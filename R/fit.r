@@ -68,5 +68,6 @@ sdreport = TMB::sdreport(obj)
 
 return(list(obj = obj,
             pars=pars,
-            sdreport=sdreport))
+            sdreport=sdreport,
+            init_values = parameters))
 }

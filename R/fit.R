@@ -10,9 +10,8 @@
 #' @export
 #' @examples
 #' data(fishdist)
-#' datalist = create_data(fishdist, min_number = 0, variable = "number", time = "year",
-#' date = "doy", asymmetric_model = TRUE, family = "gaussian")
-#' fit = fit(data_list)
+#' datalist = create_data(fishdist, date = "doy", asymmetric_model = TRUE, family = "gaussian")
+#' fit = fit(datalist)
 #' names(fit)
 fit <- function(data_list, silent=FALSE) {
 

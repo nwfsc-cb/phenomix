@@ -84,12 +84,21 @@ template<class Type>
     //nll += dnorm(y(i),pred(i),obs_sigma,true);
   }
 
+  Type s1 = 0;
+  Type s2 = 0;
   if(family==1) {
     // gaussian, both data and predictions in log space
     nll += sum(dnorm(log(y), pred, obs_sigma, true));
   }
   if(family==2) {
     nll += sum(dpois(y, exp(pred), true));
+  }
+  if(family==3) {
+    for(i = 0; i < n; i++) {
+      s1 = exp(pred(i));
+      s2 = s1 + pow(s1, Type(2))*obs_sigma;
+      nll += dnbinom2(y(i), s1, s2, true);
+    }
   }
 
   // ADREPORT section

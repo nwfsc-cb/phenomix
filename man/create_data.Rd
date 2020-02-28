@@ -4,8 +4,15 @@
 \alias{create_data}
 \title{Create data file for fitting time varying run timing distributions with TMB}
 \usage{
-create_data(data, min_number = 0, variable = "number", time = "year",
-  date = "doy", asymmetric_model = TRUE, family = "gaussian")
+create_data(
+  data,
+  min_number = 0,
+  variable = "number",
+  time = "year",
+  date = "doy",
+  asymmetric_model = TRUE,
+  family = "gaussian"
+)
 }
 \arguments{
 \item{data}{A data frame}

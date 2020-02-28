@@ -19,7 +19,7 @@ Imports:
     graphics,
     methods,
     stats,
-    TMB
+    TMB (>= 1.7.13)
 Suggests:
     knitr,
     rmarkdown

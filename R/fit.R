@@ -54,8 +54,9 @@ fit <- function(data_list, silent=FALSE) {
   random = c("mu_devs","sigma1_devs")
   if(data_list$asymmetric==TRUE) random = c(random, "sigma2_devs")
 
-  obj <- TMB::MakeADFun(data = data_list, parameters, DLL="model",
-    random=random, silent=silent, map = tmb_map)
+  obj <- TMB::MakeADFun(data = data_list, parameters=parameters,
+    map = tmb_map, DLL="salmix",
+    random=random, silent=silent)
 
   # Attempt to do estimation
   pars = stats::nlminb(

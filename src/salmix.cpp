@@ -1,5 +1,5 @@
-// Scaled gaussian model of fish run sizes
 #include <TMB.hpp>
+// #include <omp.h>
 
 template<class Type>
   Type objective_function<Type>::operator() ()

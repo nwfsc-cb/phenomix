@@ -11,7 +11,7 @@
 #' @examples
 #' data(fishdist)
 #' datalist = create_data(fishdist, date = "doy", asymmetric_model = TRUE, family = "gaussian")
-#' fit = fit(datalist)
+#' fit = fit(datalist,silent=FALSE)
 #' names(fit)
 fit <- function(data_list, silent=FALSE) {
 
@@ -53,7 +53,7 @@ if(data_list$asymmetric==FALSE) {
 random = c("mu_devs","sigma1_devs")
 if(data_list$asymmetric==TRUE) random = c(random, "sigma2_devs")
 
-obj <- TMB::MakeADFun(data = data_list, parameters, DLL="model",
+obj <- TMB::MakeADFun(data = data_list, parameters=parameters, DLL="model",
     random=random, silent=silent, map = tmb_map)
 
 # Attempt to do estimation

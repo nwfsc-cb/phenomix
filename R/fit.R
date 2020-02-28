@@ -1,3 +1,6 @@
+#' @useDynLib salmix, .registration = TRUE
+NULL
+
 #' Fitting function to be called by user
 #'
 #' This function creates a list of parameters, sets up TMB object and attempts to
@@ -10,9 +13,7 @@
 #' @export
 #' @examples
 #' data(fishdist)
-#' datalist = create_data(fishdist, date = "doy", asymmetric_model = TRUE, family = "gaussian")
-#' fit = fit(datalist)
-#' names(fit)
+#' datalist = create_data(fishdist)
 fit <- function(data_list, silent=FALSE) {
 
   # create list of parameter starting values -- used in both

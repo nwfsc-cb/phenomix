@@ -41,11 +41,11 @@ template<class Type>
 
   for(i = 0; i < nLevels; i++) {
 
-    sigma1(i) = exp(sig1_b0 + sigma1_devs(i) + sig1_b1*Type(unique_years(i)));
+    sigma1(i) = exp(sig1_b0 + sig1_b1*Type(unique_years(i)) + sigma1_devs(i));
     if(asymmetric == 1) {
-      sigma2(i) = exp(sig2_b0 + sigma2_devs(i) + sig2_b1*Type(unique_years(i)));
+      sigma2(i) = exp(sig2_b0 + sig2_b1*Type(unique_years(i)) + sigma2_devs(i));
       // scalar(i) is just log(sig2) - log(sig1)
-      scalar(i) = sigma2_devs(i) + sigma2_devs(i) - (sigma1_devs(i) + sigma1_devs(i));
+      scalar(i) = sig2_b0 + sig2_b1*Type(unique_years(i)) + sigma2_devs(i) - (sig1_b0 + sig1_b1*Type(unique_years(i)) + sigma1_devs(i));//sigma2_devs(i) + sigma2_devs(i) - (sigma1_devs(i) + sigma1_devs(i));
     }
 
     mu(i) = exp(log_mu_b0) + mu_devs(i) + mu_b1*Type(unique_years(i));
@@ -120,6 +120,7 @@ template<class Type>
     ADREPORT(sigma2);
     ADREPORT(sig2_b0);
     ADREPORT(sig2_b1);
+    ADREPORT(scalar);
   }
 
   return (-nll);

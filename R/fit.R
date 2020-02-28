@@ -8,13 +8,15 @@ NULL
 #'
 #' @param data_list A list of data, as output from create_data
 #' @param silent Boolean passed to TMB::MakeADFun, whether to be verbose or not (defaults to FALSE)
-#'
+#' @param inits Optional named list of parameters for starting values, defaults to NULL
+#' @param control Optional control list for stats::nlminb. For arguments see ?nlminb. Defaults to eval.max=2000, iter.max=1000, rel.tol=1e-6
 #' @importFrom stats runif
 #' @export
 #' @examples
 #' data(fishdist)
 #' datalist = create_data(fishdist)
-fit <- function(data_list, silent=FALSE) {
+fit <- function(data_list, silent=FALSE, inits = NULL, control=list(eval.max=2000, iter.max=1000,
+  rel.tol=1e-10)) {
 
   # create list of parameter starting values -- used in both
   # asymmetric and symmetric models
@@ -38,6 +40,9 @@ fit <- function(data_list, silent=FALSE) {
         log_sigma2 = -1))
   }
 
+  # If inits is included, use that instead of parameters
+  if(!is.null(inits)) parameters = inits
+
   # Mapping off params as needed:
   tmb_map <- list()
   if (data_list$family == 2)
@@ -59,10 +64,14 @@ fit <- function(data_list, silent=FALSE) {
     random=random, silent=silent)
 
   # Attempt to do estimation
+  if(!is.null(inits)) {
+    init = inits
+  } else {
+    init = obj$par + runif(length(obj$par),-0.1,.1)
+  }
   pars = stats::nlminb(
-    start = obj$par + runif(length(obj$par),-0.1,.1), objective = obj$fn,
-    gradient = obj$gr, control=list(eval.max=2000, iter.max=1000,
-      rel.tol=1e-6),
+    start = init, objective = obj$fn,
+    gradient = obj$gr, control = control,
     lower = limits(parnames = names(obj$par))$lower,
     upper = limits(parnames = names(obj$par))$upper)
 
@@ -71,5 +80,6 @@ fit <- function(data_list, silent=FALSE) {
   return(list(obj = obj,
     pars=pars,
     sdreport=sdreport,
-    init_values = parameters))
+    init_values = parameters,
+    data_list = data_list))
 }

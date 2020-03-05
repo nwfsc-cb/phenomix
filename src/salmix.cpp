@@ -24,10 +24,11 @@ template<class Type>
   PARAMETER(log_obs_sigma);
   DATA_INTEGER(asymmetric); // 0 if false, 1 = true
   DATA_INTEGER(family); // 1 gaussian, 2 = poisson, 3 = neg bin
-  PARAMETER_VECTOR(sigma2_devs);
+
   PARAMETER(sig2_b0);
   PARAMETER(sig2_b1);
   PARAMETER(log_sigma2);
+  PARAMETER_VECTOR(sigma2_devs);
 
   // derived parameters
   int n = x.size();

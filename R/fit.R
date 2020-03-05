@@ -32,7 +32,7 @@ fit <- function(data_list, silent=FALSE, inits = NULL, control=list(eval.max=200
     log_obs_sigma=0.005)
 
   # optional parameters to add for asymmetric model
-  if(data_list$asymmetric==TRUE) {
+  if(data_list$asymmetric==1) {
     parameters <- append(parameters,
       list(sigma2_devs = rep(0, data_list$nLevels),
         sig2_b0 = 4.1,
@@ -48,12 +48,12 @@ fit <- function(data_list, silent=FALSE, inits = NULL, control=list(eval.max=200
   if (data_list$family == 2)
     tmb_map <- c(tmb_map, list(log_obs_sigma = as.factor(NA)))
 
-  if(data_list$asymmetric==FALSE) {
+  if(data_list$asymmetric==0) {
     # map off pars not needed
-    tmb_map <- c(tmb_map, list(sigma2_devs = rep(NA, data_list$nLevels),
-      sig2_b0 = NA,
+    tmb_map <- c(tmb_map, list(sig2_b0 = NA,
       sig2_b1 = NA,
-      log_sigma2 = NA))
+      log_sigma2 = NA,
+      sigma2_devs = rep(NA, data_list$nLevels)))
   }
 
   random = c("mu_devs","sigma1_devs")

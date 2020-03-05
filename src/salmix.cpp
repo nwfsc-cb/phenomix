@@ -120,7 +120,7 @@ template<class Type>
     ADREPORT(sigma2);
     ADREPORT(sig2_b0);
     ADREPORT(sig2_b1);
-    ADREPORT(scalar);
+    //ADREPORT(scalar);
   }
 
   return (-nll);

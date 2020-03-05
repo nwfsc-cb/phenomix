@@ -4,12 +4,21 @@
 \alias{fit}
 \title{Fitting function to be called by user}
 \usage{
-fit(data_list, silent = FALSE)
+fit(
+  data_list,
+  silent = FALSE,
+  inits = NULL,
+  control = list(eval.max = 2000, iter.max = 1000, rel.tol = 1e-10)
+)
 }
 \arguments{
 \item{data_list}{A list of data, as output from create_data}
 
 \item{silent}{Boolean passed to TMB::MakeADFun, whether to be verbose or not (defaults to FALSE)}
+
+\item{inits}{Optional named list of parameters for starting values, defaults to NULL}
+
+\item{control}{Optional control list for stats::nlminb. For arguments see ?nlminb. Defaults to eval.max=2000, iter.max=1000, rel.tol=1e-6}
 }
 \description{
 This function creates a list of parameters, sets up TMB object and attempts to

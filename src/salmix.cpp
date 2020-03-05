@@ -31,12 +31,13 @@ template<class Type>
   PARAMETER_VECTOR(sigma2_devs);
 
   // derived parameters
-  int n = x.size();
   Type obs_sigma=exp(log_obs_sigma);
   vector<Type> sigma1(nLevels), mu(nLevels);
-  vector<Type> sigma2(nLevels),scalar(nLevels);
+  vector<Type> sigma2(nLevels), scalar(nLevels);
   vector<Type> lower25(nLevels), upper75(nLevels);
-  int i = 0;
+
+  int i;
+  int n = x.size();
 
   Type nll=0;
 

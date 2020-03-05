@@ -50,10 +50,10 @@ fit <- function(data_list, silent=FALSE, inits = NULL, control=list(eval.max=200
 
   if(data_list$asymmetric==0) {
     # map off pars not needed
-    tmb_map <- c(tmb_map, list(sig2_b0 = NA,
-      sig2_b1 = NA,
-      log_sigma2 = NA,
-      sigma2_devs = rep(NA, data_list$nLevels)))
+    tmb_map <- c(tmb_map, list(sig2_b0 = as.factor(NA),
+      sig2_b1 = as.factor(NA),
+      log_sigma2 = as.factor(NA),
+      sigma2_devs = rep(as.factor(NA), data_list$nLevels)))
   }
 
   random = c("mu_devs","sigma1_devs")

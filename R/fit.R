@@ -32,13 +32,13 @@ fit <- function(data_list, silent=FALSE, inits = NULL, control=list(eval.max=200
     log_obs_sigma=0.005)
 
   # optional parameters to add for asymmetric model
-  if(data_list$asymmetric==1) {
+  #if(data_list$asymmetric==1) {
     parameters <- append(parameters,
       list(sigma2_devs = rep(0, data_list$nLevels),
         sig2_b0 = 4.1,
         sig2_b1 = 0.0,
         log_sigma2 = -1))
-  }
+  #}
 
   # If inits is included, use that instead of parameters
   if(!is.null(inits)) parameters = inits

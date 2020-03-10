@@ -4,12 +4,14 @@
 \alias{plot_diagnostics}
 \title{Plotting function to be called by user}
 \usage{
-plot_diagnostics(fitted, type = "timing")
+plot_diagnostics(fitted, type = "timing", logspace = TRUE)
 }
 \arguments{
 \item{fitted}{A fitted model object}
 
 \item{type}{A plot type for ggplot, either "timing" or "scatter"}
+
+\item{logspace}{whether to plot the space in log space, defaults to TRUE}
 }
 \description{
 These functions make some basic plots for the user

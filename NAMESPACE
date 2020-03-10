@@ -2,5 +2,7 @@
 
 export(create_data)
 export(fit)
+export(plot_diagnostics)
+import(ggplot2)
 importFrom(stats,runif)
 useDynLib(salmix, .registration = TRUE)

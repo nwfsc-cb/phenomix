@@ -42,19 +42,18 @@ plot_diagnostics <- function(fitted, type="timing", logspace = TRUE) {
   if(type=="timing") {
     if(logspace==TRUE) {
     g = ggplot(df, aes(x, pred,fill=timing,col=timing)) +
-      geom_line(alpha=0.5) +
       facet_wrap(~years,scales="free") +
       xlab("Calendar day") +
       ylab("Ln pred and obs") +
-      geom_point(aes(x, log(y),fill=timing,col=timing),size=1,alpha=0.5)
+      geom_point(aes(x, log(y),fill=timing,col=timing),size=1,alpha=0.5) +
+      geom_line(col="black")
     } else {
       g = ggplot(df, aes(x, exp(pred),fill=timing,col=timing)) +
-        geom_line(alpha=0.5) +
         facet_wrap(~years,scales="free") +
         xlab("Calendar day") +
         ylab("Ln pred and obs") +
-        geom_point(aes(x, y,fill=timing,col=timing),size=1,alpha=0.5)
-
+        geom_point(aes(x, y,fill=timing,col=timing),size=1,alpha=0.5) +
+        geom_line(col="black")
     }
   }
   return(g)

@@ -26,7 +26,7 @@ fit <- function(data_list, silent=FALSE, inits = NULL, control=list(eval.max=200
     log_mu_b0 = log(120),
     mu_b1 = 0,
     log_sigma_mu_devs = -1,
-    sig1_b0 = 4.3,
+    sig1_b0 = 2.0,
     sig1_b1 = 0.0,
     log_sigma1 = -1,
     log_obs_sigma=0.005)
@@ -35,7 +35,7 @@ fit <- function(data_list, silent=FALSE, inits = NULL, control=list(eval.max=200
   #if(data_list$asymmetric==1) {
     parameters <- append(parameters,
       list(sigma2_devs = rep(0, data_list$nLevels),
-        sig2_b0 = 4.1,
+        sig2_b0 = 2.0,
         sig2_b1 = 0.0,
         log_sigma2 = -1))
   #}

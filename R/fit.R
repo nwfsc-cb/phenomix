@@ -9,7 +9,7 @@ NULL
 #' @param data_list A list of data, as output from create_data
 #' @param silent Boolean passed to TMB::MakeADFun, whether to be verbose or not (defaults to FALSE)
 #' @param inits Optional named list of parameters for starting values, defaults to NULL
-#' @param control Optional control list for stats::nlminb. For arguments see ?nlminb. Defaults to eval.max=2000, iter.max=1000, rel.tol=1e-6
+#' @param control Optional control list for stats::nlminb. For arguments see ?nlminb. Defaults to eval.max=2000, iter.max=1000, rel.tol=1e-10. For final model runs, the rel.tol should be even smaller
 #' @importFrom stats runif
 #' @export
 #' @examples

@@ -47,12 +47,13 @@ template<class Type>
     if(asymmetric == 1) {
       sigma2(i) = exp(sig2_b0 + sig2_b1*Type(unique_years(i)) + sigma2_devs(i));
       // scalar(i) is just log(sig2) - log(sig1)
-      scalar(i) = sig2_b0 + sig2_b1*Type(unique_years(i)) + sigma2_devs(i) - (sig1_b0 + sig1_b1*Type(unique_years(i)) + sigma1_devs(i));//sigma2_devs(i) + sigma2_devs(i) - (sigma1_devs(i) + sigma1_devs(i));
+      scalar(i) = sig2_b0 + sig2_b1*Type(unique_years(i)) + sigma2_devs(i) - (sig1_b0 + sig1_b1*Type(unique_years(i)) + sigma1_devs(i));
     }
 
+    // trend in in normal space, e.g. not log-linear
     mu(i) = exp(log_mu_b0) + mu_devs(i) + mu_b1*Type(unique_years(i));
 
-    // random effects contributions
+    // random effects contributions of mean and sigma1
     nll += dnorm(mu_devs(i), Type(0.0),exp(log_sigma_mu_devs),true);
     nll += dnorm(sigma1_devs(i),Type(0.0),exp(log_sigma1),true);
     if(asymmetric == 1) {
@@ -116,7 +117,6 @@ template<class Type>
   ADREPORT(sig1_b1);
   ADREPORT(lower25);
   ADREPORT(upper75);
-
   if(asymmetric == 1) {
     // these are only reported for asymmetric model
     ADREPORT(sigma2);

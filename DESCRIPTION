@@ -16,6 +16,7 @@ Depends:
     R (>= 3.2.0)
 Imports:
     ggplot2,
+    dplyr,
     graphics,
     methods,
     stats,

@@ -6,6 +6,7 @@
 #' @param type A plot type for ggplot, either "timing" or "scatter"
 #' @param logspace whether to plot the space in log space, defaults to TRUE
 #' @import ggplot2
+#' @importFrom dplyr left_join
 #' @export
 plot_diagnostics <- function(fitted, type="timing", logspace = TRUE) {
 

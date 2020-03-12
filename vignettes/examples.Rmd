@@ -32,7 +32,7 @@ glimpse(fishdist)
 
 ### Creating data for estimation
 
-There's three main functions we'll work with. First, we'll use the `create_data` function, which builds the data and model arguments to be used for fitting. We'll start with the default arguments, before going into detail about what they all mean. 
+There's three main functions we'll work with. First, we'll use the `create_data` function, which builds the data and model arguments to be used for fitting. We'll start with the default arguments, before going into detail about what they all mean. The only argument that we've initially changed from the default is using `asymmetric_model = FALSE` to fit the symmetric model.
 
 ```{r}
 datalist = create_data(fishdist, 
@@ -40,7 +40,7 @@ datalist = create_data(fishdist,
   variable = "number", 
   time="year", 
   date = "doy",
-  asymmetric_model = TRUE, 
+  asymmetric_model = FALSE, 
   est_sigma_trend = TRUE, 
   est_mu_trend = TRUE, 
   est_t_model = FALSE, 
@@ -70,11 +70,12 @@ sdrep_df = data.frame("par"=names(sdrep$value),
 head(sdrep_df)
 ```
 
+
+
+
+### Diagnosing lack of convergence
+
 In addition to the warning message about the Hessian not being positive definite, the NaNs in the `sd` column are a sure sign that things aren't converging. 
 
 Fixes to improve convergence may be to start from a different set of starting values (try passing `inits` into the `fit` function), or placing stricter bounds on convergence statistics. Or it may be that the model isn't a good fit to the data. But we'll try improving things by adjusting the convergence criterion. The `control` argument is a list that is passed into `stats::nlminb` -- we'll only adjust `rel.tol` in this example, but you can tweak other parameters. 
-
-```{r}
-fitted = fit(datalist, control=list(rel.tol = 1e-12))
-```
 

@@ -34,13 +34,13 @@ template<class Type>
   PARAMETER_VECTOR(sigma2_devs);
   PARAMETER(tdf_1);
   PARAMETER(tdf_2);
-
+  // todo: add range, 75th-25th percentile
   // derived parameters
   Type obs_sigma=exp(log_obs_sigma);
   vector<Type> sigma1(nLevels), mu(nLevels);
   vector<Type> sigma2(nLevels), scalar(nLevels);
   vector<Type> lower25(nLevels), upper75(nLevels);
-
+  vector<Type> range(nLevels);
   int i;
   int n = x.size();
 
@@ -97,6 +97,7 @@ template<class Type>
         upper75(i) = 0;//qt(Type(0.75), mu(i) / sigma1(i), tdf_1);
       }
     }
+    range(i) = upper75(i) - lower25(i);
   }
 
   vector<Type> log_dens(n), pred(n);
@@ -168,6 +169,7 @@ template<class Type>
   }
   ADREPORT(lower25);
   ADREPORT(upper75);
+  ADREPORT(range);
   if(t_model==1) {
     ADREPORT(tdf_1);
   }

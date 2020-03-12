@@ -19,7 +19,7 @@
 #' datalist = create_data(fishdist, min_number = 0, variable = "number", time = "year",
 #' date = "doy", asymmetric_model = TRUE, family = "gaussian")
 create_data <- function(data, min_number=0, variable = "number", time="year", date = "doy",
-                        asymmetric_model = TRUE, est_sigma_trend = TRUE, est_mu_trend = TRUE, family = "gaussian") {
+                        asymmetric_model = TRUE, est_sigma_trend = TRUE, est_mu_trend = TRUE, est_t_model = FALSE, family = "gaussian") {
 
   dist = c("gaussian", "poisson", "negbin")
   fam = match(family, dist)
@@ -53,8 +53,9 @@ create_data <- function(data, min_number=0, variable = "number", time="year", da
                    nLevels = length(unique(data$year)),
                    asymmetric = as.numeric(asymmetric_model),
                    family = fam,
-                   sig_trend = est_sigma_trend,
-                   mu_trend = est_mu_trend)
+                   sig_trend = as.numeric(est_sigma_trend),
+                   mu_trend = as.numeric(est_mu_trend),
+                   t_model = as.numeric(est_t_model))
 
   return(data_list)
 }

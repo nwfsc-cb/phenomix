@@ -19,6 +19,7 @@ limits <- function(parnames) {
     if(length(grep("sig1_b1",parnames[i]))>0) df[i,c("lower","upper")] = c(-0.2,0.2)
     if(length(grep("sig2_b1",parnames[i]))>0) df[i,c("lower","upper")] = c(-0.2,0.2)
     if(length(grep("log_obs_sigma",parnames[i]))>0) df[i,c("lower","upper")] = c(-5,3)
+    if(length(grep("tdf",parnames[i]))>0) df[i,c("lower","upper")] = c(2,100)
   }
   return(df)
 }

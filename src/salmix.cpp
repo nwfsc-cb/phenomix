@@ -168,14 +168,14 @@ template<class Type>
   }
   ADREPORT(lower25);
   ADREPORT(upper75);
-  if(t_model==0) {
+  if(t_model==1) {
     ADREPORT(tdf_1);
   }
   if(asymmetric == 1) {
     // these are only reported for asymmetric model
     ADREPORT(sigma2);
     ADREPORT(sig2_b0);
-    if(t_model==0) {
+    if(t_model==1) {
       ADREPORT(tdf_2);
     }
     if(sig_trend==1) {

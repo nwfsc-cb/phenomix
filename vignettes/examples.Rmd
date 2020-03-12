@@ -1,0 +1,51 @@
+---
+title: "Curve fitting with the salmix package"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Curve fitting with the salmix package}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE, cache=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 7,
+  fig.asp = 0.618
+)
+```
+
+```{r packages, message=FALSE, warning=TRUE}
+library(salmix)
+```
+
+We'll start by loading the example dataset, based on run timing data for Pacific salmon.
+
+```{r}
+glimpse(fishdist)
+```
+
+There's three main functions we'll work with. First, we'll use the `create_data` function, which builds the data and model arguments to be used for fitting. We'll start with the default arguments, before going into detail about what they all mean. 
+
+```{r}
+datalist = create_data(fishdist, 
+  min_number=0, 
+  variable = "number", 
+  time="year", 
+  date = "doy",
+  asymmetric_model = TRUE, 
+  est_sigma_trend = TRUE, 
+  est_mu_trend = TRUE, 
+  est_t_model = FALSE, 
+  family = "gaussian")
+```
+
+The `min_number` argument represents an optional threshold below which data is ignored. The `variable` argument is a character identifying the name of the response variable in the data frame. Similarly, the `time` and `date` arguments specify the labels of the temporal (e.g. year) and seasonal variables (day of year).
+
+The `salmix` package can fit asymmetric or symmetric models to the distribution data (whether the left side of the curve is the same shape as the right) and defaults to FALSE. The mean and standard deviations that control the distributions are allowed to vary over time (as random effects) but we can also include temporal trends in the mean and standard deviations. These are estimated by default, and controlled with the `est_sigma_trend` and `est_mu_trend` arguments. The trends are log-linear for the standard deviation parameters, but in normal space for the mean parameters. Finally, the tails of the response curves may be estimated via fitting a Gaussian (normal) distribution or a Student-t distribution. By default, the Gaussian tails are estimated, and this parameter is controlled with the `est_t_model` argument.
+
+Last, we can model the observed count data with a number of different distributions, and set this with the `family` argument. Currently supported distributions include the Gaussian, Poisson, and Negative Binomial, and all include a log-link. 
+
+

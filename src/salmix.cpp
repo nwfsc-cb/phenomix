@@ -79,23 +79,23 @@ template<class Type>
       nll += dnorm(sigma2_devs(i),Type(0.0),exp(log_sigma2),true);
     }
 
-    //if(t_model==0) {
+    if(t_model==0) {
       lower25(i) = qnorm(Type(0.25), mu(i), sigma1(i));
-    //} else {
-      //lower25(i) = qt(Type(0.25), mu(i) / sigma1(i), tdf_1);
-    //}
-    if(asymmetric == 1) {
-      //if(t_model == 0) {
-        upper75(i) = qnorm(Type(0.75), mu(i), sigma2(i));
-      //} else {
-        //upper75(i) = qt(Type(0.75), mu(i) / sigma2(i), tdf_2);
-      //}
     } else {
-      //if(t_model == 0) {
+      lower25(i) = 0;//qt(Type(0.25), mu(i) / sigma1(i), tdf_1);
+    }
+    if(asymmetric == 1) {
+      if(t_model == 0) {
+        upper75(i) = qnorm(Type(0.75), mu(i), sigma2(i));
+      } else {
+        upper75(i) = 0;//qt(Type(0.75), mu(i) / sigma2(i), tdf_2);
+      }
+    } else {
+      if(t_model == 0) {
         upper75(i) = qnorm(Type(0.75), mu(i), sigma1(i));
-      //} else {
-        //upper75(i) = qt(Type(0.75), mu(i) / sigma1(i), tdf_1);
-      //}
+      } else {
+        upper75(i) = 0;//qt(Type(0.75), mu(i) / sigma1(i), tdf_1);
+      }
     }
   }
 
@@ -105,29 +105,33 @@ template<class Type>
       // model is asymmetric, left side smaller / right side bigger
       if(x(i) < mu(years(i)-1)) {
         if(t_model==0) {
+          // model is asymmetric around mu, gaussian tails
           log_dens(i) = dnorm(x(i), mu(years(i)-1), sigma1(years(i)-1), true);
         } else {
+          // model is asymmetric around mu, student-t tails
           log_dens(i) = dt((x(i) - mu(years(i)-1)) / sigma1(years(i)-1), tdf_1, true) - log(sigma1(years(i)-1));
         }
         pred(i) = log_dens(i) + theta(years(i)-1);
       } else {
         if(t_model==0) {
+          // model is asymmetric around mu, gaussian tails
           log_dens(i) = dnorm(x(i), mu(years(i)-1), sigma2(years(i)-1), true);
         } else {
+          // model is asymmetric around mu, student-t tails
           log_dens(i) = dt((x(i) - mu(years(i)-1)) / sigma2(years(i)-1), tdf_2, true) - log(sigma2(years(i)-1));
         }
         pred(i) = log_dens(i) + theta(years(i)-1) + scalar(years(i)-1);
       }
     } else {
-      // model is symmetric around mu
       if(t_model==0) {
+        // model is symmetric around mu, gaussian tails
         log_dens(i) = dnorm(x(i), mu(years(i)-1), sigma1(years(i)-1), true);
       } else {
+        // model is symmetric around mu, student-t tails
         log_dens(i) = dt((x(i) - mu(years(i)-1)) / sigma1(years(i)-1), tdf_1, true) - log(sigma1(years(i)-1));
       }
       pred(i) = log_dens(i) + theta(years(i)-1);
     }
-    //nll += dnorm(y(i),pred(i),obs_sigma,true);
   }
 
   Type s1 = 0;

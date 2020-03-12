@@ -11,8 +11,9 @@ create_data(
   time = "year",
   date = "doy",
   asymmetric_model = TRUE,
-  sigma_trend = TRUE,
-  mu_trend = TRUE,
+  est_sigma_trend = TRUE,
+  est_mu_trend = TRUE,
+  est_t_model = FALSE,
   family = "gaussian"
 )
 }
@@ -31,9 +32,11 @@ column should contain a numeric response -- for example, the result from using l
 \item{asymmetric_model}{Boolean, whether or not to let model be asymmetric (e.g. run timing before peak has a
 different shape than run timing after peak)}
 
-\item{sigma_trend}{Whether to fit a log-linear trend in standard deviations. Defaults to TRUE (when FALSE, an intercept and random deviations are estimated)}
+\item{est_sigma_trend}{Whether to fit a log-linear trend in standard deviations. Defaults to TRUE (when FALSE, an intercept and random deviations are estimated)}
 
-\item{mu_trend}{Whether to fit a linear trend in means. Defaults to TRUE (when FALSE, an intercept and random deviations are estimated)}
+\item{est_mu_trend}{Whether to fit a linear trend in means. Defaults to TRUE (when FALSE, an intercept and random deviations are estimated)}
+
+\item{est_t_model}{Whether to fit a model with Gaussian (FALSE) or Student-t tails (TRUE). Defaults to FALSE}
 
 \item{family}{Response for observation model, options are "gaussian", "poisson", "negbin"}
 }

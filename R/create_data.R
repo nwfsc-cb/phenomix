@@ -12,6 +12,7 @@
 #' different shape than run timing after peak)
 #' @param est_sigma_trend Whether to fit a log-linear trend in standard deviations. Defaults to TRUE (when FALSE, an intercept and random deviations are estimated)
 #' @param est_mu_trend Whether to fit a linear trend in means. Defaults to TRUE (when FALSE, an intercept and random deviations are estimated)
+#' @param est_t_model Whether to fit a model with Gaussian (FALSE) or Student-t tails (TRUE). Defaults to FALSE
 #' @param family Response for observation model, options are "gaussian", "poisson", "negbin"
 #' @export
 #' @examples

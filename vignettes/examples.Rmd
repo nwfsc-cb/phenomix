@@ -19,6 +19,9 @@ knitr::opts_chunk$set(
 
 ```{r packages, message=FALSE, warning=TRUE}
 library(salmix)
+library(dplyr)
+library(TMB)
+set.seed(1)
 ```
 
 We'll start by loading the example dataset, based on run timing data for Pacific salmon.
@@ -26,6 +29,8 @@ We'll start by loading the example dataset, based on run timing data for Pacific
 ```{r}
 glimpse(fishdist)
 ```
+
+### Creating data for estimation
 
 There's three main functions we'll work with. First, we'll use the `create_data` function, which builds the data and model arguments to be used for fitting. We'll start with the default arguments, before going into detail about what they all mean. 
 
@@ -48,4 +53,28 @@ The `salmix` package can fit asymmetric or symmetric models to the distribution 
 
 Last, we can model the observed count data with a number of different distributions, and set this with the `family` argument. Currently supported distributions include the Gaussian, Poisson, and Negative Binomial, and all include a log-link. 
 
+### Fitting the model
+
+Next, we'll use the `fit` function to do maximum likelihood estimation in TMB. Additional arguments can be found in the help file, but the most important one is the list of data created above.
+
+```{r}
+fitted = fit(datalist)
+```
+
+We don't get any warnings out of the estimation, but let's look at the sdreport in more detail.
+
+```{r}
+sdrep = TMB::sdreport(fitted$obj)
+sdrep_df = data.frame("par"=names(sdrep$value),
+  "value"=sdrep$value, "sd"=sdrep$sd)
+head(sdrep_df)
+```
+
+In addition to the warning message about the Hessian not being positive definite, the NaNs in the `sd` column are a sure sign that things aren't converging. 
+
+Fixes to improve convergence may be to start from a different set of starting values (try passing `inits` into the `fit` function), or placing stricter bounds on convergence statistics. Or it may be that the model isn't a good fit to the data. But we'll try improving things by adjusting the convergence criterion. The `control` argument is a list that is passed into `stats::nlminb` -- we'll only adjust `rel.tol` in this example, but you can tweak other parameters. 
+
+```{r}
+fitted = fit(datalist, control=list(rel.tol = 1e-12))
+```
 

@@ -10,6 +10,8 @@
 #' column should contain a numeric response -- for example, the result from using lubridate::yday(x)
 #' @param asymmetric_model Boolean, whether or not to let model be asymmetric (e.g. run timing before peak has a
 #' different shape than run timing after peak)
+#' @param est_sigma_trend Whether to fit a log-linear trend in standard deviations. Defaults to TRUE (when FALSE, an intercept and random deviations are estimated)
+#' @param est_mu_trend Whether to fit a linear trend in means. Defaults to TRUE (when FALSE, an intercept and random deviations are estimated)
 #' @param family Response for observation model, options are "gaussian", "poisson", "negbin"
 #' @export
 #' @examples
@@ -17,7 +19,7 @@
 #' datalist = create_data(fishdist, min_number = 0, variable = "number", time = "year",
 #' date = "doy", asymmetric_model = TRUE, family = "gaussian")
 create_data <- function(data, min_number=0, variable = "number", time="year", date = "doy",
-                        asymmetric_model = TRUE, family = "gaussian") {
+                        asymmetric_model = TRUE, est_sigma_trend = TRUE, est_mu_trend = TRUE, family = "gaussian") {
 
   dist = c("gaussian", "poisson", "negbin")
   fam = match(family, dist)
@@ -50,7 +52,9 @@ create_data <- function(data, min_number=0, variable = "number", time="year", da
                    unique_years = unique(data$year),
                    nLevels = length(unique(data$year)),
                    asymmetric = as.numeric(asymmetric_model),
-                   family = fam)
+                   family = fam,
+                   sig_trend = est_sigma_trend,
+                   mu_trend = est_mu_trend)
 
   return(data_list)
 }

@@ -24,7 +24,8 @@ template<class Type>
   PARAMETER(log_obs_sigma);
   DATA_INTEGER(asymmetric); // 0 if false, 1 = true
   DATA_INTEGER(family); // 1 gaussian, 2 = poisson, 3 = neg bin
-
+  DATA_INTEGER(sig_trend); // 0 if false, 1 = true
+  DATA_INTEGER(mu_trend); // 0 if false, 1 = true
   PARAMETER(sig2_b0);
   PARAMETER(sig2_b1);
   PARAMETER(log_sigma2);
@@ -43,15 +44,29 @@ template<class Type>
 
   for(i = 0; i < nLevels; i++) {
 
-    sigma1(i) = exp(sig1_b0 + sig1_b1*Type(unique_years(i)) + sigma1_devs(i));
+    if(sig_trend==1) {
+      sigma1(i) = exp(sig1_b0 + sig1_b1*Type(unique_years(i)) + sigma1_devs(i));
+    } else {
+      sigma1(i) = exp(sig1_b0 + sigma1_devs(i));
+    }
+
     if(asymmetric == 1) {
+      if(sig_trend==1) {
       sigma2(i) = exp(sig2_b0 + sig2_b1*Type(unique_years(i)) + sigma2_devs(i));
       // scalar(i) is just log(sig2) - log(sig1)
       scalar(i) = sig2_b0 + sig2_b1*Type(unique_years(i)) + sigma2_devs(i) - (sig1_b0 + sig1_b1*Type(unique_years(i)) + sigma1_devs(i));
+      } else {
+        sigma2(i) = exp(sig2_b0 + sigma2_devs(i));
+        scalar(i) = sig2_b0 + sigma2_devs(i) - (sig1_b0 + sigma1_devs(i));
+      }
     }
 
     // trend in in normal space, e.g. not log-linear
+    if(mu_trend == TRUE) {
     mu(i) = exp(log_mu_b0) + mu_devs(i) + mu_b1*Type(unique_years(i));
+    } else {
+      mu(i) = exp(log_mu_b0) + mu_devs(i);
+    }
 
     // random effects contributions of mean and sigma1
     nll += dnorm(mu_devs(i), Type(0.0),exp(log_sigma_mu_devs),true);
@@ -111,17 +126,23 @@ template<class Type>
   ADREPORT(obs_sigma);
   ADREPORT(pred);
   ADREPORT(log_mu_b0);
-  ADREPORT(mu_b1);
+  if(mu_trend==1) {
+    ADREPORT(mu_b1);
+  }
   ADREPORT(mu_devs);
   ADREPORT(sig1_b0);
-  ADREPORT(sig1_b1);
+  if(sig_trend==1) {
+    ADREPORT(sig1_b1);
+  }
   ADREPORT(lower25);
   ADREPORT(upper75);
   if(asymmetric == 1) {
     // these are only reported for asymmetric model
     ADREPORT(sigma2);
     ADREPORT(sig2_b0);
-    ADREPORT(sig2_b1);
+    if(sig_trend==1) {
+      ADREPORT(sig2_b1);
+    }
     //ADREPORT(scalar);
   }
 

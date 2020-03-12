@@ -56,6 +56,14 @@ fit <- function(data_list, silent=FALSE, inits = NULL, control=list(eval.max=200
       sigma2_devs = rep(as.factor(NA), data_list$nLevels)))
   }
 
+  if(data_list$sig_trend == FALSE) {
+    tmb_map = c(tmb_map, list(sig1_b1 = as.factor(NA),
+      sig2_b1 = as.factor(NA)))
+  }
+  if(data_list$mu_trend == FALSE) {
+    tmb_map = c(tmb_map, list(mu_b1 = as.factor(NA)))
+  }
+
   random = c("mu_devs","sigma1_devs")
   if(data_list$asymmetric==TRUE) random = c(random, "sigma2_devs")
 

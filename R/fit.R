@@ -29,17 +29,17 @@ fit <- function(data_list, silent=FALSE, inits = NULL, control=list(eval.max=200
     sig1_b0 = 2.0,
     sig1_b1 = 0.0,
     log_sigma1 = -1,
-    log_obs_sigma=0.005,
-    tdf_1 = 10)
+    log_obs_sigma=0.005)
 
   # optional parameters to add for asymmetric model
   #if(data_list$asymmetric==1) {
     parameters <- append(parameters,
       list(sigma2_devs = rep(0, data_list$nLevels),
-        sig2_b0 = 2.0,
+        sig2_b0 = 0.0,
         sig2_b1 = 0.0,
-        log_sigma2 = -1,
-        tdf_2 = 10))
+        log_sigma2 = 0.0,
+        log_tdf_1 = 0,
+        log_tdf_2 = 0))
   #}
 
   # If inits is included, use that instead of parameters
@@ -50,19 +50,12 @@ fit <- function(data_list, silent=FALSE, inits = NULL, control=list(eval.max=200
   if (data_list$family == 2)
     tmb_map <- c(tmb_map, list(log_obs_sigma = as.factor(NA)))
 
-  if(data_list$t_model == 0) {
-    tmb_map <- c(tmb_map, list(tdf_1 = as.factor(NA)))
-  }
-
   if(data_list$asymmetric==0) {
     # map off pars not needed
     tmb_map <- c(tmb_map, list(sig2_b0 = as.factor(NA),
       sig2_b1 = as.factor(NA),
       log_sigma2 = as.factor(NA),
       sigma2_devs = rep(as.factor(NA), data_list$nLevels)))
-    if(data_list$t_model == 0) {
-      tmb_map <- c(tmb_map, list(tdf_2 = as.factor(NA)))
-    }
   }
 
   if(data_list$sig_trend == FALSE) {
@@ -71,6 +64,18 @@ fit <- function(data_list, silent=FALSE, inits = NULL, control=list(eval.max=200
   }
   if(data_list$mu_trend == FALSE) {
     tmb_map = c(tmb_map, list(mu_b1 = as.factor(NA)))
+  }
+
+  if(data_list$t_model == 0) {
+    if(data_list$asymmetric==0) {
+      print("hi")
+      tmb_map <- c(tmb_map, list(log_tdf_2 = as.factor(NA)))
+    } else {
+      tmb_map <- c(tmb_map, list(log_tdf_1 = as.factor(NA),
+        log_tdf_2 = as.factor(NA)))
+    }
+  } else {
+    tmb_map <- c(tmb_map, list(log_tdf_2 = as.factor(NA)))
   }
 
   random = c("mu_devs","sigma1_devs")

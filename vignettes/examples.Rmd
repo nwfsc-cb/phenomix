@@ -61,7 +61,7 @@ Next, we'll use the `fit` function to do maximum likelihood estimation in TMB. A
 fitted = fit(datalist)
 ```
 
-We don't get any warnings out of the estimation, but let's look at the sdreport in more detail.
+We don't get any warnings out of the estimation, but let's look at the sdreport in more detail. This looks like things are converging.
 
 ```{r}
 sdrep = TMB::sdreport(fitted$obj)
@@ -70,12 +70,27 @@ sdrep_df = data.frame("par"=names(sdrep$value),
 head(sdrep_df)
 ```
 
+Next, we can try to fit the same model, but using an asymmetric t-distribution.
 
+```{r}
+datalist = create_data(fishdist, 
+  min_number=0, 
+  variable = "number", 
+  time="year", 
+  date = "doy",
+  asymmetric_model = TRUE, 
+  est_t_model = FALSE)
+```
 
 
 ### Diagnosing lack of convergence
 
 In addition to the warning message about the Hessian not being positive definite, the NaNs in the `sd` column are a sure sign that things aren't converging. 
 
-Fixes to improve convergence may be to start from a different set of starting values (try passing `inits` into the `fit` function), or placing stricter bounds on convergence statistics. Or it may be that the model isn't a good fit to the data. But we'll try improving things by adjusting the convergence criterion. The `control` argument is a list that is passed into `stats::nlminb` -- we'll only adjust `rel.tol` in this example, but you can tweak other parameters. 
+Fixes to improve convergence may be to start from a different set of starting values (try passing `inits` into the `fit` function), or placing stricter bounds on convergence statistics. Or it may be that the model isn't a good fit to the data. Specifically, the convergence criterion can be modified with the `control` argument -- which is passed into `stats::nlminb`. One parameter in this list that can be changed is `rel.tol`, e.g.
+
+```{r eval=FALSE}
+fit = fitted(..., control=list(rel.tol = 1.0e-12, 
+  eval.max=4000, iter.max=4000))
+```
 

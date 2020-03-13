@@ -32,15 +32,17 @@ template<class Type>
   PARAMETER(sig2_b1);
   PARAMETER(log_sigma2);
   PARAMETER_VECTOR(sigma2_devs);
-  PARAMETER(tdf_1);
-  PARAMETER(tdf_2);
-  // todo: add range, 75th-25th percentile
+  PARAMETER(log_tdf_1);
+  PARAMETER(log_tdf_2);
+
   // derived parameters
   Type obs_sigma=exp(log_obs_sigma);
+  Type tdf_1 = exp(log_tdf_1) + 2;
+  Type tdf_2 = exp(log_tdf_2) + 2;
   vector<Type> sigma1(nLevels), mu(nLevels);
   vector<Type> sigma2(nLevels), scalar(nLevels);
   vector<Type> lower25(nLevels), upper75(nLevels);
-  vector<Type> range(nLevels);
+  vector<Type> range(nLevels); // 75th - 25th percentile
   int i;
   int n = x.size();
 
@@ -110,7 +112,7 @@ template<class Type>
           log_dens(i) = dnorm(x(i), mu(years(i)-1), sigma1(years(i)-1), true);
         } else {
           // model is asymmetric around mu, student-t tails
-          log_dens(i) = dt((x(i) - mu(years(i)-1)) / sigma1(years(i)-1), tdf_1, true) - log(sigma1(years(i)-1));
+          log_dens(i) = dt((x(i) - mu(years(i)-1)) / sigma1(years(i)-1), Type(tdf_1), true) - log(sigma1(years(i)-1));
         }
         pred(i) = log_dens(i) + theta(years(i)-1);
       } else {
@@ -171,14 +173,14 @@ template<class Type>
   ADREPORT(upper75);
   ADREPORT(range);
   if(t_model==1) {
-    ADREPORT(tdf_1);
+  //  ADREPORT(tdf_1);
   }
   if(asymmetric == 1) {
     // these are only reported for asymmetric model
     ADREPORT(sigma2);
     ADREPORT(sig2_b0);
     if(t_model==1) {
-      ADREPORT(tdf_2);
+    //  ADREPORT(tdf_2);
     }
     if(sig_trend==1) {
       ADREPORT(sig2_b1);

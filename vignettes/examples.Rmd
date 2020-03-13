@@ -57,7 +57,7 @@ Last, we can model the observed count data with a number of different distributi
 
 Next, we'll use the `fit` function to do maximum likelihood estimation in TMB. Additional arguments can be found in the help file, but the most important one is the list of data created above.
 
-```{r}
+```{r message=FALSE, warning=FALSE, results='hide'}
 fitted = fit(datalist)
 ```
 
@@ -73,7 +73,7 @@ head(sdrep_df)
 
 Using our fitted object, there are some basic plotting functions included for diagnostics. Let's plot run timing over time, by year:
 
-```{r, fig.cap="Fitted symmetric model with tails from a  Gaussian distribution"}
+```{r, fig.cap="Fitted symmetric model with tails from a  Gaussian distribution", fig.width = 8}
 g = plot_diagnostics(fitted, type="timing", logspace=TRUE)
 g
 ```
@@ -83,7 +83,7 @@ The object returned by `plot_diagnostics` is just a ggplot object, so additional
 ### Additional examples 
 First, we can try to fit the same model, but using an asymmetric t-distribution.
 
-```{r}
+```{r message=FALSE, warning=FALSE, results='hide'}
 datalist = create_data(fishdist, 
   min_number=0, 
   variable = "number", 
@@ -94,7 +94,7 @@ datalist = create_data(fishdist,
 fitted = fit(datalist)
 ```
 
-```{r, fig.cap="Fitted asymmetric model with heavy tails from a t-distribution"}
+```{r, fig.cap="Fitted asymmetric model with heavy tails from a t-distribution", fig.width = 8}
 plot_diagnostics(fitted)
 ```
 

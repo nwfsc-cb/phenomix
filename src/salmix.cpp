@@ -1,6 +1,55 @@
 #include <TMB.hpp>
 // #include <omp.h>
 
+template <class Type>
+Type qthill(Type quantile, Type v, Type mean, Type sigma)
+{
+  // implements algorithm from Hill et al. 1970
+  // this is source of qt in R, and elsewhere -- e.g.
+  // https://repo.progsbase.com/repoviewer/no.inductive.libraries/BasicStatistics/0.1.14///HillsAlgorithm396/
+  // I've extended this here to incldue mean and sigma
+  Type z, flip;
+  if(quantile > 0.5){
+    flip = 1;
+    z = 2*(1 - quantile);
+  }else{
+    flip = -1;
+    z = 2*quantile;
+  }
+
+  Type a = 1/(v - 0.5);
+  Type b = 48/(a*a);
+  Type c = ((20700*a/b - 98)*a - 16)*a + 96.36;
+  Type d = ((94.5/(b + c) - 3)/b + 1)*sqrt(a*3.14159265/2)*v;
+  Type x = z*d;
+  Type y = pow(x, 2/v);//x**(2/v);
+
+  if(y > 0.05 + a){
+    x = qnorm(z*0.5, Type(0), Type(1));
+    y = x*x;
+    if(v < 5){
+      c = c + 0.3*(v - 4.5)*(x + 0.6);
+    }
+    c = c + (((0.05*d*x - 5)*x - 7)*x - 2)*x + b;
+    y = (((((0.4*y + 6.3)*y + 36)*y + 94.5)/c - y - 3)/b + 1)*x;
+    y = a*y*y;
+    if(y > 0.002){
+      y = exp(y) - 1;
+    }else{
+      y = y + 0.5*y*y;
+    }
+  }else{
+    y = ((1/(((v + 6)/(v*y) - 0.089*d - 0.822)*(v + 2)*3) + 0.5/(v + 4))*y - 1)*(v + 1)/(v + 2) + 1/y;
+  }
+
+  Type q = sqrt(v*y);
+  // flip sign if needed
+  q = q * flip;
+
+  return (mean + sigma*q);
+}
+
+
 template<class Type>
   Type objective_function<Type>::operator() ()
 {
@@ -84,19 +133,19 @@ template<class Type>
     if(t_model==0) {
       lower25(i) = qnorm(Type(0.25), mu(i), sigma1(i));
     } else {
-      lower25(i) = 0;//qt(Type(0.25), mu(i) / sigma1(i), tdf_1);
+      lower25(i) = qthill(Type(0.25),Type(tdf_1), mu(i), sigma1(i));
     }
     if(asymmetric == 1) {
       if(t_model == 0) {
         upper75(i) = qnorm(Type(0.75), mu(i), sigma2(i));
       } else {
-        upper75(i) = 0;//qt(Type(0.75), mu(i) / sigma2(i), tdf_2);
+        upper75(i) = qthill(Type(0.75),Type(tdf_2), mu(i), sigma2(i));
       }
     } else {
       if(t_model == 0) {
         upper75(i) = qnorm(Type(0.75), mu(i), sigma1(i));
       } else {
-        upper75(i) = 0;//qt(Type(0.75), mu(i) / sigma1(i), tdf_1);
+        upper75(i) = qthill(Type(0.75),Type(tdf_1), mu(i), sigma1(i));
       }
     }
     range(i) = upper75(i) - lower25(i);
@@ -155,32 +204,32 @@ template<class Type>
   }
 
   // ADREPORT section
-  //ADREPORT(theta); // nuisance parameter
-  ADREPORT(sigma1);
-  ADREPORT(mu);
-  ADREPORT(obs_sigma);
-  ADREPORT(pred);
-  ADREPORT(log_mu_b0);
+  ADREPORT(theta); // nuisance parameter
+  ADREPORT(sigma1); // sigma, LHS
+  ADREPORT(mu); // mean of curves by year
+  ADREPORT(obs_sigma); // obs sd (or phi, NB)
+  ADREPORT(pred); // predictions in link space (log)
+  ADREPORT(log_mu_b0); // hypermean, log space
   if(mu_trend==1) {
-    ADREPORT(mu_b1);
+    ADREPORT(mu_b1); // trend in mean
   }
-  ADREPORT(mu_devs);
-  ADREPORT(sig1_b0);
+  ADREPORT(mu_devs); // deviations year to year from hypermean
+  ADREPORT(sig1_b0); // mean sigma for LHS
   if(sig_trend==1) {
-    ADREPORT(sig1_b1);
+    ADREPORT(sig1_b1); // optional trend parameter for LHS sigmas
   }
-  ADREPORT(lower25);
-  ADREPORT(upper75);
-  ADREPORT(range);
+  ADREPORT(lower25); // lower quartile
+  ADREPORT(upper75); // upper quartile
+  ADREPORT(range); // diff between upper and lower quartiles
   if(t_model==1) {
-  //  ADREPORT(tdf_1);
+    ADREPORT(tdf_1); // tdf for LHS
   }
   if(asymmetric == 1) {
     // these are only reported for asymmetric model
-    ADREPORT(sigma2);
+    ADREPORT(sigma2); // same as above, but RHS optionally
     ADREPORT(sig2_b0);
     if(t_model==1) {
-    //  ADREPORT(tdf_2);
+      ADREPORT(tdf_2);
     }
     if(sig_trend==1) {
       ADREPORT(sig2_b1);

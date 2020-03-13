@@ -99,9 +99,9 @@ fit <- function(data_list, silent=FALSE, inits = NULL, control=list(eval.max=200
 
   sdreport = TMB::sdreport(obj)
 
-  return(list(obj = obj,
+  return(structure(list(obj = obj,
     pars=pars,
     sdreport=sdreport,
     init_values = parameters,
-    data_list = data_list))
+    data_list = data_list), class="salmix"))
 }

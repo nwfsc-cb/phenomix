@@ -61,7 +61,14 @@ Next, we'll use the `fit` function to do maximum likelihood estimation in TMB. A
 fitted = fit(datalist)
 ```
 
-We don't get any warnings out of the estimation, but let's look at the sdreport in more detail. This looks like things are converging.
+We don't get any warnings out of the estimation, but let's look at the sdreport in more detail. 
+
+First we can look at the convergence code,
+```{r}
+fitted$pars$convergence
+```
+
+This looks like things are converging. But sometimes relative convergence won't thrown warnings. We can also look at the variance estimates, which also are estimated (a good sign things are converged!).
 
 ```{r}
 sdrep_df = data.frame("par"=names(fitted$sdreport$value),
@@ -91,13 +98,22 @@ datalist = create_data(fishdist,
   date = "doy",
   asymmetric_model = TRUE, 
   est_t_model = TRUE)
-fitted = fit(datalist)
+fitted_t = fit(datalist)
 ```
 
 ```{r, fig.cap="Fitted asymmetric model with heavy tails from a t-distribution", fig.width = 8}
-plot_diagnostics(fitted)
+plot_diagnostics(fitted_t)
 ```
 
+We can also compare the two models using AIC. Note we're not comparing random effects structures (where we'd need REML), and that this is an approximation (because only fixed effects parameters are included). This comparison shows that maybe not surprisingly, the Student-t model is more parsimoinious than the Gaussian tailed model (aic_2 < aic_1).
+
+```{r}
+aic_1 = extractAIC(fitted)$AIC
+aic_1
+
+aic_2 = extractAIC(fitted_t)$AIC
+aic_2
+```
 
 ### Diagnosing lack of convergence
 

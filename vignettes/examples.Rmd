@@ -64,13 +64,24 @@ fitted = fit(datalist)
 We don't get any warnings out of the estimation, but let's look at the sdreport in more detail. This looks like things are converging.
 
 ```{r}
-sdrep = TMB::sdreport(fitted$obj)
-sdrep_df = data.frame("par"=names(sdrep$value),
-  "value"=sdrep$value, "sd"=sdrep$sd)
+sdrep_df = data.frame("par"=names(fitted$sdreport$value),
+  "value"=fitted$sdreport$value, "sd"=fitted$sdreport$sd)
 head(sdrep_df)
 ```
 
-Next, we can try to fit the same model, but using an asymmetric t-distribution.
+### Plotting results
+
+Using our fitted object, there are some basic plotting functions included for diagnostics. Let's plot run timing over time, by year:
+
+```{r, fig.cap="Fitted symmetric model with tails from a  Gaussian distribution"}
+g = plot_diagnostics(fitted, type="timing", logspace=TRUE)
+g
+```
+
+The object returned by `plot_diagnostics` is just a ggplot object, so additional arguments or themes can be added with `+ ` statements. The plot can be shown in normal space by setting `logspace=FALSE`. These run timing plots are the default, but additonal scatterplots of observed vs predicted values can be shown by setting `type=scatter`.
+
+### Additional examples 
+First, we can try to fit the same model, but using an asymmetric t-distribution.
 
 ```{r}
 datalist = create_data(fishdist, 
@@ -79,7 +90,12 @@ datalist = create_data(fishdist,
   time="year", 
   date = "doy",
   asymmetric_model = TRUE, 
-  est_t_model = FALSE)
+  est_t_model = TRUE)
+fitted = fit(datalist)
+```
+
+```{r, fig.cap="Fitted asymmetric model with heavy tails from a t-distribution"}
+plot_diagnostics(fitted)
 ```
 
 

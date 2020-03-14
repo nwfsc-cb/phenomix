@@ -31,12 +31,6 @@ concentrated (from fisheries, this occurs with counts over time of
 salmon returning from the ocean to spawn or juvenile fish emigrating
 from streams to the ocean).
 
-``` r
-ggplot(dplyr::filter(df,year==1), aes(doy,exp(y))) + 
-  geom_line() + xlab("Calendar day") + ylab("Count") + 
-  geom_point(aes(doy,exp(data)),col="red")
-```
-
 ![Predicted (black line) and observed counts (red dots) for hypothetical
 dataset. Multiple observations may exist for some days, or no
 observations on others.](README-figs/unnamed-chunk-5-1.png)
@@ -46,11 +40,6 @@ asymmetric Gaussian or Student-t distribution (shown here in log-scale
 on the y-axis). Questions of interest might be - are the means (x-axis)
 shifting through time? - are the variances shifting through time? - does
 the model support a symmetric or asymmetric distribution?
-
-``` r
-ggplot(df, aes(doy,exp(y),col=year,group=year)) + 
-  geom_line() + xlab("Calendar day") + ylab("Count")
-```
 
 ![](README-figs/unnamed-chunk-6-1.png)<!-- -->
 

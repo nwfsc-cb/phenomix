@@ -50,7 +50,7 @@ df$year = as.factor(df$year)
 df$data = rnorm(nrow(df), df$y, 0.2)
 ```
 
-```{r fig.cap="Predicted (black line) and observed counts (red dots) for hypothetical dataset. Multiple observations may exist for some days, or no observations on others."}
+```{r fig.cap="Predicted (black line) and observed counts (red dots) for hypothetical dataset. Multiple observations may exist for some days, or no observations on others.",  echo=FALSE}
 ggplot(dplyr::filter(df,year==1), aes(doy,exp(y))) + 
   geom_line() + xlab("Calendar day") + ylab("Count") + 
   geom_point(aes(doy,exp(data)),col="red")
@@ -61,7 +61,7 @@ In a given year, the curve might be described by a symmetric or asymmetric Gauss
 - are the variances shifting through time?
 - does the model support a symmetric or asymmetric distribution?
 
-```{r}
+```{r echo=FALSE}
 ggplot(df, aes(doy,exp(y),col=year,group=year)) + 
   geom_line() + xlab("Calendar day") + ylab("Count")
 ```

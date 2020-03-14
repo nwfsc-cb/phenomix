@@ -67,15 +67,15 @@ fit <- function(data_list, silent=FALSE, inits = NULL, control=list(eval.max=200
   }
 
   if(data_list$t_model == 0) {
-    if(data_list$asymmetric==0) {
-      print("hi")
-      tmb_map <- c(tmb_map, list(log_tdf_2 = as.factor(NA)))
-    } else {
-      tmb_map <- c(tmb_map, list(log_tdf_1 = as.factor(NA),
-        log_tdf_2 = as.factor(NA)))
-    }
+    # then fit gaussian model and map off both parameters
+    tmb_map <- c(tmb_map, list(log_tdf_1 = as.factor(NA),
+      log_tdf_2 = as.factor(NA)))
   } else {
-    tmb_map <- c(tmb_map, list(log_tdf_2 = as.factor(NA)))
+    # fit the t-model
+    if(data_list$asymmetric==0) {
+      # then map off the tdf2, because model is symmetric
+      tmb_map <- c(tmb_map, list(log_tdf_2 = as.factor(NA)))
+    }
   }
 
   random = c("mu_devs","sigma1_devs")

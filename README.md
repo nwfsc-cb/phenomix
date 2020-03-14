@@ -33,10 +33,13 @@ from streams to the ocean).
 
 ``` r
 ggplot(dplyr::filter(df,year==1), aes(doy,exp(y))) + 
-  geom_line() + xlab("Calendar day") + ylab("Count")
+  geom_line() + xlab("Calendar day") + ylab("Count") + 
+  geom_point(aes(doy,exp(data)),col="red")
 ```
 
-![](README-figs/unnamed-chunk-5-1.png)<!-- -->
+![Predicted (black line) and observed counts (red dots) for hypothetical
+dataset. Multiple observations may exist for some days, or no
+observations on others.](README-figs/unnamed-chunk-5-1.png)
 
 In a given year, the curve might be described by a symmetric or
 asymmetric Gaussian or Student-t distribution (shown here in log-scale

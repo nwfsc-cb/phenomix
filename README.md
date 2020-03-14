@@ -31,22 +31,25 @@ concentrated (from fisheries, this occurs with counts over time of
 salmon returning from the ocean to spawn or juvenile fish emigrating
 from streams to the ocean).
 
+``` r
+ggplot(dplyr::filter(df,year==1), aes(doy,exp(y))) + 
+  geom_line() + xlab("Calendar day") + ylab("Count")
+```
+
+![](README-figs/unnamed-chunk-5-1.png)<!-- -->
+
 In a given year, the curve might be described by a symmetric or
 asymmetric Gaussian or Student-t distribution (shown here in log-scale
 on the y-axis). Questions of interest might be - are the means (x-axis)
 shifting through time? - are the variances shifting through time? - does
-the model support a symmetric or asymmetric
-    distribution?
-
-    #> Warning in dnorm(df$doy, mus[df$year], sigmas[df$year], log = TRUE): NaNs
-    #> produced
+the model support a symmetric or asymmetric distribution?
 
 ``` r
-ggplot(df, aes(doy,y,col=year,group=year)) + geom_line()
-#> Warning: Removed 151 row(s) containing missing values (geom_path).
+ggplot(df, aes(doy,exp(y),col=year,group=year)) + 
+  geom_line() + xlab("Calendar day") + ylab("Count")
 ```
 
-![](README-figs/unnamed-chunk-5-1.png)<!-- -->
+![](README-figs/unnamed-chunk-6-1.png)<!-- -->
 
 ## Examples
 

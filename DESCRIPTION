@@ -22,6 +22,7 @@ Imports:
     stats,
     TMB (>= 1.7.13)
 Suggests:
+    testthat,
     knitr,
     rmarkdown
 LinkingTo: 

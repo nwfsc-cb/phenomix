@@ -5,7 +5,7 @@
 #' @export
 #' @noRd
 nobs.salmix <- function(object, ...) {
-  length(fitted$data_list$y)
+  length(object$data_list$y)
 }
 
 

@@ -4,7 +4,9 @@
 \name{fishdist}
 \alias{fishdist}
 \title{Example data for fish distributions from multiple years}
-\format{A data frame.}
+\format{
+A data frame.
+}
 \usage{
 fishdist
 }

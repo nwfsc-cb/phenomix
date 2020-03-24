@@ -193,6 +193,7 @@ template<class Type>
     nll += sum(dnorm(log(y), pred, obs_sigma, true));
   }
   if(family==2) {
+    REPORT(nll);
     nll += sum(dpois(y, exp(pred), true));
   }
   if(family==3) {

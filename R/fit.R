@@ -93,9 +93,10 @@ fit <- function(data_list, silent=FALSE, inits = NULL, control=list(eval.max=200
   }
   pars = stats::nlminb(
     start = init, objective = obj$fn,
-    gradient = obj$gr, control = control,
-    lower = limits(parnames = names(obj$par))$lower,
-    upper = limits(parnames = names(obj$par))$upper)
+    gradient = obj$gr, control = control)
+  #,
+  #  lower = limits(parnames = names(obj$par))$lower,
+  #  upper = limits(parnames = names(obj$par))$upper)
 
   sdreport = TMB::sdreport(obj)
 

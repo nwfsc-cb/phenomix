@@ -8,7 +8,8 @@ fit(
   data_list,
   silent = FALSE,
   inits = NULL,
-  control = list(eval.max = 2000, iter.max = 1000, rel.tol = 1e-10)
+  control = list(eval.max = 2000, iter.max = 1000, rel.tol = 1e-10),
+  limits = FALSE
 )
 }
 \arguments{

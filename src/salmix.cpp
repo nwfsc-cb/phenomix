@@ -93,7 +93,7 @@ template<class Type>
   vector<Type> lower25(nLevels), upper75(nLevels);
   vector<Type> range(nLevels); // 75th - 25th percentile
   int i;
-  int n = x.size();
+  int n = y.size();
 
   Type nll=0;
 
@@ -188,13 +188,15 @@ template<class Type>
 
   Type s1 = 0;
   Type s2 = 0;
+
   if(family==1) {
     // gaussian, both data and predictions in log space
     nll += sum(dnorm(log(y), pred, obs_sigma, true));
   }
   if(family==2) {
-    REPORT(nll);
-    nll += sum(dpois(y, exp(pred), true));
+    for(i = 0; i < n; i++) {
+      nll += dpois(y(i), exp(pred(i)), true);
+    }
   }
   if(family==3) {
     for(i = 0; i < n; i++) {

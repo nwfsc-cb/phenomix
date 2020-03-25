@@ -19,7 +19,7 @@ test_that("t model - symmetric works", {
 })
 
 test_that("t model - asymmetric works", {
-  set.seed(1)
+  set.seed(2)
   fitted = fit(create_data(fishdist, asymmetric_model = TRUE, est_t_model = TRUE), silent=TRUE)
   expect_equal(length(which(is.na(fitted$sdreport$sd))), 0)
 })

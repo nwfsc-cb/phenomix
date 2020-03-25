@@ -82,7 +82,8 @@ fit <- function(data_list, silent=FALSE, inits = NULL, control=list(eval.max=200
   random = c("mu_devs","sigma1_devs")
   if(data_list$asymmetric==TRUE) random = c(random, "sigma2_devs")
 
-  obj <- TMB::MakeADFun(data = data_list, parameters=parameters,
+  obj <- TMB::MakeADFun(data = data_list,
+    parameters=parameters,
     map = tmb_map, DLL="salmix",
     random=random, silent=silent)
 

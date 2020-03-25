@@ -20,6 +20,8 @@ fit(
 \item{inits}{Optional named list of parameters for starting values, defaults to NULL}
 
 \item{control}{Optional control list for stats::nlminb. For arguments see ?nlminb. Defaults to eval.max=2000, iter.max=1000, rel.tol=1e-10. For final model runs, the rel.tol should be even smaller}
+
+\item{limits}{Whether to include limits for stats::nlminb, defaults to FALSE}
 }
 \description{
 This function creates a list of parameters, sets up TMB object and attempts to

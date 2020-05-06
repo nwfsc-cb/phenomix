@@ -13,7 +13,7 @@ create_data(
   asymmetric_model = TRUE,
   est_sigma_trend = TRUE,
   est_mu_trend = TRUE,
-  est_t_model = FALSE,
+  tail_model = "gaussian",
   family = "gaussian"
 )
 }
@@ -36,7 +36,7 @@ different shape than run timing after peak)}
 
 \item{est_mu_trend}{Whether to fit a linear trend in means. Defaults to TRUE (when FALSE, an intercept and random deviations are estimated)}
 
-\item{est_t_model}{Whether to fit a model with Gaussian (FALSE) or Student-t tails (TRUE). Defaults to FALSE}
+\item{tail_model}{Whether to fit Gaussian ("gaussian" = default) or Student-t ("student_t") or generalized normal ("gnorm"). Defaults to FALSE}
 
 \item{family}{Response for observation model, options are "gaussian", "poisson", "negbin"}
 }

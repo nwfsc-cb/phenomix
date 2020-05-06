@@ -65,7 +65,7 @@ template<class Type>
   DATA_INTEGER(family); // 1 gaussian, 2 = poisson, 3 = neg bin
   DATA_INTEGER(sig_trend); // 0 if false, 1 = true. Whether to estimate trend parameters with respect to sds
   DATA_INTEGER(mu_trend); // 0 if false, 1 = true. Whether to estimate trend parameters with respect to mean
-  DATA_INTEGER(t_model); // 0 if false, 1 = true. Whether to estimate model with student-t tails or normal distribution
+  DATA_INTEGER(tail_model); // 0 if gaussian, 1 = student_t, 2 = generalized normal for tails
 
   PARAMETER_VECTOR(sigma1_devs);
   PARAMETER_VECTOR(theta);
@@ -83,11 +83,15 @@ template<class Type>
   PARAMETER_VECTOR(sigma2_devs);
   PARAMETER(log_tdf_1);
   PARAMETER(log_tdf_2);
+  PARAMETER(log_beta_1);
+  PARAMETER(log_beta_2);
 
   // derived parameters
   Type obs_sigma=exp(log_obs_sigma);
   Type tdf_1 = exp(log_tdf_1) + 2;
   Type tdf_2 = exp(log_tdf_2) + 2;
+  Type beta_1 = exp(log_beta_1);
+  Type beta_2 = exp(log_beta_2);
   vector<Type> sigma1(nLevels), mu(nLevels);
   vector<Type> sigma2(nLevels), scalar(nLevels);
   vector<Type> lower25(nLevels), upper75(nLevels);
@@ -130,57 +134,99 @@ template<class Type>
       nll += dnorm(sigma2_devs(i),Type(0.0),exp(log_sigma2),true);
     }
 
-    if(t_model==0) {
+    if(tail_model==0) {
       lower25(i) = qnorm(Type(0.25), mu(i), sigma1(i));
     } else {
-      lower25(i) = qthill(Type(0.25),Type(tdf_1), mu(i), sigma1(i));
+      if(tail_model == 1) {
+        lower25(i) = qthill(Type(0.25),Type(tdf_1), mu(i), sigma1(i));
+      } else {
+        // gnorm
+      }
     }
     if(asymmetric == 1) {
-      if(t_model == 0) {
+      if(tail_model == 0) {
         upper75(i) = qnorm(Type(0.75), mu(i), sigma2(i));
       } else {
-        upper75(i) = qthill(Type(0.75),Type(tdf_2), mu(i), sigma2(i));
+        if(tail_model == 1) {
+          upper75(i) = qthill(Type(0.75),Type(tdf_2), mu(i), sigma2(i));
+        } else {
+          // gnorm
+        }
       }
     } else {
-      if(t_model == 0) {
+      if(tail_model == 0) {
         upper75(i) = qnorm(Type(0.75), mu(i), sigma1(i));
       } else {
-        upper75(i) = qthill(Type(0.75),Type(tdf_1), mu(i), sigma1(i));
+        if(tail_model==1) {
+          upper75(i) = qthill(Type(0.75),Type(tdf_1), mu(i), sigma1(i));
+        } else {
+          // gnorm
+        }
       }
     }
     range(i) = upper75(i) - lower25(i);
   }
 
   vector<Type> log_dens(n), pred(n);
+  vector<Type> beta_ratio(2);
+  Type tempcalc = 0;
+  if(tail_model == 2) {
+    beta_ratio(1) = sqrt(exp(lgamma(1.0/Type(beta_1))) / exp(lgamma(3.0/Type(beta_1))));
+    if(asymmetric == 1) {
+      beta_ratio(2) = sqrt(exp(lgamma(1.0/Type(beta_2))) / exp(lgamma(3.0/Type(beta_2))));
+    }
+  }
   for(i = 0; i < n; i++) {
     if(asymmetric == 1) {
       // model is asymmetric, left side smaller / right side bigger
       if(x(i) < mu(years(i)-1)) {
-        if(t_model==0) {
+        if(tail_model==0) {
           // model is asymmetric around mu, gaussian tails
           log_dens(i) = dnorm(x(i), mu(years(i)-1), sigma1(years(i)-1), true);
         } else {
-          // model is asymmetric around mu, student-t tails
-          log_dens(i) = dt((x(i) - mu(years(i)-1)) / sigma1(years(i)-1), Type(tdf_1), true) - log(sigma1(years(i)-1));
+          if(tail_model==1) {
+            // model is asymmetric around mu, student-t tails
+            log_dens(i) = dt((x(i) - mu(years(i)-1)) / sigma1(years(i)-1), Type(tdf_1), true) - log(sigma1(years(i)-1));
+          } else {
+            // gnorm, copied from maryclare/gnorm
+            // alpha = sqrt( var * gamma(1/beta) / gamma(3/beta) ), alpha = sigma(1)*beta_ratio(1)
+            tempcalc = sigma1(years(i)-1)*beta_ratio(1);
+            log_dens(i) = -pow(Type(fabs(x(i) - mu(years(i)-1)))/Type(tempcalc), beta_1) + log(beta_1) - (log(2) + log(sigma1(years(i)-1)*beta_ratio(1)) + lgamma(1/beta_1));
+          }
         }
         pred(i) = log_dens(i) + theta(years(i)-1);
       } else {
-        if(t_model==0) {
+        if(tail_model==0) {
           // model is asymmetric around mu, gaussian tails
           log_dens(i) = dnorm(x(i), mu(years(i)-1), sigma2(years(i)-1), true);
         } else {
-          // model is asymmetric around mu, student-t tails
-          log_dens(i) = dt((x(i) - mu(years(i)-1)) / sigma2(years(i)-1), tdf_2, true) - log(sigma2(years(i)-1));
+          if(tail_model==1) {
+            // model is asymmetric around mu, student-t tails
+            log_dens(i) = dt((x(i) - mu(years(i)-1)) / sigma2(years(i)-1), tdf_2, true) - log(sigma2(years(i)-1));
+          } else {
+            // gnorm, copied from maryclare/gnorm
+            // alpha = sqrt( var * gamma(1/beta) / gamma(3/beta) ), alpha = sigma(1)*beta_ratio(1)
+            //-(abs(x - mu)/alpha)^beta + log(beta) - (log(2) + log(alpha) + log(gamma(1/beta)))
+            tempcalc = sigma2(years(i)-1)*beta_ratio(2);
+            log_dens(i) = -pow(fabs(x(i) - mu(years(i)-1))/tempcalc, beta_2) + log(beta_2) - (log(2) + log(sigma2(years(i)-1)*beta_ratio(2)) + lgamma(1/beta_2));
+          }
         }
         pred(i) = log_dens(i) + theta(years(i)-1) + scalar(years(i)-1);
       }
     } else {
-      if(t_model==0) {
+      if(tail_model==0) {
         // model is symmetric around mu, gaussian tails
         log_dens(i) = dnorm(x(i), mu(years(i)-1), sigma1(years(i)-1), true);
       } else {
+        if(tail_model==1) {
         // model is symmetric around mu, student-t tails
         log_dens(i) = dt((x(i) - mu(years(i)-1)) / sigma1(years(i)-1), tdf_1, true) - log(sigma1(years(i)-1));
+        } else {
+          // gnorm, copied from maryclare/gnorm
+          // alpha = sqrt( var * gamma(1/beta) / gamma(3/beta) ), alpha = sigma(1)*beta_ratio(1)
+          tempcalc = sigma1(years(i)-1)*beta_ratio(1);
+          log_dens(i) = -pow(fabs(x(i) - mu(years(i)-1))/tempcalc, beta_1) + log(beta_1) - (log(2) + log(sigma1(years(i)-1)*beta_ratio(1)) + lgamma(1/beta_1));
+        }
       }
       pred(i) = log_dens(i) + theta(years(i)-1);
     }
@@ -224,14 +270,14 @@ template<class Type>
   ADREPORT(lower25); // lower quartile
   ADREPORT(upper75); // upper quartile
   ADREPORT(range); // diff between upper and lower quartiles
-  if(t_model==1) {
+  if(tail_model==1) {
     ADREPORT(tdf_1); // tdf for LHS
   }
   if(asymmetric == 1) {
     // these are only reported for asymmetric model
     ADREPORT(sigma2); // same as above, but RHS optionally
     ADREPORT(sig2_b0);
-    if(t_model==1) {
+    if(tail_model==1) {
       ADREPORT(tdf_2);
     }
     if(sig_trend==1) {

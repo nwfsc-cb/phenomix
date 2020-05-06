@@ -40,7 +40,9 @@ fit <- function(data_list, silent=FALSE, inits = NULL, control=list(eval.max=200
         sig2_b1 = 0.0,
         log_sigma2 = 0.0,
         log_tdf_1 = 0,
-        log_tdf_2 = 0))
+        log_tdf_2 = 0,
+        log_beta_1 = 0,
+        log_beta_2 = 0))
   #}
 
   # If inits is included, use that instead of parameters
@@ -67,15 +69,32 @@ fit <- function(data_list, silent=FALSE, inits = NULL, control=list(eval.max=200
     tmb_map = c(tmb_map, list(mu_b1 = as.factor(NA)))
   }
 
-  if(data_list$t_model == 0) {
+  if(data_list$tail_model == 0) {
     # then fit gaussian model and map off both parameters
     tmb_map <- c(tmb_map, list(log_tdf_1 = as.factor(NA),
-      log_tdf_2 = as.factor(NA)))
+      log_tdf_2 = as.factor(NA),
+      log_beta_1 = as.factor(NA),
+      log_beta_2 = as.factor(NA)))
   } else {
-    # fit the t-model
-    if(data_list$asymmetric==0) {
-      # then map off the tdf2, because model is symmetric
-      tmb_map <- c(tmb_map, list(log_tdf_2 = as.factor(NA)))
+    if(data_list$tail_model == 1) {
+      # fit the t-model
+      if(data_list$asymmetric==0) {
+        # then map off the tdf2, because model is symmetric
+        tmb_map <- c(tmb_map, list(log_tdf_2 = as.factor(NA), log_beta_1 = as.factor(NA),
+          log_beta_2 = as.factor(NA)))
+      } else {
+        tmb_map <- c(tmb_map, list(log_beta_1 = as.factor(NA),
+          log_beta_2 = as.factor(NA)))
+      }
+    } else {
+      if(data_list$asymmetric==0) {
+        # then map off the beta2, because model is symmetric
+        tmb_map <- c(tmb_map, list(log_beta_2 = as.factor(NA), log_tdf_1 = as.factor(NA),
+          log_tdf_2 = as.factor(NA)))
+      } else {
+        tmb_map <- c(tmb_map, list(log_tdf_1 = as.factor(NA),
+          log_tdf_2 = as.factor(NA)))
+      }
     }
   }
 

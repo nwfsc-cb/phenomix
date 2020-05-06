@@ -12,7 +12,7 @@
 #' different shape than run timing after peak)
 #' @param est_sigma_trend Whether to fit a log-linear trend in standard deviations. Defaults to TRUE (when FALSE, an intercept and random deviations are estimated)
 #' @param est_mu_trend Whether to fit a linear trend in means. Defaults to TRUE (when FALSE, an intercept and random deviations are estimated)
-#' @param est_t_model Whether to fit a model with Gaussian (FALSE) or Student-t tails (TRUE). Defaults to FALSE
+#' @param tail_model Whether to fit Gaussian ("gaussian" = default) or Student-t ("student_t") or generalized normal ("gnorm"). Defaults to FALSE
 #' @param family Response for observation model, options are "gaussian", "poisson", "negbin"
 #' @export
 #' @examples
@@ -20,12 +20,18 @@
 #' datalist = create_data(fishdist, min_number = 0, variable = "number", time = "year",
 #' date = "doy", asymmetric_model = TRUE, family = "gaussian")
 create_data <- function(data, min_number=0, variable = "number", time="year", date = "doy",
-                        asymmetric_model = TRUE, est_sigma_trend = TRUE, est_mu_trend = TRUE, est_t_model = FALSE, family = "gaussian") {
+                        asymmetric_model = TRUE, est_sigma_trend = TRUE, est_mu_trend = TRUE, tail_model = "gaussian", family = "gaussian") {
 
   dist = c("gaussian", "poisson", "negbin")
   fam = match(family, dist)
   if(is.na(fam)) {
     stop("Make sure the entered family is in the list of accepted distributions")
+  }
+
+  tail = c("gaussian","student_t","gnorm")
+  tailmod = match(tail_model, tail)
+  if(is.na(tailmod)) {
+    stop("Make sure the entered tail model is in the list of accepted distributions")
   }
 
   # check to make sure year and date are numeric
@@ -56,7 +62,7 @@ create_data <- function(data, min_number=0, variable = "number", time="year", da
                    family = fam,
                    sig_trend = as.numeric(est_sigma_trend),
                    mu_trend = as.numeric(est_mu_trend),
-                   t_model = as.numeric(est_t_model))
+                   tail_model = as.numeric(tailmod)-1)
 
   return(data_list)
 }

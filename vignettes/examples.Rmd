@@ -125,7 +125,7 @@ datalist = create_data(fishdist,
   date = "doy",
   asymmetric_model = FALSE, 
   tail_model = "gnorm")
-fitted = fit(datalist)
+fitted = fit(datalist, limits = TRUE)
 ```
 
 ### Diagnosing lack of convergence

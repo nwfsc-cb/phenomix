@@ -115,6 +115,19 @@ aic_2 = extractAIC(fitted_t)$AIC
 aic_2
 ```
 
+Second, we can we can try to fit the same model, but using a generalized normal distribution. This distribution has a plateau or 'flat top'. For examples, see the `gnorm` package on CRAN [here](https://cran.r-project.org/web/packages/gnorm/index.html) or [Wikipedia page](https://en.wikipedia.org/wiki/Generalized_normal_distribution).
+
+```{r message=FALSE, warning=FALSE, results='hide', eval=FALSE}
+datalist = create_data(fishdist, 
+  min_number=0, 
+  variable = "number", 
+  time="year", 
+  date = "doy",
+  asymmetric_model = FALSE, 
+  tail_model = "gnorm")
+fitted = fit(datalist)
+```
+
 ### Diagnosing lack of convergence
 
 In addition to the warning message about the Hessian not being positive definite, the NaNs in the `sd` column are a sure sign that things aren't converging. 

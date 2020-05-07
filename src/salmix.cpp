@@ -49,6 +49,37 @@ Type qthill(Type quantile, Type v, Type mean, Type sigma)
   return (mean + sigma*q);
 }
 
+template <class Type>
+Type dgnorm(Type x, Type mu, Type alpha, Type beta)
+{
+  // implements dgnorm
+  // copied from https://github.com/maryclare/gnorm/blob/master/R/gnorm.R
+  return(-pow(fabs(x - mu)/alpha,beta) + log(beta) - (log(2.0) +
+    log(alpha) + lgamma(1.0/beta)));
+}
+
+template <class Type>
+Type qgnorm(Type quantile, Type mu, Type alpha, Type beta)
+{
+  // implements qgnorm
+  // copied from https://github.com/maryclare/gnorm/blob/master/R/gnorm.R
+  Type p = quantile;
+  if(p > 0.5) {
+    p = 1 - p;
+  }
+  Type sign = 0;
+  if(p - 0.5 > 0.0) {
+    sign = 1;
+  }
+  if(p - 0.5 < 0.0){
+    sign = -1;
+  }
+  Type shape =1.0/beta;
+  Type scale = 1.0/pow(1.0/alpha, beta);
+  //return(sign(p - 0.5) * qgamma(abs(p - 0.5) * 2, shape = 1/beta, scale = 1/lambda)^(1/beta) + mu)
+  //return (sign*pow(qgamma(fabs(p - 0.5)*2, shape = shape, scale = scale), 1.0/beta) + mu);
+  return (sign*exp(log(qgamma(fabs(p - 0.5)*2, shape = shape, scale = scale))/beta) + mu);
+}
 
 template<class Type>
   Type objective_function<Type>::operator() ()
@@ -90,14 +121,25 @@ template<class Type>
   Type obs_sigma=exp(log_obs_sigma);
   Type tdf_1 = exp(log_tdf_1) + 2;
   Type tdf_2 = exp(log_tdf_2) + 2;
-  Type beta_1 = exp(log_beta_1);
-  Type beta_2 = exp(log_beta_2);
+  Type beta_1 = exp(log_beta_1);///(1+exp(log_beta_1))*20;
+  Type beta_2 = exp(log_beta_2);///(1+exp(log_beta_2))*20;
   vector<Type> sigma1(nLevels), mu(nLevels);
   vector<Type> sigma2(nLevels), scalar(nLevels);
+  vector<Type> alpha1(nLevels), alpha2(nLevels);
+  vector<Type> logalpha1(nLevels), logalpha2(nLevels);
   vector<Type> lower25(nLevels), upper75(nLevels);
   vector<Type> range(nLevels); // 75th - 25th percentile
   int i;
   int n = y.size();
+
+  // calculations for beta for gnorm dist if implemented
+  vector<Type> beta_ratio(2);
+  if(tail_model == 2) {
+    beta_ratio(1) = sqrt(exp(lgamma(1.0/Type(beta_1))) / exp(lgamma(3.0/Type(beta_1))));
+    if(asymmetric == 1) {
+      beta_ratio(2) = sqrt(exp(lgamma(1.0/Type(beta_2))) / exp(lgamma(3.0/Type(beta_2))));
+    }
+  }
 
   Type nll=0;
 
@@ -120,9 +162,17 @@ template<class Type>
       }
     }
 
+    // calculate alphas if the gnorm model is used
+    if(tail_model == 2) {
+      alpha1(i) = sigma1(years(i)-1)*beta_ratio(1);
+      if(asymmetric==1) {
+        alpha2(i) = sigma2(years(i)-1)*beta_ratio(2);
+      }
+    }
+
     // trend in in normal space, e.g. not log-linear
     if(mu_trend == TRUE) {
-    mu(i) = exp(log_mu_b0) + mu_devs(i) + mu_b1*Type(unique_years(i));
+      mu(i) = exp(log_mu_b0) + mu_devs(i) + mu_b1*Type(unique_years(i));
     } else {
       mu(i) = exp(log_mu_b0) + mu_devs(i);
     }
@@ -141,6 +191,7 @@ template<class Type>
         lower25(i) = qthill(Type(0.25),Type(tdf_1), mu(i), sigma1(i));
       } else {
         // gnorm
+        lower25(i) = qgnorm(Type(0.25), mu(i), sigma1(i)*beta_ratio(1), beta_1);
       }
     }
     if(asymmetric == 1) {
@@ -151,6 +202,7 @@ template<class Type>
           upper75(i) = qthill(Type(0.75),Type(tdf_2), mu(i), sigma2(i));
         } else {
           // gnorm
+          upper75(i) = qgnorm(Type(0.75), mu(i), sigma2(i)*beta_ratio(2), beta_2);
         }
       }
     } else {
@@ -161,6 +213,7 @@ template<class Type>
           upper75(i) = qthill(Type(0.75),Type(tdf_1), mu(i), sigma1(i));
         } else {
           // gnorm
+          upper75(i) = qgnorm(Type(0.75), mu(i), sigma1(i)*beta_ratio(1), beta_1);
         }
       }
     }
@@ -168,14 +221,7 @@ template<class Type>
   }
 
   vector<Type> log_dens(n), pred(n);
-  vector<Type> beta_ratio(2);
-  Type tempcalc = 0;
-  if(tail_model == 2) {
-    beta_ratio(1) = sqrt(exp(lgamma(1.0/Type(beta_1))) / exp(lgamma(3.0/Type(beta_1))));
-    if(asymmetric == 1) {
-      beta_ratio(2) = sqrt(exp(lgamma(1.0/Type(beta_2))) / exp(lgamma(3.0/Type(beta_2))));
-    }
-  }
+
   for(i = 0; i < n; i++) {
     if(asymmetric == 1) {
       // model is asymmetric, left side smaller / right side bigger
@@ -190,8 +236,7 @@ template<class Type>
           } else {
             // gnorm, copied from maryclare/gnorm
             // alpha = sqrt( var * gamma(1/beta) / gamma(3/beta) ), alpha = sigma(1)*beta_ratio(1)
-            tempcalc = sigma1(years(i)-1)*beta_ratio(1);
-            log_dens(i) = -pow(Type(fabs(x(i) - mu(years(i)-1)))/Type(tempcalc), beta_1) + log(beta_1) - (log(2) + log(sigma1(years(i)-1)*beta_ratio(1)) + lgamma(1/beta_1));
+            log_dens(i) = dgnorm(x(i), mu(years(i)-1), alpha1(years(i)-1), beta_1);
           }
         }
         pred(i) = log_dens(i) + theta(years(i)-1);
@@ -206,9 +251,7 @@ template<class Type>
           } else {
             // gnorm, copied from maryclare/gnorm
             // alpha = sqrt( var * gamma(1/beta) / gamma(3/beta) ), alpha = sigma(1)*beta_ratio(1)
-            //-(abs(x - mu)/alpha)^beta + log(beta) - (log(2) + log(alpha) + log(gamma(1/beta)))
-            tempcalc = sigma2(years(i)-1)*beta_ratio(2);
-            log_dens(i) = -pow(fabs(x(i) - mu(years(i)-1))/tempcalc, beta_2) + log(beta_2) - (log(2) + log(sigma2(years(i)-1)*beta_ratio(2)) + lgamma(1/beta_2));
+            log_dens(i) = dgnorm(x(i), mu(years(i)-1), alpha2(years(i)-1), beta_2);
           }
         }
         pred(i) = log_dens(i) + theta(years(i)-1) + scalar(years(i)-1);
@@ -224,8 +267,7 @@ template<class Type>
         } else {
           // gnorm, copied from maryclare/gnorm
           // alpha = sqrt( var * gamma(1/beta) / gamma(3/beta) ), alpha = sigma(1)*beta_ratio(1)
-          tempcalc = sigma1(years(i)-1)*beta_ratio(1);
-          log_dens(i) = -pow(fabs(x(i) - mu(years(i)-1))/tempcalc, beta_1) + log(beta_1) - (log(2) + log(sigma1(years(i)-1)*beta_ratio(1)) + lgamma(1/beta_1));
+          log_dens(i) = dgnorm(x(i), mu(years(i)-1), alpha1(years(i)-1), beta_1);
         }
       }
       pred(i) = log_dens(i) + theta(years(i)-1);
@@ -273,12 +315,18 @@ template<class Type>
   if(tail_model==1) {
     ADREPORT(tdf_1); // tdf for LHS
   }
+  if(tail_model==2) {
+    ADREPORT(beta_1); // tdf for LHS
+  }
   if(asymmetric == 1) {
     // these are only reported for asymmetric model
     ADREPORT(sigma2); // same as above, but RHS optionally
     ADREPORT(sig2_b0);
     if(tail_model==1) {
       ADREPORT(tdf_2);
+    }
+    if(tail_model==2) {
+      ADREPORT(beta_2);
     }
     if(sig_trend==1) {
       ADREPORT(sig2_b1);

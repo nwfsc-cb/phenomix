@@ -335,6 +335,5 @@ template<class Type>
     }
     //ADREPORT(scalar);
   }
-
   return (-nll);
 }

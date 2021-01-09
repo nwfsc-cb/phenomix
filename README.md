@@ -5,8 +5,10 @@
 R package for fitting distributions to run timing data via maximum
 likelihood
 
-[![Build
-Status](https://travis-ci.com/ericward-noaa/salmix.svg?branch=master)](https://travis-ci.com/ericward-noaa/salmix)
+<!-- badges: start -->
+
+[![R-CMD-check](https://github.com/ericward-noaa/salmix/workflows/R-CMD-check/badge.svg)](https://github.com/ericward-noaa/salmix/actions)
+<!-- badges: end -->
 
 ## Installation
 

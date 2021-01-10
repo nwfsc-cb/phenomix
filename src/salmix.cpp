@@ -79,7 +79,8 @@ Type qgnorm(Type quantile, Type mu, Type alpha, Type beta)
   Type scale = 1.0/pow(1.0/alpha, beta);
   //return(sign(p - 0.5) * qgamma(abs(p - 0.5) * 2, shape = 1/beta, scale = 1/lambda)^(1/beta) + mu)
   //return (sign*pow(qgamma(fabs(p - 0.5)*2, shape = shape, scale = scale), 1.0/beta) + mu);
-  Type z = sign*exp(log(qgamma(fabs(p - 0.5)*2, shape = shape, scale = scale))/beta) + mu;
+  //Type z = sign*exp(log(qgamma(fabs(p - 0.5)*2, shape = shape, scale = scale))/beta) + mu;
+  Type z = sign*exp(log(qgamma(fabs(p - 0.5)*2, shape, scale))/beta) + mu;
   return (z);
 }
 

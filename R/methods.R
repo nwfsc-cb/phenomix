@@ -38,5 +38,5 @@ logLik.salmix <- function(object, ...) {
 extractAIC.salmix <- function(fit, scale, k = 2, ...) {
   L <- logLik(fit)
   edf <- attr(L, "df")
-  return(data.frame("df"=edf, "AIC"=-2 * L + k * edf))
+  return(data.frame("df" = edf, "AIC" = -2 * L + k * edf))
 }

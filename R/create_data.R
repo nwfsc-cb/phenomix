@@ -17,53 +17,55 @@
 #' @export
 #' @examples
 #' data(fishdist)
-#' datalist = create_data(fishdist, min_number = 0, variable = "number", time = "year",
-#' date = "doy", asymmetric_model = TRUE, family = "gaussian")
-create_data <- function(data, min_number=0, variable = "number", time="year", date = "doy",
+#' datalist <- create_data(fishdist,
+#'   min_number = 0, variable = "number", time = "year",
+#'   date = "doy", asymmetric_model = TRUE, family = "gaussian"
+#' )
+create_data <- function(data, min_number = 0, variable = "number", time = "year", date = "doy",
                         asymmetric_model = TRUE, est_sigma_trend = TRUE, est_mu_trend = TRUE, tail_model = "gaussian", family = "gaussian") {
-
-  dist = c("gaussian", "poisson", "negbin")
-  fam = match(family, dist)
-  if(is.na(fam)) {
+  dist <- c("gaussian", "poisson", "negbin")
+  fam <- match(family, dist)
+  if (is.na(fam)) {
     stop("Make sure the entered family is in the list of accepted distributions")
   }
 
-  tail = c("gaussian","student_t","gnorm")
-  tailmod = match(tail_model, tail)
-  if(is.na(tailmod)) {
+  tail <- c("gaussian", "student_t", "gnorm")
+  tailmod <- match(tail_model, tail)
+  if (is.na(tailmod)) {
     stop("Make sure the entered tail model is in the list of accepted distributions")
   }
 
   # check to make sure year and date are numeric
-  if(!is.numeric(data[,time])) {
+  if (!is.numeric(data[, time])) {
     stop("The time variable in the data frame (e.g. year) needs to be numeric")
   }
-  if(is.numeric(data[,date])) {
-    if(max(data[,date],na.rm=T) > 365) stop("The date variable in the data frame contains values greater than 365")
-    if(min(data[,date],na.rm=T) < 1) stop("The date variable in the data frame contains values less than 1")
+  if (is.numeric(data[, date])) {
+    if (max(data[, date], na.rm = T) > 365) stop("The date variable in the data frame contains values greater than 365")
+    if (min(data[, date], na.rm = T) < 1) stop("The date variable in the data frame contains values less than 1")
   } else {
     stop("The date variable in the data frame (e.g. day_of_year) needs to be numeric")
   }
 
   # drop rows below threshold or NAs
-  drop_rows = which(is.na(data[,variable]) | data[,variable] <= min_number)
-  if(length(drop_rows)>0) data = data[-drop_rows,]
+  drop_rows <- which(is.na(data[, variable]) | data[, variable] <= min_number)
+  if (length(drop_rows) > 0) data <- data[-drop_rows, ]
 
   # rescale year variable
-  data$year = data[,time] - min(data[,time]) + 1
+  data$year <- data[, time] - min(data[, time]) + 1
 
-  data_list = list(y = data[,variable],
-                   years = as.numeric(as.factor(data$year)),
-                   x = data[,date],
-                   year_levels = as.numeric(as.factor(unique(data$year))),
-                   unique_years = unique(data$year),
-                   nLevels = length(unique(data$year)),
-                   asymmetric = as.numeric(asymmetric_model),
-                   family = fam,
-                   sig_trend = as.numeric(est_sigma_trend),
-                   mu_trend = as.numeric(est_mu_trend),
-                   tail_model = as.numeric(tailmod)-1)
+  data_list <- list(
+    y = data[, variable],
+    years = as.numeric(as.factor(data$year)),
+    x = data[, date],
+    year_levels = as.numeric(as.factor(unique(data$year))),
+    unique_years = unique(data$year),
+    nLevels = length(unique(data$year)),
+    asymmetric = as.numeric(asymmetric_model),
+    family = fam,
+    sig_trend = as.numeric(est_sigma_trend),
+    mu_trend = as.numeric(est_mu_trend),
+    tail_model = as.numeric(tailmod) - 1
+  )
 
   return(data_list)
 }
-

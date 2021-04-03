@@ -1,0 +1,15 @@
+reference:
+- title: "Processing phenology data"
+  desc: >
+    Functions for manipulating data, prior to fitting
+- contents:
+  - create_data
+  - limits
+- title: "Fitting phenological models"
+  desc: "Function for fitting the model with TMB"
+- contents:
+  - fit
+- title: "Plotting output"
+  desc: "Function for plotting estimates and diagnostics"
+- contents:
+  - plot_diagnostics

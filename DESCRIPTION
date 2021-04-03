@@ -7,11 +7,12 @@ Authors@R: c(person(given = c("Eric", "J."),
              role = c("aut", "cre"),
              email = "eric.ward@noaa.gov"))
 Description: The 'salmix' package fits time-varying density curves to run
-    timing type data commonly encountered in fisheries. Example applications include to peak run timing 
-    curves collected for juvenile or adult Pacific salmon, though could also be applied to other kinds
-    of data such as hydrographs. 
+    timing type data commonly encountered in fisheries and ecology. Example 
+    applications include to peak run timing curves collected for juvenile or 
+    adult Pacific salmon, though could also be applied to other kinds
+    of data such as hydrographs, plant phenology (flowering, leaf out).
 License: GPL (>=3)
-URL: https://github.com/ericward-noaa/salmix
+URL: https://ericward-noaa.github.io/salmix, https://github.com/ericward-noaa/salmix
 Depends: 
     R (>= 3.2.0)
 Imports:

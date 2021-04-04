@@ -45,6 +45,8 @@ Does minimal processing of data to use as argument to fitting function
 }
 \examples{
 data(fishdist)
-datalist = create_data(fishdist, min_number = 0, variable = "number", time = "year",
-date = "doy", asymmetric_model = TRUE, family = "gaussian")
+datalist <- create_data(fishdist,
+  min_number = 0, variable = "number", time = "year",
+  date = "doy", asymmetric_model = TRUE, family = "gaussian"
+)
 }

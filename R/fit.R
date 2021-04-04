@@ -26,17 +26,21 @@ fit <- function(data_list, silent = FALSE, inits = NULL, control = list(
   # asymmetric and symmetric models
   parameters <- list(
     sigma1_devs = rep(0, data_list$nLevels),
-    theta = runif(n = data_list$nLevels, 5, 7),
+    theta = rep(0, data_list$nLevels),
     mu_devs = rep(0, data_list$nLevels),
-    log_mu_b0 = log(120),
+    log_mu_b0 = 0,
     mu_b1 = 0,
-    log_sigma_mu_devs = -1,
-    sig1_b0 = 2.0,
+    log_sigma_mu_devs = 0,
+    sig1_b0 = 0,
     sig1_b1 = 0.0,
-    log_sigma1 = -1,
-    log_obs_sigma = 0.005
+    log_sigma1 = 0
   )
 
+  #if(data_list$family==1){
+    # if gaussian, add normal observation error variance parameter
+    parameters <- append(parameters,
+                         list(log_obs_sigma = 0))
+  #}
   # optional parameters to add for asymmetric model
   # if(data_list$asymmetric==1) {
   parameters <- append(
@@ -55,11 +59,16 @@ fit <- function(data_list, silent = FALSE, inits = NULL, control = list(
   # }
 
   # If inits is included, use that instead of parameters
-  if (!is.null(inits)) parameters <- inits
+  if (!is.null(inits)) {
+    for(i in 1:length(inits)) {
+      parameters[which(names(parameters)==names(inits)[i])] = inits[i]
+    }
+    #parameters[match(names(inits), names(parameters))] = inits
+  }
 
   # Mapping off params as needed:
   tmb_map <- list()
-  if (data_list$family == 2) {
+  if (data_list$family == 1) {
     tmb_map <- c(tmb_map, list(log_obs_sigma = as.factor(NA)))
   }
 
@@ -126,6 +135,9 @@ fit <- function(data_list, silent = FALSE, inits = NULL, control = list(
   random <- c("mu_devs", "sigma1_devs")
   if (data_list$asymmetric == TRUE) random <- c(random, "sigma2_devs")
 
+  #compile("src/salmix.cpp")
+  #dyn.load(dynlib("src/salmix"))
+
   obj <- TMB::MakeADFun(
     data = data_list,
     parameters = parameters,
@@ -135,7 +147,7 @@ fit <- function(data_list, silent = FALSE, inits = NULL, control = list(
 
   # Attempt to do estimation
   if (!is.null(inits)) {
-    init <- inits
+    init <- obj$par
   } else {
     init <- obj$par + runif(length(obj$par), -0.1, .1)
   }

@@ -21,7 +21,6 @@ knitr::opts_chunk$set(
 library(salmix)
 library(dplyr)
 library(TMB)
-set.seed(123)
 ```
 
 We'll start by loading the example dataset, based on run timing data for Pacific salmon.
@@ -58,7 +57,11 @@ Last, we can model the observed count data with a number of different distributi
 Next, we'll use the `fit` function to do maximum likelihood estimation in TMB. Additional arguments can be found in the help file, but the most important one is the list of data created above.
 
 ```{r message=FALSE, warning=FALSE, results='hide'}
-fitted = fit(datalist)
+set.seed(1)
+inits = list(log_mu_b0 = log(120),
+    theta = runif(n = data_list$nLevels, 5, 7))
+
+fitted = fit(datalist, inits = inits)
 ```
 
 We don't get any warnings out of the estimation, but let's look at the sdreport in more detail. 
@@ -91,6 +94,15 @@ The object returned by `plot_diagnostics` is just a ggplot object, so additional
 First, we can try to fit the same model, but using an asymmetric t-distribution.
 
 ```{r message=FALSE, warning=FALSE, results='hide'}
+set.seed(5)
+
+inits = list(log_mu_b0 = log(120),
+    theta = runif(n = data_list$nLevels, 5, 7),
+    sig1_b0 = 2.0,
+    log_sigma_mu_devs = -1,
+    log_sigma1 = -1
+    )
+
 datalist = create_data(fishdist, 
   min_number=0, 
   variable = "number", 
@@ -118,6 +130,8 @@ aic_2
 Second, we can we can try to fit the same model, but using a generalized normal distribution. This distribution has a plateau or 'flat top'. For examples, see the `gnorm` package on CRAN [here](https://cran.r-project.org/web/packages/gnorm/index.html) or [Wikipedia page](https://en.wikipedia.org/wiki/Generalized_normal_distribution).
 
 ```{r message=FALSE, warning=FALSE, results='hide', eval=FALSE}
+set.seed(1)
+
 datalist = create_data(fishdist, 
   min_number=0, 
   variable = "number", 
@@ -125,7 +139,7 @@ datalist = create_data(fishdist,
   date = "doy",
   asymmetric_model = FALSE, 
   tail_model = "gnorm")
-fitted = fit(datalist, limits = TRUE)
+fitted = fit(datalist, inits = inits, limits = TRUE)
 ```
 
 ### Diagnosing lack of convergence

@@ -29,5 +29,6 @@ do fitting / estimation
 }
 \examples{
 data(fishdist)
-datalist = create_data(fishdist)
+datalist <- create_data(fishdist)
+fit <- fit(datalist)
 }

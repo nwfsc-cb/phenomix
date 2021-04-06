@@ -1,6 +1,6 @@
 Type: Package
 Package: salmix
-Title: Fit density curves to peak timing data that varies over time
+Title: Fit Density Curves to Peak Timing Data that Varies over Time
 Version: 0.0.1
 Authors@R: c(person(given = c("Eric", "J."),
              family = "Ward",

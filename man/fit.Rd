@@ -29,5 +29,28 @@ do fitting / estimation
 }
 \examples{
 data(fishdist)
-datalist = create_data(fishdist)
+
+# example of fitting fixed effects, no trends
+# set.seed(1)
+# datalist <- create_data(fishdist[which(fishdist$year > 1970),], asymmetric_model = FALSE,
+#    est_sigma_trend=FALSE, est_mu_trend=FALSE)
+# fit <- fit(datalist)
+#
+# # example of model with random effects in means
+# set.seed(1)
+# datalist <- create_data(fishdist[which(fishdist$year > 1970),], asymmetric_model = FALSE,
+#                         est_sigma_trend=FALSE, est_mu_trend=FALSE, est_mu_re = TRUE)
+# fit <- fit(datalist)
+# # example of model with random effects in variances
+# set.seed(1)
+# datalist <- create_data(fishdist[which(fishdist$year > 1970),], asymmetric_model = FALSE,
+#                         est_sigma_trend=FALSE, est_mu_trend=FALSE, est_sigma_re = TRUE)
+# fit <- fit(datalist)
+#
+# # example of model with poisson response
+# set.seed(1)
+# datalist <- create_data(fishdist[which(fishdist$year > 1970),], asymmetric_model = FALSE,
+#                         est_sigma_trend=FALSE, est_mu_trend=FALSE, est_mu_re = TRUE,
+#                         family="poisson")
+# fit <- fit(datalist)
 }

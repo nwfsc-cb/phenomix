@@ -100,6 +100,8 @@ template<class Type>
   DATA_INTEGER(sig_trend); // 0 if false, 1 = true. Whether to estimate trend parameters with respect to sds
   DATA_INTEGER(mu_trend); // 0 if false, 1 = true. Whether to estimate trend parameters with respect to mean
   DATA_INTEGER(tail_model); // 0 if gaussian, 1 = student_t, 2 = generalized normal for tails
+  DATA_INTEGER(est_sigma_re); // 0 if FALSE, 1 = TRUE. Whether to estimate deviations as random effects
+  DATA_INTEGER(est_mu_re); // 0 if FALSE, 1 = TRUE. Whether to estimate deviations as random effects
 
   PARAMETER_VECTOR(sigma1_devs);
   PARAMETER_VECTOR(theta);
@@ -145,24 +147,40 @@ template<class Type>
   }
 
   Type nll=0;
+  Type temp_calc=0;
+
+  // random effects components
+  for(i = 0; i < nLevels; i++) {
+    // random effects contributions of mean and sigma1
+    if(est_mu_re==1) {
+      nll += dnorm(mu_devs(i), Type(0.0), exp(log_sigma_mu_devs), true);
+    }
+    if(est_sigma_re==1) {
+      nll += dnorm(sigma1_devs(i),sig1_b0,exp(log_sigma1),true);
+      if(asymmetric == 1) {
+        nll += dnorm(sigma2_devs(i),sig2_b0,exp(log_sigma2),true);
+      }
+    }
+  }
 
   for(i = 0; i < nLevels; i++) {
 
+    temp_calc = sigma1_devs(i);
     if(sig_trend==1) {
-      sigma1(i) = exp(sig1_b0 + sig1_b1*Type(unique_years(i)) + sigma1_devs(i));
-    } else {
-      sigma1(i) = exp(sig1_b0 + sigma1_devs(i));
+      temp_calc += temp_calc + sig1_b1*Type(unique_years(i));
     }
+    sigma1(i) = exp(temp_calc);
 
     if(asymmetric == 1) {
+      temp_calc = sigma2_devs(i);
       if(sig_trend==1) {
-      sigma2(i) = exp(sig2_b0 + sig2_b1*Type(unique_years(i)) + sigma2_devs(i));
-      // scalar(i) is just log(sig2) - log(sig1)
-      scalar(i) = sig2_b0 + sig2_b1*Type(unique_years(i)) + sigma2_devs(i) - (sig1_b0 + sig1_b1*Type(unique_years(i)) + sigma1_devs(i));
+        temp_calc += sigma2_devs(0) + sig2_b1*Type(unique_years(i));
+        // scalar(i) is just log(sig2) - log(sig1)
+        scalar(i) = sig2_b1*Type(unique_years(i)) + sigma2_devs(i) - (sig1_b1*Type(unique_years(i)) + sigma1_devs(i));
       } else {
-        sigma2(i) = exp(sig2_b0 + sigma2_devs(i));
-        scalar(i) = sig2_b0 + sigma2_devs(i) - (sig1_b0 + sigma1_devs(i));
+        scalar(i) = sigma2_devs(i) - sigma1_devs(i);
       }
+      sigma2(i) = exp(temp_calc);
     }
 
     // calculate alphas if the gnorm model is used
@@ -174,19 +192,15 @@ template<class Type>
     }
 
     // trend in in normal space, e.g. not log-linear
-    if(mu_trend == TRUE) {
-      mu(i) = exp(log_mu_b0) + mu_devs(i) + mu_b1*Type(unique_years(i));
-    } else {
-      mu(i) = exp(log_mu_b0) + mu_devs(i);
+    mu(i) = mu_devs(i);
+    if(est_mu_re == 1) {
+      mu(i) += exp(log_mu_b0);
+    }
+    if(mu_trend == 1) {
+      mu(i) += mu_b1*Type(unique_years(i));
     }
 
-    // random effects contributions of mean and sigma1
-    nll += dnorm(mu_devs(i), Type(0.0),exp(log_sigma_mu_devs),true);
-    nll += dnorm(sigma1_devs(i),Type(0.0),exp(log_sigma1),true);
-    if(asymmetric == 1) {
-      nll += dnorm(sigma2_devs(i),Type(0.0),exp(log_sigma2),true);
-    }
-
+    // this is all for calculating quantiles on LHS
     if(tail_model==0) {
       lower25(i) = qnorm(Type(0.25), mu(i), sigma1(i));
     } else {
@@ -197,6 +211,7 @@ template<class Type>
         lower25(i) = qgnorm(Type(0.25), mu(i), sigma1(i)*beta_ratio(1), beta_1);
       }
     }
+    // this is all for calculating quantiles on RHS
     if(asymmetric == 1) {
       if(tail_model == 0) {
         upper75(i) = qnorm(Type(0.75), mu(i), sigma2(i));
@@ -223,8 +238,8 @@ template<class Type>
     range(i) = upper75(i) - lower25(i);
   }
 
+  // this is for the predictions
   vector<Type> log_dens(n), pred(n);
-
   for(i = 0; i < n; i++) {
     if(asymmetric == 1) {
       // model is asymmetric, left side smaller / right side bigger
@@ -277,6 +292,7 @@ template<class Type>
     }
   }
 
+  // this is the likelihood
   Type s1 = 0;
   Type s2 = 0;
 
@@ -286,14 +302,19 @@ template<class Type>
   }
   if(family==2) {
     for(i = 0; i < n; i++) {
+      //std::cout << dpois(y(i), exp(pred(i)), true) << std::endl;
       nll += dpois(y(i), exp(pred(i)), true);
     }
   }
   if(family==3) {
     for(i = 0; i < n; i++) {
       s1 = exp(pred(i));
-      s2 = s1 + pow(s1, Type(2))*obs_sigma;
-      nll += dnbinom2(y(i), s1, s2, true);
+      //s2 = s1 + pow(s1, Type(2))*obs_sigma;
+      s2 = 2. * s1 - log_obs_sigma; // log(var - mu)
+      nll += dnbinom_robust(y(i), s1, s2, true);
+      //std::cout << dnbinom2(y(i), s1, s2, true) << std::endl;
+      //std::cout << s2 << std::endl;
+      //nll += dnbinom2(y(i), s1, s2, true);
     }
   }
 
@@ -301,14 +322,22 @@ template<class Type>
   ADREPORT(theta); // nuisance parameter
   ADREPORT(sigma1); // sigma, LHS
   ADREPORT(mu); // mean of curves by year
-  ADREPORT(obs_sigma); // obs sd (or phi, NB)
+  if(family != 2) {
+    ADREPORT(obs_sigma); // obs sd (or phi, NB)
+  }
   ADREPORT(pred); // predictions in link space (log)
-  ADREPORT(log_mu_b0); // hypermean, log space
+
   if(mu_trend==1) {
     ADREPORT(mu_b1); // trend in mean
   }
-  ADREPORT(mu_devs); // deviations year to year from hypermean
-  ADREPORT(sig1_b0); // mean sigma for LHS
+  if(est_mu_re==1) {
+    ADREPORT(log_mu_b0); // hypermean, log space
+    ADREPORT(mu_devs); // deviations year to year from hypermean
+  }
+  if(est_sigma_re==1) {
+    ADREPORT(sig1_b0); // mean sigma for LHS
+  }
+
   if(sig_trend==1) {
     ADREPORT(sig1_b1); // optional trend parameter for LHS sigmas
   }
@@ -323,8 +352,10 @@ template<class Type>
   }
   if(asymmetric == 1) {
     // these are only reported for asymmetric model
-    ADREPORT(sigma2); // same as above, but RHS optionally
-    ADREPORT(sig2_b0);
+    if(est_sigma_re==1) {
+      ADREPORT(sigma2); // same as above, but RHS optionally
+      ADREPORT(sig2_b0);
+    }
     if(tail_model==1) {
       ADREPORT(tdf_2);
     }

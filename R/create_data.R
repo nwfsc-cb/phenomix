@@ -12,6 +12,8 @@
 #' different shape than run timing after peak)
 #' @param est_sigma_trend Whether to fit a log-linear trend in standard deviations. Defaults to TRUE (when FALSE, an intercept and random deviations are estimated)
 #' @param est_mu_trend Whether to fit a linear trend in means. Defaults to TRUE (when FALSE, an intercept and random deviations are estimated)
+#' @param est_sigma_re Whether to estimate random effects by year in sigma parameter controlling tail of distribution. Defaults to TRUE
+#' @param est_mu_re Whether to estimate random effects by year in mu parameter controlling location of distribution. Defaults to TRUE
 #' @param tail_model Whether to fit Gaussian ("gaussian" = default) or Student-t ("student_t") or generalized normal ("gnorm"). Defaults to FALSE
 #' @param family Response for observation model, options are "gaussian", "poisson", "negbin"
 #' @export
@@ -21,8 +23,17 @@
 #'   min_number = 0, variable = "number", time = "year",
 #'   date = "doy", asymmetric_model = TRUE, family = "gaussian"
 #' )
-create_data <- function(data, min_number = 0, variable = "number", time = "year", date = "doy",
-                        asymmetric_model = TRUE, est_sigma_trend = TRUE, est_mu_trend = TRUE, tail_model = "gaussian", family = "gaussian") {
+create_data <- function(data, min_number = 0,
+                        variable = "number",
+                        time = "year",
+                        date = "doy",
+                        asymmetric_model = TRUE,
+                        est_sigma_trend = TRUE,
+                        est_mu_trend = TRUE,
+                        est_sigma_re = TRUE,
+                        est_mu_re = TRUE,
+                        tail_model = "gaussian",
+                        family = "gaussian") {
   dist <- c("gaussian", "poisson", "negbin")
   fam <- match(family, dist)
   if (is.na(fam)) {
@@ -46,6 +57,21 @@ create_data <- function(data, min_number = 0, variable = "number", time = "year"
     stop("The date variable in the data frame (e.g. day_of_year) needs to be numeric")
   }
 
+  if (est_mu_trend == TRUE & est_mu_re == FALSE) {
+    stop("Error: if trying to model the trend in mu, 'est_mu_re' needs to be TRUE, otherwise parameters aren't identifiable")
+  }
+  if (est_sigma_trend == TRUE & est_sigma_re == FALSE) {
+    stop("Error: if trying to model the trend in sigma, 'est_sigma_re' needs to be TRUE, otherwise parameters aren't identifiable")
+  }
+
+  # if 1 level, turn off trend and random effect estimation
+  if (length(unique(as.numeric(data[, time]))) == 1) {
+    est_sigma_trend <- FALSE
+    est_mu_trend <- FALSE
+    est_sigma_re <- FALSE
+    est_mu_re <- FALSE
+  }
+
   # drop rows below threshold or NAs
   drop_rows <- which(is.na(data[, variable]) | data[, variable] <= min_number)
   if (length(drop_rows) > 0) data <- data[-drop_rows, ]
@@ -64,7 +90,9 @@ create_data <- function(data, min_number = 0, variable = "number", time = "year"
     family = fam,
     sig_trend = as.numeric(est_sigma_trend),
     mu_trend = as.numeric(est_mu_trend),
-    tail_model = as.numeric(tailmod) - 1
+    tail_model = as.numeric(tailmod) - 1,
+    est_sigma_re = as.numeric(est_sigma_re),
+    est_mu_re = as.numeric(est_mu_re)
   )
 
   return(data_list)

@@ -11,7 +11,6 @@ NULL
 #' @param inits Optional named list of parameters for starting values, defaults to NULL
 #' @param control Optional control list for stats::nlminb. For arguments see ?nlminb. Defaults to eval.max=2000, iter.max=1000, rel.tol=1e-10. For final model runs, the rel.tol should be even smaller
 #' @param limits Whether to include limits for stats::nlminb, defaults to FALSE
-#' @param ... Additional arguments to be passed to
 #' @importFrom stats runif rnorm
 #' @export
 #' @examples
@@ -231,8 +230,7 @@ fit <- function(data_list,
       start = init, objective = obj$fn,
       gradient = obj$gr, control = control,
       lower = limits(parnames = names(obj$par))$lower,
-      upper = limits(parnames = names(obj$par))$upper,
-      ...
+      upper = limits(parnames = names(obj$par))$upper
     )
   }
 

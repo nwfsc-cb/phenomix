@@ -138,6 +138,8 @@
   asymmetric_model <span class='op'>=</span> <span class='cn'>TRUE</span>,
   est_sigma_trend <span class='op'>=</span> <span class='cn'>TRUE</span>,
   est_mu_trend <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  est_sigma_re <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  est_mu_re <span class='op'>=</span> <span class='cn'>TRUE</span>,
   tail_model <span class='op'>=</span> <span class='st'>"gaussian"</span>,
   family <span class='op'>=</span> <span class='st'>"gaussian"</span>
 <span class='op'>)</span></pre>
@@ -180,6 +182,14 @@ different shape than run timing after peak)</p></td>
       <td><p>Whether to fit a linear trend in means. Defaults to TRUE (when FALSE, an intercept and random deviations are estimated)</p></td>
     </tr>
     <tr>
+      <th>est_sigma_re</th>
+      <td><p>Whether to estimate random effects by year in sigma parameter controlling tail of distribution. Defaults to TRUE</p></td>
+    </tr>
+    <tr>
+      <th>est_mu_re</th>
+      <td><p>Whether to estimate random effects by year in mu parameter controlling location of distribution. Defaults to TRUE</p></td>
+    </tr>
+    <tr>
       <th>tail_model</th>
       <td><p>Whether to fit Gaussian ("gaussian" = default) or Student-t ("student_t") or generalized normal ("gnorm"). Defaults to FALSE</p></td>
     </tr>
@@ -192,8 +202,10 @@ different shape than run timing after peak)</p></td>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>fishdist</span><span class='op'>)</span>
-<span class='va'>datalist</span> <span class='op'>=</span> <span class='fu'>create_data</span><span class='op'>(</span><span class='va'>fishdist</span>, min_number <span class='op'>=</span> <span class='fl'>0</span>, variable <span class='op'>=</span> <span class='st'>"number"</span>, time <span class='op'>=</span> <span class='st'>"year"</span>,
-date <span class='op'>=</span> <span class='st'>"doy"</span>, asymmetric_model <span class='op'>=</span> <span class='cn'>TRUE</span>, family <span class='op'>=</span> <span class='st'>"gaussian"</span><span class='op'>)</span>
+<span class='va'>datalist</span> <span class='op'>&lt;-</span> <span class='fu'>create_data</span><span class='op'>(</span><span class='va'>fishdist</span>,
+  min_number <span class='op'>=</span> <span class='fl'>0</span>, variable <span class='op'>=</span> <span class='st'>"number"</span>, time <span class='op'>=</span> <span class='st'>"year"</span>,
+  date <span class='op'>=</span> <span class='st'>"doy"</span>, asymmetric_model <span class='op'>=</span> <span class='cn'>TRUE</span>, family <span class='op'>=</span> <span class='st'>"gaussian"</span>
+<span class='op'>)</span>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

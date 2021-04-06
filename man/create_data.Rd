@@ -13,6 +13,8 @@ create_data(
   asymmetric_model = TRUE,
   est_sigma_trend = TRUE,
   est_mu_trend = TRUE,
+  est_sigma_re = TRUE,
+  est_mu_re = TRUE,
   tail_model = "gaussian",
   family = "gaussian"
 )
@@ -35,6 +37,10 @@ different shape than run timing after peak)}
 \item{est_sigma_trend}{Whether to fit a log-linear trend in standard deviations. Defaults to TRUE (when FALSE, an intercept and random deviations are estimated)}
 
 \item{est_mu_trend}{Whether to fit a linear trend in means. Defaults to TRUE (when FALSE, an intercept and random deviations are estimated)}
+
+\item{est_sigma_re}{Whether to estimate random effects by year in sigma parameter controlling tail of distribution. Defaults to TRUE}
+
+\item{est_mu_re}{Whether to estimate random effects by year in mu parameter controlling location of distribution. Defaults to TRUE}
 
 \item{tail_model}{Whether to fit Gaussian ("gaussian" = default) or Student-t ("student_t") or generalized normal ("gnorm"). Defaults to FALSE}
 

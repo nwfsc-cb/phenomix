@@ -81,7 +81,7 @@
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Curve fitting with the salmix package</h1>
             
-            <h4 class="date">2021-04-03</h4>
+            <h4 class="date">2021-04-06</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/ericward-noaa/salmix/blob/master/vignettes/examples.Rmd"><code>vignettes/examples.Rmd</code></a></small>
       <div class="hidden name"><code>examples.Rmd</code></div>
@@ -91,71 +91,100 @@
     
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ericward-noaa.github.io/salmix">salmix</a></span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ericward-noaa.github.io/salmix">salmix</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/kaskr/adcomp/wiki">TMB</a></span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></code></pre></div>
-<p>We’ll start by loading the example dataset, based on run timing data for Pacific salmon.</p>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/kaskr/adcomp/wiki">TMB</a></span><span class="op">)</span></code></pre></div>
+<div id="overview" class="section level2">
+<h2 class="hasAnchor">
+<a href="#overview" class="anchor"></a>Overview</h2>
+<p>The <code>salmix</code> R package is designed to be a robust and flexible tool for modeling phenological change. The name of the package is in reference to modeling run timing data for salmon, but more generally this framework can be applied to any kind of phenology data – timing of leaf-out or flowering in plants, breeding bird surveys, etc. Observations may be collected across multiple years, or for a single year, and may be discrete or continuous. For a given time step, these data may look like this:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span>
+<span class="va">df</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">110</span>,<span class="fl">150</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span>
+<span class="va">df</span><span class="op">$</span><span class="va">y</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">dnorm</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">x</span>, mean <span class="op">=</span> <span class="fl">130</span>, <span class="fl">10</span><span class="op">)</span> <span class="op">*</span> <span class="fl">10000</span>
+<span class="va">df</span><span class="op">$</span><span class="va">obs</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span>, <span class="va">df</span><span class="op">$</span><span class="va">y</span>, <span class="fl">30</span><span class="op">)</span>
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">df</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">obs</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html">geom_smooth</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span><span class="op">(</span><span class="st">"Day of year"</span><span class="op">)</span> <span class="op">+</span> 
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span><span class="op">(</span><span class="st">"Observation"</span><span class="op">)</span></code></pre></div>
+<p><img src="examples_files/figure-html/unnamed-chunk-1-1.png" width="672"></p>
+<p>For demonstration purposes, we incuded an example dataset, based on run timing data for Pacific salmon.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html">glimpse</a></span><span class="op">(</span><span class="va">fishdist</span><span class="op">)</span>
 <span class="co">#&gt; Rows: 1,005</span>
 <span class="co">#&gt; Columns: 3</span>
 <span class="co">#&gt; $ year   &lt;dbl&gt; 1960, 1960, 1960, 1960, 1960, 1960, 1960, 1960, 1960, 1960, 196…</span>
 <span class="co">#&gt; $ number &lt;int&gt; 5, 5, 5, 3, 9, 4, 3, 3, 5, 3, 3, 7, 2, 9, 21, 11, 75, 368, 385,…</span>
 <span class="co">#&gt; $ doy    &lt;int&gt; 95, 113, 120, 121, 122, 123, 124, 126, 127, 128, 130, 131, 132,…</span></code></pre></div>
-<div id="creating-data-for-estimation" class="section level3">
+<div id="manipulating-data-for-estimation" class="section level3">
 <h3 class="hasAnchor">
-<a href="#creating-data-for-estimation" class="anchor"></a>Creating data for estimation</h3>
-<p>There’s three main functions we’ll work with. First, we’ll use the <code>create_data</code> function, which builds the data and model arguments to be used for fitting. We’ll start with the default arguments, before going into detail about what they all mean. The only argument that we’ve initially changed from the default is using <code>asymmetric_model = FALSE</code> to fit the symmetric model.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<a href="#manipulating-data-for-estimation" class="anchor"></a>Manipulating data for estimation</h3>
+<p>The main data processing function in the package is called <code>create_data</code>, which builds the data and model arguments to be used for fitting. Note the names of the variables in our dataset,</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">fishdist</span><span class="op">)</span>
+<span class="co">#&gt; [1] "year"   "number" "doy"</span></code></pre></div>
+<p>We’ll start with the default arguments for the function, before going into detail about what they all mean. The only argument that we’ve initially changed from the default is using <code>asymmetric_model = FALSE</code> to fit the symmetric model.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">datalist</span> <span class="op">=</span> <span class="fu"><a href="../reference/create_data.html">create_data</a></span><span class="op">(</span><span class="va">fishdist</span>, 
   min_number<span class="op">=</span><span class="fl">0</span>, 
   variable <span class="op">=</span> <span class="st">"number"</span>, 
   time<span class="op">=</span><span class="st">"year"</span>, 
   date <span class="op">=</span> <span class="st">"doy"</span>,
-  asymmetric_model <span class="op">=</span> <span class="cn">TRUE</span>, 
+  asymmetric_model <span class="op">=</span> <span class="cn">FALSE</span>, 
   est_sigma_trend <span class="op">=</span> <span class="cn">TRUE</span>, 
   est_mu_trend <span class="op">=</span> <span class="cn">TRUE</span>, 
+  est_sigma_re <span class="op">=</span> <span class="cn">TRUE</span>,
+  est_mu_re <span class="op">=</span> <span class="cn">TRUE</span>,
   tail_model <span class="op">=</span> <span class="st">"gaussian"</span>, 
   family <span class="op">=</span> <span class="st">"gaussian"</span><span class="op">)</span></code></pre></div>
 <p>The <code>min_number</code> argument represents an optional threshold below which data is ignored. The <code>variable</code> argument is a character identifying the name of the response variable in the data frame. Similarly, the <code>time</code> and <code>date</code> arguments specify the labels of the temporal (e.g. year) and seasonal variables (day of year).</p>
-<p>The <code>salmix</code> package can fit asymmetric or symmetric models to the distribution data (whether the left side of the curve is the same shape as the right) and defaults to FALSE. The mean and standard deviations that control the distributions are allowed to vary over time (as random effects) but we can also include temporal trends in the mean and standard deviations. These are estimated by default, and controlled with the <code>est_sigma_trend</code> and <code>est_mu_trend</code> arguments. The trends are log-linear for the standard deviation parameters, but in normal space for the mean parameters. Finally, the tails of the response curves may be estimated via fitting a Gaussian (normal) distribution or a Student-t distribution. By default, the Gaussian tails are estimated, and this parameter is controlled with the <code>est_t_model</code> argument.</p>
-<p>Last, we can model the observed count data with a number of different distributions, and set this with the <code>family</code> argument. Currently supported distributions include the Gaussian, Poisson, and Negative Binomial, and all include a log-link.</p>
+<p>The remaining arguments to the function concern model fitting. The <code>salmix</code> package can fit asymmetric or symmetric models to the distribution data (whether the left side of the curve is the same shape as the right) and defaults to FALSE. The mean and standard deviations that control the distributions are allowed to vary over time (as fixed or random effects) but we can also include temporal trends in the mean and standard deviations (if temporal trends are included, random effects have to also be included). Mathematically the mean location for a model with random effects is <span class="math inline">\(u_y \sim Normal(u_0, u_{\sigma})\)</span>, where <span class="math inline">\(u_0\)</span> is the global mean and <span class="math inline">\(u_{\sigma}\)</span> is the standard deviation. Adding a trend in normal space, this becomes <span class="math inline">\(u_y \sim Normal(u_0 + b_u*y, u_{\sigma})\)</span>, where the parameter <span class="math inline">\(b_u\)</span> controlls the trend. To keep the variance parameters controlling the tails of the run timing distribution positive, we estimate those random effects in log-space. This is specified as <span class="math inline">\(\sigma_y = exp(\sigma_0 + b_{\sigma}*y + \delta_{y})\)</span>, and <span class="math inline">\(\delta_{y} \sim Normal(0, \sigma_{\sigma})\)</span>. Trends in both the mean and variance are estimated by default, and controlled with the <code>est_sigma_trend</code> and <code>est_mu_trend</code> arguments. As described with the equations above, The trends are log-linear for the standard deviation parameters, but in normal space for the mean parameters.</p>
+<p>Finally, the tails of the response curves may be estimated via fitting a Gaussian (normal) distribution, Student-t distribution, or <a href="https://en.wikipedia.org/wiki/Generalized_normal_distribution">generalized normal distribution</a>. By default, the Gaussian tails are estimated, and this parameter is controlled with the <code>tail_model</code> argument (“gaussian”, “student_t”, “gnorm”).</p>
+<p>Last, we can model the observed count data with a number of different distributions, and set this with the <code>family</code> argument. Currently supported distributions include the Gaussian (default, “gaussian”), Poisson (“poisson”), and Negative Binomial (“negbin”), and all include a log-link.</p>
 </div>
 <div id="fitting-the-model" class="section level3">
 <h3 class="hasAnchor">
 <a href="#fitting-the-model" class="anchor"></a>Fitting the model</h3>
-<p>Next, we’ll use the <code>fit</code> function to do maximum likelihood estimation in TMB. Additional arguments can be found in the help file, but the most important one is the list of data created above.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">fitted</span> <span class="op">=</span> <span class="fu"><a href="../reference/fit.html">fit</a></span><span class="op">(</span><span class="va">datalist</span><span class="op">)</span></code></pre></div>
-<p>We don’t get any warnings out of the estimation, but let’s look at the sdreport in more detail.</p>
-<p>First we can look at the convergence code,</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<p>Next, we’ll use the <code>fit</code> function to do maximum likelihood estimation in TMB. Additional arguments can be found in the help file, but the most important one is the list of data created above with <code>create_data</code>.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>
+<span class="va">fitted</span> <span class="op">=</span> <span class="fu"><a href="../reference/fit.html">fit</a></span><span class="op">(</span><span class="va">datalist</span><span class="op">)</span></code></pre></div>
+<p>We don’t get any warnings out of the estimation, but let’s look at the sdreport in more detail. <code>fitted</code> is of the <code>salmix</code> class and contains the following</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">fitted</span><span class="op">)</span>
+<span class="co">#&gt; [1] "obj"         "pars"        "sdreport"    "init_values" "data_list"</span></code></pre></div>
+<p>The <code>init_values</code> are the initial parameter values where optimization was started from, and the <code>data_list</code> represents the raw data. The <code>pars</code> component contains information relative to convergence and iterations, including the convergence code (0 = successful convergence),</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">fitted</span><span class="op">$</span><span class="va">pars</span><span class="op">$</span><span class="va">convergence</span>
 <span class="co">#&gt; [1] 0</span></code></pre></div>
-<p>This looks like things are converging. But sometimes relative convergence won’t thrown warnings. We can also look at the variance estimates, which also are estimated (a good sign things are converged!).</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<p>This looks like things are converging. But sometimes relative convergence (code = 4) won’t throw warnings. We can also look at the variance estimates, which also are estimated (a good sign things are converged!). These are all included in the <code>sdreport</code> – the parameters and their standard errors are accessible with</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sdrep_df</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="st">"par"</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">fitted</span><span class="op">$</span><span class="va">sdreport</span><span class="op">$</span><span class="va">value</span><span class="op">)</span>,
   <span class="st">"value"</span><span class="op">=</span><span class="va">fitted</span><span class="op">$</span><span class="va">sdreport</span><span class="op">$</span><span class="va">value</span>, <span class="st">"sd"</span><span class="op">=</span><span class="va">fitted</span><span class="op">$</span><span class="va">sdreport</span><span class="op">$</span><span class="va">sd</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">sdrep_df</span><span class="op">)</span>
 <span class="co">#&gt;     par    value        sd</span>
-<span class="co">#&gt; 1 theta 9.365050 0.2120706</span>
-<span class="co">#&gt; 2 theta 9.623500 0.3036527</span>
-<span class="co">#&gt; 3 theta 9.340817 0.2866172</span>
-<span class="co">#&gt; 4 theta 8.907733 0.1835051</span>
-<span class="co">#&gt; 5 theta 8.711307 0.2112738</span>
-<span class="co">#&gt; 6 theta 8.986236 0.2923290</span></code></pre></div>
+<span class="co">#&gt; 1 theta 8.405112 0.2253369</span>
+<span class="co">#&gt; 2 theta 8.625972 0.2248001</span>
+<span class="co">#&gt; 3 theta 8.468620 0.2057673</span>
+<span class="co">#&gt; 4 theta 8.151020 0.1577421</span>
+<span class="co">#&gt; 5 theta 8.114337 0.1900175</span>
+<span class="co">#&gt; 6 theta 8.234232 0.2192143</span></code></pre></div>
+<p>If for some reason, these need to be re-generated, the <code>obj</code> object can be fed into</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">TMB</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/TMB/man/sdreport.html">sdreport</a></span><span class="op">(</span><span class="va">fitted</span><span class="op">$</span><span class="va">obj</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="plotting-results" class="section level3">
 <h3 class="hasAnchor">
 <a href="#plotting-results" class="anchor"></a>Plotting results</h3>
 <p>Using our fitted object, there are some basic plotting functions included for diagnostics. Let’s plot run timing over time, by year:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">g</span> <span class="op">=</span> <span class="fu"><a href="../reference/plot_diagnostics.html">plot_diagnostics</a></span><span class="op">(</span><span class="va">fitted</span>, type<span class="op">=</span><span class="st">"timing"</span>, logspace<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>
 <span class="co">#&gt; Joining, by = "years"</span>
 <span class="va">g</span></code></pre></div>
 <div class="figure">
-<img src="examples_files/figure-html/unnamed-chunk-6-1.png" alt="Fitted symmetric model with tails from a  Gaussian distribution" width="768"><p class="caption">
+<img src="examples_files/figure-html/unnamed-chunk-10-1.png" alt="Fitted symmetric model with tails from a  Gaussian distribution" width="768"><p class="caption">
 Fitted symmetric model with tails from a Gaussian distribution
 </p>
 </div>
@@ -165,8 +194,10 @@ Fitted symmetric model with tails from a Gaussian distribution
 <h3 class="hasAnchor">
 <a href="#additional-examples" class="anchor"></a>Additional examples</h3>
 <p>First, we can try to fit the same model, but using an asymmetric t-distribution.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">datalist</span> <span class="op">=</span> <span class="fu"><a href="../reference/create_data.html">create_data</a></span><span class="op">(</span><span class="va">fishdist</span>, 
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>
+
+<span class="va">datalist</span> <span class="op">=</span> <span class="fu"><a href="../reference/create_data.html">create_data</a></span><span class="op">(</span><span class="va">fishdist</span>, 
   min_number<span class="op">=</span><span class="fl">0</span>, 
   variable <span class="op">=</span> <span class="st">"number"</span>, 
   time<span class="op">=</span><span class="st">"year"</span>, 
@@ -174,48 +205,53 @@ Fitted symmetric model with tails from a Gaussian distribution
   asymmetric_model <span class="op">=</span> <span class="cn">TRUE</span>, 
   tail_model <span class="op">=</span> <span class="st">"student_t"</span><span class="op">)</span>
 <span class="va">fitted_t</span> <span class="op">=</span> <span class="fu"><a href="../reference/fit.html">fit</a></span><span class="op">(</span><span class="va">datalist</span><span class="op">)</span></code></pre></div>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/plot_diagnostics.html">plot_diagnostics</a></span><span class="op">(</span><span class="va">fitted_t</span><span class="op">)</span>
 <span class="co">#&gt; Joining, by = "years"</span></code></pre></div>
 <div class="figure">
-<img src="examples_files/figure-html/unnamed-chunk-8-1.png" alt="Fitted asymmetric model with heavy tails from a t-distribution" width="768"><p class="caption">
+<img src="examples_files/figure-html/unnamed-chunk-12-1.png" alt="Fitted asymmetric model with heavy tails from a t-distribution" width="768"><p class="caption">
 Fitted asymmetric model with heavy tails from a t-distribution
 </p>
 </div>
 <p>We can also compare the two models using AIC. Note we’re not comparing random effects structures (where we’d need REML), and that this is an approximation (because only fixed effects parameters are included). This comparison shows that maybe not surprisingly, the Student-t model is more parsimoinious than the Gaussian tailed model (aic_2 &lt; aic_1).</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">aic_1</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/extractAIC.html">extractAIC</a></span><span class="op">(</span><span class="va">fitted</span><span class="op">)</span><span class="op">$</span><span class="va">AIC</span>
 <span class="va">aic_1</span>
-<span class="co">#&gt; [1] 3053.419</span>
+<span class="co">#&gt; [1] 3222.334</span>
 
 <span class="va">aic_2</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/extractAIC.html">extractAIC</a></span><span class="op">(</span><span class="va">fitted_t</span><span class="op">)</span><span class="op">$</span><span class="va">AIC</span>
 <span class="va">aic_2</span>
-<span class="co">#&gt; [1] 2399.579</span></code></pre></div>
+<span class="co">#&gt; [1] 3234.865</span></code></pre></div>
 <p>Second, we can we can try to fit the same model, but using a generalized normal distribution. This distribution has a plateau or ‘flat top’. For examples, see the <code>gnorm</code> package on CRAN <a href="https://cran.r-project.org/web/packages/gnorm/index.html">here</a> or <a href="https://en.wikipedia.org/wiki/Generalized_normal_distribution">Wikipedia page</a>.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">datalist</span> <span class="op">=</span> <span class="fu"><a href="../reference/create_data.html">create_data</a></span><span class="op">(</span><span class="va">fishdist</span>, 
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>
+
+<span class="va">datalist</span> <span class="op">=</span> <span class="fu"><a href="../reference/create_data.html">create_data</a></span><span class="op">(</span><span class="va">fishdist</span>, 
   min_number<span class="op">=</span><span class="fl">0</span>, 
   variable <span class="op">=</span> <span class="st">"number"</span>, 
   time<span class="op">=</span><span class="st">"year"</span>, 
   date <span class="op">=</span> <span class="st">"doy"</span>,
   asymmetric_model <span class="op">=</span> <span class="cn">FALSE</span>, 
   tail_model <span class="op">=</span> <span class="st">"gnorm"</span><span class="op">)</span>
-<span class="va">fitted</span> <span class="op">=</span> <span class="fu"><a href="../reference/fit.html">fit</a></span><span class="op">(</span><span class="va">datalist</span>, limits <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<span class="va">fitted</span> <span class="op">=</span> <span class="fu"><a href="../reference/fit.html">fit</a></span><span class="op">(</span><span class="va">datalist</span>, inits <span class="op">=</span> <span class="va">inits</span>, limits <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="diagnosing-lack-of-convergence" class="section level3">
 <h3 class="hasAnchor">
 <a href="#diagnosing-lack-of-convergence" class="anchor"></a>Diagnosing lack of convergence</h3>
 <p>In addition to the warning message about the Hessian not being positive definite, the NaNs in the <code>sd</code> column are a sure sign that things aren’t converging.</p>
 <p>Fixes to improve convergence may be to start from a different set of starting values (try passing <code>inits</code> into the <code>fit</code> function), or placing stricter bounds on convergence statistics. Or it may be that the model isn’t a good fit to the data. Specifically, the convergence criterion can be modified with the <code>control</code> argument – which is passed into <code><a href="https://rdrr.io/r/stats/nlminb.html">stats::nlminb</a></code>. One parameter in this list that can be changed is <code>rel.tol</code>, e.g.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">fit</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/fitted.values.html">fitted</a></span><span class="op">(</span><span class="va">...</span>, control<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>rel.tol <span class="op">=</span> <span class="fl">1.0e-12</span>, 
   eval.max<span class="op">=</span><span class="fl">4000</span>, iter.max<span class="op">=</span><span class="fl">4000</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+</div>
 </div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
 
-      </div>
+        <nav id="toc" data-toggle="toc"><h2 data-toc-skip>Contents</h2>
+    </nav>
+</div>
 
 </div>
 

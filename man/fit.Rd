@@ -22,6 +22,8 @@ fit(
 \item{control}{Optional control list for stats::nlminb. For arguments see ?nlminb. Defaults to eval.max=2000, iter.max=1000, rel.tol=1e-10. For final model runs, the rel.tol should be even smaller}
 
 \item{limits}{Whether to include limits for stats::nlminb, defaults to FALSE}
+
+\item{...}{Additional arguments to be passed to}
 }
 \description{
 This function creates a list of parameters, sets up TMB object and attempts to
@@ -29,6 +31,28 @@ do fitting / estimation
 }
 \examples{
 data(fishdist)
-datalist <- create_data(fishdist)
-fit <- fit(datalist)
+
+# example of fitting fixed effects, no trends
+# set.seed(1)
+# datalist <- create_data(fishdist[which(fishdist$year > 1970),], asymmetric_model = FALSE,
+#    est_sigma_trend=FALSE, est_mu_trend=FALSE)
+# fit <- fit(datalist)
+#
+# # example of model with random effects in means
+# set.seed(1)
+# datalist <- create_data(fishdist[which(fishdist$year > 1970),], asymmetric_model = FALSE,
+#                         est_sigma_trend=FALSE, est_mu_trend=FALSE, est_mu_re = TRUE)
+# fit <- fit(datalist)
+# # example of model with random effects in variances
+# set.seed(1)
+# datalist <- create_data(fishdist[which(fishdist$year > 1970),], asymmetric_model = FALSE,
+#                         est_sigma_trend=FALSE, est_mu_trend=FALSE, est_sigma_re = TRUE)
+# fit <- fit(datalist)
+#
+# # example of model with poisson response
+# set.seed(1)
+# datalist <- create_data(fishdist[which(fishdist$year > 1970),], asymmetric_model = FALSE,
+#                         est_sigma_trend=FALSE, est_mu_trend=FALSE, est_mu_re = TRUE,
+#                         family="poisson")
+# fit <- fit(datalist)
 }

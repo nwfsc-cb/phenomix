@@ -1,0 +1,173 @@
+---
+title: "Curve fitting with the salmix package"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Curve fitting with the salmix package}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE, cache=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 7,
+  fig.asp = 0.618
+)
+```
+
+```{r packages, message=FALSE, warning=TRUE}
+library(ggplot2)
+library(salmix)
+library(dplyr)
+library(TMB)
+```
+
+## Overview
+
+The `salmix` R package is designed to be a robust and flexible tool for modeling phenological change. The name of the package is in reference to modeling run timing data for salmon, but more generally this framework can be applied to any kind of phenology data -- timing of leaf-out or flowering in plants, breeding bird surveys, etc. Observations may be collected across multiple years, or for a single year, and may be discrete or continuous. For a given time step, these data may look like this:
+
+```{r message=FALSE, warning=FALSE, results='hide'}
+set.seed(123)
+df = data.frame(x = seq(110,150,1))
+df$y = dnorm(df$x, mean = 130, 10) * 10000
+df$obs = rnorm(nrow(df), df$y, 30)
+ggplot(df, aes(x, obs)) + geom_point() + 
+  geom_smooth() + 
+  theme_bw() + 
+  xlab("Day of year") + 
+  ylab("Observation")
+```
+
+For demonstration purposes, we incuded an example dataset, based on run timing data for Pacific salmon.
+
+```{r}
+glimpse(fishdist)
+```
+
+### Manipulating data for estimation
+
+The main data processing function in the package is called `create_data`, which builds the data and model arguments to be used for fitting. Note the names of the variables in our dataset, 
+
+```{r}
+names(fishdist)
+```
+
+We'll start with the default arguments for the function, before going into detail about what they all mean. The only argument that we've initially changed from the default is using `asymmetric_model = FALSE` to fit the symmetric model.
+
+```{r}
+datalist = create_data(fishdist, 
+  min_number=0, 
+  variable = "number", 
+  time="year", 
+  date = "doy",
+  asymmetric_model = FALSE, 
+  est_sigma_trend = TRUE, 
+  est_mu_trend = TRUE, 
+  est_sigma_re = TRUE,
+  est_mu_re = TRUE,
+  tail_model = "gaussian", 
+  family = "gaussian")
+```
+
+The `min_number` argument represents an optional threshold below which data is ignored. The `variable` argument is a character identifying the name of the response variable in the data frame. Similarly, the `time` and `date` arguments specify the labels of the temporal (e.g. year) and seasonal variables (day of year).
+
+The remaining arguments to the function concern model fitting. The `salmix` package can fit asymmetric or symmetric models to the distribution data (whether the left side of the curve is the same shape as the right) and defaults to FALSE. The mean and standard deviations that control the distributions are allowed to vary over time (as fixed or random effects) but we can also include temporal trends in the mean and standard deviations (if temporal trends are included, random effects have to also be included). 
+Mathematically the mean location for a model with random effects is $u_y \sim Normal(u_0, u_{\sigma})$, where $u_0$ is the global mean and $u_{\sigma}$ is the standard deviation. Adding a trend in normal space, this becomes $u_y \sim Normal(u_0 + b_u*y, u_{\sigma})$, where the parameter $b_u$ controlls the trend. To keep the variance parameters controlling the tails of the run timing distribution positive, we estimate those random effects in log-space. This is specified as $\sigma_y = exp(\sigma_0 + b_{\sigma}*y + \delta_{y})$, and $\delta_{y} \sim Normal(0, \sigma_{\sigma})$. Trends in both the mean and variance are estimated by default, and controlled with the `est_sigma_trend` and `est_mu_trend` arguments. As described with the equations above, The trends are log-linear for the standard deviation parameters, but in normal space for the mean parameters. 
+
+Finally, the tails of the response curves may be estimated via fitting a Gaussian (normal) distribution, Student-t distribution, or [generalized normal distribution](https://en.wikipedia.org/wiki/Generalized_normal_distribution). By default, the Gaussian tails are estimated, and this parameter is controlled with the `tail_model` argument ("gaussian", "student_t", "gnorm").
+
+Last, we can model the observed count data with a number of different distributions, and set this with the `family` argument. Currently supported distributions include the Gaussian (default, "gaussian"), Poisson ("poisson"), and Negative Binomial ("negbin"), and all include a log-link. 
+
+### Fitting the model
+
+Next, we'll use the `fit` function to do maximum likelihood estimation in TMB. Additional arguments can be found in the help file, but the most important one is the list of data created above with `create_data`.
+
+```{r message=FALSE, warning=FALSE, results='hide'}
+set.seed(1)
+fitted = fit(datalist)
+```
+
+We don't get any warnings out of the estimation, but let's look at the sdreport in more detail. 
+
+First we can look at the convergence code,
+```{r}
+fitted$pars$convergence
+```
+
+This looks like things are converging. But sometimes relative convergence won't thrown warnings. We can also look at the variance estimates, which also are estimated (a good sign things are converged!).
+
+```{r}
+sdrep_df = data.frame("par"=names(fitted$sdreport$value),
+  "value"=fitted$sdreport$value, "sd"=fitted$sdreport$sd)
+head(sdrep_df)
+```
+
+### Plotting results
+
+Using our fitted object, there are some basic plotting functions included for diagnostics. Let's plot run timing over time, by year:
+
+```{r, fig.cap="Fitted symmetric model with tails from a  Gaussian distribution", fig.width = 8}
+g = plot_diagnostics(fitted, type="timing", logspace=TRUE)
+g
+```
+
+The object returned by `plot_diagnostics` is just a ggplot object, so additional arguments or themes can be added with `+ ` statements. The plot can be shown in normal space by setting `logspace=FALSE`. These run timing plots are the default, but additonal scatterplots of observed vs predicted values can be shown by setting `type=scatter`.
+
+### Additional examples 
+First, we can try to fit the same model, but using an asymmetric t-distribution.
+
+```{r message=FALSE, warning=FALSE, results='hide'}
+set.seed(1)
+
+datalist = create_data(fishdist, 
+  min_number=0, 
+  variable = "number", 
+  time="year", 
+  date = "doy",
+  asymmetric_model = TRUE, 
+  tail_model = "student_t")
+fitted_t = fit(datalist)
+```
+
+```{r, fig.cap="Fitted asymmetric model with heavy tails from a t-distribution", fig.width = 8}
+plot_diagnostics(fitted_t)
+```
+
+We can also compare the two models using AIC. Note we're not comparing random effects structures (where we'd need REML), and that this is an approximation (because only fixed effects parameters are included). This comparison shows that maybe not surprisingly, the Student-t model is more parsimoinious than the Gaussian tailed model (aic_2 < aic_1).
+
+```{r}
+aic_1 = extractAIC(fitted)$AIC
+aic_1
+
+aic_2 = extractAIC(fitted_t)$AIC
+aic_2
+```
+
+Second, we can we can try to fit the same model, but using a generalized normal distribution. This distribution has a plateau or 'flat top'. For examples, see the `gnorm` package on CRAN [here](https://cran.r-project.org/web/packages/gnorm/index.html) or [Wikipedia page](https://en.wikipedia.org/wiki/Generalized_normal_distribution).
+
+```{r message=FALSE, warning=FALSE, results='hide', eval=FALSE}
+set.seed(1)
+
+datalist = create_data(fishdist, 
+  min_number=0, 
+  variable = "number", 
+  time="year", 
+  date = "doy",
+  asymmetric_model = FALSE, 
+  tail_model = "gnorm")
+fitted = fit(datalist, inits = inits, limits = TRUE)
+```
+
+### Diagnosing lack of convergence
+
+In addition to the warning message about the Hessian not being positive definite, the NaNs in the `sd` column are a sure sign that things aren't converging. 
+
+Fixes to improve convergence may be to start from a different set of starting values (try passing `inits` into the `fit` function), or placing stricter bounds on convergence statistics. Or it may be that the model isn't a good fit to the data. Specifically, the convergence criterion can be modified with the `control` argument -- which is passed into `stats::nlminb`. One parameter in this list that can be changed is `rel.tol`, e.g.
+
+```{r eval=FALSE}
+fit = fitted(..., control=list(rel.tol = 1.0e-12, 
+  eval.max=4000, iter.max=4000))
+```
+

@@ -184,3 +184,6 @@ fit = fitted(..., control=list(rel.tol = 1.0e-12,
   eval.max=4000, iter.max=4000))
 ```
 
+### Adding covariates
+
+Finally, it's possible to include covariates instead of inter-annual trends - either in the mean or standard deviation parameters. These arguments are `mu_covariate` and `sigma_covariate`, which are string variables declaring the name of the variable in the data frame passed to `create_data`. These variables may be the same or different variables, and for asymmetric models the trend variables are required to be the same on the left and right hand sides of the distribution.

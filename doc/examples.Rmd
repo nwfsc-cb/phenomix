@@ -1,9 +1,9 @@
 ---
-title: "Curve fitting with the salmix package"
+title: "Fitting time varying phenology models with the salmix package"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Curve fitting with the salmix package}
+  %\VignetteIndexEntry{Fitting time varying phenology models with the salmix package}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -89,20 +89,33 @@ set.seed(1)
 fitted = fit(datalist)
 ```
 
-We don't get any warnings out of the estimation, but let's look at the sdreport in more detail. 
+We don't get any warnings out of the estimation, but let's look at the sdreport in more detail. `fitted` is of the `salmix` class and contains the following
 
-First we can look at the convergence code,
+```{r}
+names(fitted)
+```
+
+The `init_values` are the initial parameter values where optimization was started from, and the `data_list` represents the raw data. The `pars` component contains information relative to convergence and iterations, including the convergence code (0 = successful convergence),
 ```{r}
 fitted$pars$convergence
 ```
 
-This looks like things are converging. But sometimes relative convergence won't thrown warnings. We can also look at the variance estimates, which also are estimated (a good sign things are converged!).
+This looks like things are converging. But sometimes relative convergence (code = 4) won't throw warnings. We can also look at the variance estimates, which also are estimated (a good sign things are converged!). These are all included in the `sdreport` -- the parameters and their standard errors are accessible with
 
 ```{r}
 sdrep_df = data.frame("par"=names(fitted$sdreport$value),
   "value"=fitted$sdreport$value, "sd"=fitted$sdreport$sd)
 head(sdrep_df)
 ```
+
+If for some reason, these need to be re-generated, the `obj` object can be fed into 
+
+```{r eval = FALSE}
+TMB::sdreport(fitted$obj)
+```
+
+
+
 
 ### Plotting results
 
@@ -119,7 +132,7 @@ The object returned by `plot_diagnostics` is just a ggplot object, so additional
 First, we can try to fit the same model, but using an asymmetric t-distribution.
 
 ```{r message=FALSE, warning=FALSE, results='hide'}
-set.seed(1)
+set.seed(2)
 
 datalist = create_data(fishdist, 
   min_number=0, 
@@ -148,7 +161,7 @@ aic_2
 Second, we can we can try to fit the same model, but using a generalized normal distribution. This distribution has a plateau or 'flat top'. For examples, see the `gnorm` package on CRAN [here](https://cran.r-project.org/web/packages/gnorm/index.html) or [Wikipedia page](https://en.wikipedia.org/wiki/Generalized_normal_distribution).
 
 ```{r message=FALSE, warning=FALSE, results='hide', eval=FALSE}
-set.seed(1)
+set.seed(5)
 
 datalist = create_data(fishdist, 
   min_number=0, 
@@ -157,7 +170,7 @@ datalist = create_data(fishdist,
   date = "doy",
   asymmetric_model = FALSE, 
   tail_model = "gnorm")
-fitted = fit(datalist, inits = inits, limits = TRUE)
+fitted = fit(datalist, limits = TRUE)
 ```
 
 ### Diagnosing lack of convergence
@@ -171,3 +184,6 @@ fit = fitted(..., control=list(rel.tol = 1.0e-12,
   eval.max=4000, iter.max=4000))
 ```
 
+### Adding covariates
+
+Finally, it's possible to include covariates instead of inter-annual trends - either in the mean or standard deviation parameters. These arguments are `mu_covariate` and `sigma_covariate`, which are string variables declaring the name of the variable in the data frame passed to `create_data`. These variables may be the same or different variables, and for asymmetric models the trend variables are required to be the same on the left and right hand sides of the distribution.

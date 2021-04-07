@@ -48,6 +48,9 @@ set.seed(1)
 fitted = fit(datalist)
 
 ## -----------------------------------------------------------------------------
+names(fitted)
+
+## -----------------------------------------------------------------------------
 fitted$pars$convergence
 
 ## -----------------------------------------------------------------------------
@@ -55,12 +58,15 @@ sdrep_df = data.frame("par"=names(fitted$sdreport$value),
   "value"=fitted$sdreport$value, "sd"=fitted$sdreport$sd)
 head(sdrep_df)
 
+## ----eval = FALSE-------------------------------------------------------------
+#  TMB::sdreport(fitted$obj)
+
 ## ---- fig.cap="Fitted symmetric model with tails from a  Gaussian distribution", fig.width = 8----
 g = plot_diagnostics(fitted, type="timing", logspace=TRUE)
 g
 
 ## ----message=FALSE, warning=FALSE, results='hide'-----------------------------
-set.seed(1)
+set.seed(2)
 
 datalist = create_data(fishdist, 
   min_number=0, 
@@ -82,7 +88,7 @@ aic_2 = extractAIC(fitted_t)$AIC
 aic_2
 
 ## ----message=FALSE, warning=FALSE, results='hide', eval=FALSE-----------------
-#  set.seed(1)
+#  set.seed(5)
 #  
 #  datalist = create_data(fishdist,
 #    min_number=0,
@@ -91,7 +97,7 @@ aic_2
 #    date = "doy",
 #    asymmetric_model = FALSE,
 #    tail_model = "gnorm")
-#  fitted = fit(datalist, inits = inits, limits = TRUE)
+#  fitted = fit(datalist, limits = TRUE)
 
 ## ----eval=FALSE---------------------------------------------------------------
 #  fit = fitted(..., control=list(rel.tol = 1.0e-12,

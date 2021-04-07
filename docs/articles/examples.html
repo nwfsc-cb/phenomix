@@ -244,6 +244,11 @@ Fitted asymmetric model with heavy tails from a t-distribution
 <code class="sourceCode R"><span class="va">fit</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/fitted.values.html">fitted</a></span><span class="op">(</span><span class="va">...</span>, control<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>rel.tol <span class="op">=</span> <span class="fl">1.0e-12</span>, 
   eval.max<span class="op">=</span><span class="fl">4000</span>, iter.max<span class="op">=</span><span class="fl">4000</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 </div>
+<div id="adding-covariates" class="section level3">
+<h3 class="hasAnchor">
+<a href="#adding-covariates" class="anchor"></a>Adding covariates</h3>
+<p>Finally, it’s possible to include covariates instead of inter-annual trends - either in the mean or standard deviation parameters. These arguments are <code>mu_covariate</code> and <code>sigma_covariate</code>, which are string variables declaring the name of the variable in the data frame passed to <code>create_data</code>. These variables may be the same or different variables, and for asymmetric models the trend variables are required to be the same on the left and right hand sides of the distribution.</p>
+</div>
 </div>
   </div>
 

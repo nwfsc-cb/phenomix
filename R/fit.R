@@ -100,8 +100,10 @@ fit <- function(data_list,
 
   if (data_list$sig_trend == 0) {
     tmb_map <- c(tmb_map, list(
-      sig1_b1 = as.factor(NA)
+      sig1_b1 = as.factor(NA),
+      sig2_b1 = as.factor(NA)
     ))
+  } else {
     if (data_list$asymmetric == 0) {
       tmb_map <- c(tmb_map, list(
         sig2_b1 = as.factor(NA)

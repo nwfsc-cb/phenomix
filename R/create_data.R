@@ -14,6 +14,8 @@
 #' @param est_mu_trend Whether to fit a linear trend in means. Defaults to TRUE (when FALSE, an intercept and random deviations are estimated)
 #' @param est_sigma_re Whether to estimate random effects by year in sigma parameter controlling tail of distribution. Defaults to TRUE
 #' @param est_mu_re Whether to estimate random effects by year in mu parameter controlling location of distribution. Defaults to TRUE
+#' @param mu_covariate Optional covariate for including in the mu trend. If trend is estimated, and this isn't specified the covariate defaults to time
+#' @param sigma_covariate Optional covariate for including in the sigma trend. If trend is estimated, and this isn't specified the covariate defaults to time
 #' @param tail_model Whether to fit Gaussian ("gaussian" = default) or Student-t ("student_t") or generalized normal ("gnorm"). Defaults to FALSE
 #' @param family Response for observation model, options are "gaussian", "poisson", "negbin"
 #' @export
@@ -32,6 +34,8 @@ create_data <- function(data, min_number = 0,
                         est_mu_trend = TRUE,
                         est_sigma_re = TRUE,
                         est_mu_re = TRUE,
+                        mu_covariate = NA,
+                        sigma_covariate = NA,
                         tail_model = "gaussian",
                         family = "gaussian") {
   dist <- c("gaussian", "poisson", "negbin")
@@ -64,6 +68,23 @@ create_data <- function(data, min_number = 0,
     stop("Error: if trying to model the trend in sigma, 'est_sigma_re' needs to be TRUE, otherwise parameters aren't identifiable")
   }
 
+  mu_cov = rep(0, length(unique(data[[time]])))
+  if(is.na(mu_covariate)) mu_covariate = time
+  if(est_mu_trend==TRUE) {
+    for(i in 1:length(unique(data[[time]]))) {
+      mu_cov[i] = data[which(data[[time]] == unique(data[[time]])[i])[1],mu_covariate]
+    }
+    mu_cov = (mu_cov - mean(mu_cov)) / sd(mu_cov)
+  }
+  sigma_cov = rep(0, length(unique(data[[time]])))
+  if(is.na(sigma_covariate)) sigma_covariate = time
+  if(est_sigma_trend==TRUE) {
+    for(i in 1:length(unique(data[[time]]))) {
+      sigma_cov[i] = data[which(data[[time]] == unique(data[[time]])[i])[1],sigma_covariate]
+    }
+    sigma_cov = (sigma_cov - mean(sigma_cov)) / sd(sigma_cov)
+  }
+
   # if 1 level, turn off trend and random effect estimation
   if (length(unique(as.numeric(data[, time]))) == 1) {
     est_sigma_trend <- FALSE
@@ -92,7 +113,9 @@ create_data <- function(data, min_number = 0,
     mu_trend = as.numeric(est_mu_trend),
     tail_model = as.numeric(tailmod) - 1,
     est_sigma_re = as.numeric(est_sigma_re),
-    est_mu_re = as.numeric(est_mu_re)
+    est_mu_re = as.numeric(est_mu_re),
+    mu_cov = as.numeric(mu_cov),
+    sigma_cov = as.numeric(sigma_cov)
   )
 
   return(data_list)

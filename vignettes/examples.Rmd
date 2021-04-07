@@ -1,9 +1,9 @@
 ---
-title: "Curve fitting with the salmix package"
+title: "Fitting time varying phenology models with the salmix package"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Curve fitting with the salmix package}
+  %\VignetteIndexEntry{Fitting time varying phenology models with the salmix package}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -132,7 +132,7 @@ The object returned by `plot_diagnostics` is just a ggplot object, so additional
 First, we can try to fit the same model, but using an asymmetric t-distribution.
 
 ```{r message=FALSE, warning=FALSE, results='hide'}
-set.seed(1)
+set.seed(2)
 
 datalist = create_data(fishdist, 
   min_number=0, 
@@ -161,7 +161,7 @@ aic_2
 Second, we can we can try to fit the same model, but using a generalized normal distribution. This distribution has a plateau or 'flat top'. For examples, see the `gnorm` package on CRAN [here](https://cran.r-project.org/web/packages/gnorm/index.html) or [Wikipedia page](https://en.wikipedia.org/wiki/Generalized_normal_distribution).
 
 ```{r message=FALSE, warning=FALSE, results='hide', eval=FALSE}
-set.seed(1)
+set.seed(5)
 
 datalist = create_data(fishdist, 
   min_number=0, 
@@ -170,7 +170,7 @@ datalist = create_data(fishdist,
   date = "doy",
   asymmetric_model = FALSE, 
   tail_model = "gnorm")
-fitted = fit(datalist, inits = inits, limits = TRUE)
+fitted = fit(datalist, limits = TRUE)
 ```
 
 ### Diagnosing lack of convergence

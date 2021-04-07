@@ -5,13 +5,13 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Curve fitting with the salmix package • salmix</title>
+<title>Fitting time varying phenology models with the salmix package • salmix</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="Curve fitting with the salmix package">
+<script src="../pkgdown.js"></script><meta property="og:title" content="Fitting time varying phenology models with the salmix package">
 <meta property="og:description" content="salmix">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -54,7 +54,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/examples.html">Curve fitting with the salmix package</a>
+      <a href="../articles/examples.html">Fitting time varying phenology models with the salmix package</a>
     </li>
   </ul>
 </li>
@@ -79,7 +79,7 @@
       </header><script src="examples_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Curve fitting with the salmix package</h1>
+      <h1 data-toc-skip>Fitting time varying phenology models with the salmix package</h1>
             
             <h4 class="date">2021-04-06</h4>
       
@@ -165,12 +165,12 @@
   <span class="st">"value"</span><span class="op">=</span><span class="va">fitted</span><span class="op">$</span><span class="va">sdreport</span><span class="op">$</span><span class="va">value</span>, <span class="st">"sd"</span><span class="op">=</span><span class="va">fitted</span><span class="op">$</span><span class="va">sdreport</span><span class="op">$</span><span class="va">sd</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">sdrep_df</span><span class="op">)</span>
 <span class="co">#&gt;     par    value        sd</span>
-<span class="co">#&gt; 1 theta 8.405112 0.2253369</span>
-<span class="co">#&gt; 2 theta 8.625972 0.2248001</span>
-<span class="co">#&gt; 3 theta 8.468620 0.2057673</span>
-<span class="co">#&gt; 4 theta 8.151020 0.1577421</span>
-<span class="co">#&gt; 5 theta 8.114337 0.1900175</span>
-<span class="co">#&gt; 6 theta 8.234232 0.2192143</span></code></pre></div>
+<span class="co">#&gt; 1 theta 8.405112 0.2253368</span>
+<span class="co">#&gt; 2 theta 8.625975 0.2248003</span>
+<span class="co">#&gt; 3 theta 8.468619 0.2057674</span>
+<span class="co">#&gt; 4 theta 8.151018 0.1577422</span>
+<span class="co">#&gt; 5 theta 8.114336 0.1900176</span>
+<span class="co">#&gt; 6 theta 8.234240 0.2192147</span></code></pre></div>
 <p>If for some reason, these need to be re-generated, the <code>obj</code> object can be fed into</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">TMB</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/TMB/man/sdreport.html">sdreport</a></span><span class="op">(</span><span class="va">fitted</span><span class="op">$</span><span class="va">obj</span><span class="op">)</span></code></pre></div>
@@ -195,7 +195,7 @@ Fitted symmetric model with tails from a Gaussian distribution
 <a href="#additional-examples" class="anchor"></a>Additional examples</h3>
 <p>First, we can try to fit the same model, but using an asymmetric t-distribution.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span>
 
 <span class="va">datalist</span> <span class="op">=</span> <span class="fu"><a href="../reference/create_data.html">create_data</a></span><span class="op">(</span><span class="va">fishdist</span>, 
   min_number<span class="op">=</span><span class="fl">0</span>, 
@@ -221,10 +221,10 @@ Fitted asymmetric model with heavy tails from a t-distribution
 
 <span class="va">aic_2</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/extractAIC.html">extractAIC</a></span><span class="op">(</span><span class="va">fitted_t</span><span class="op">)</span><span class="op">$</span><span class="va">AIC</span>
 <span class="va">aic_2</span>
-<span class="co">#&gt; [1] 3234.865</span></code></pre></div>
+<span class="co">#&gt; [1] 2300.259</span></code></pre></div>
 <p>Second, we can we can try to fit the same model, but using a generalized normal distribution. This distribution has a plateau or ‘flat top’. For examples, see the <code>gnorm</code> package on CRAN <a href="https://cran.r-project.org/web/packages/gnorm/index.html">here</a> or <a href="https://en.wikipedia.org/wiki/Generalized_normal_distribution">Wikipedia page</a>.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span>
 
 <span class="va">datalist</span> <span class="op">=</span> <span class="fu"><a href="../reference/create_data.html">create_data</a></span><span class="op">(</span><span class="va">fishdist</span>, 
   min_number<span class="op">=</span><span class="fl">0</span>, 
@@ -233,7 +233,7 @@ Fitted asymmetric model with heavy tails from a t-distribution
   date <span class="op">=</span> <span class="st">"doy"</span>,
   asymmetric_model <span class="op">=</span> <span class="cn">FALSE</span>, 
   tail_model <span class="op">=</span> <span class="st">"gnorm"</span><span class="op">)</span>
-<span class="va">fitted</span> <span class="op">=</span> <span class="fu"><a href="../reference/fit.html">fit</a></span><span class="op">(</span><span class="va">datalist</span>, inits <span class="op">=</span> <span class="va">inits</span>, limits <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<span class="va">fitted</span> <span class="op">=</span> <span class="fu"><a href="../reference/fit.html">fit</a></span><span class="op">(</span><span class="va">datalist</span>, limits <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="diagnosing-lack-of-convergence" class="section level3">
 <h3 class="hasAnchor">

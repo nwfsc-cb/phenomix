@@ -95,7 +95,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/examples.html">Curve fitting with the salmix package</a>
+      <a href="../articles/examples.html">Fitting time varying phenology models with the salmix package</a>
     </li>
   </ul>
 </li>
@@ -140,6 +140,8 @@
   est_mu_trend <span class='op'>=</span> <span class='cn'>TRUE</span>,
   est_sigma_re <span class='op'>=</span> <span class='cn'>TRUE</span>,
   est_mu_re <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  mu_covariate <span class='op'>=</span> <span class='cn'>NA</span>,
+  sigma_covariate <span class='op'>=</span> <span class='cn'>NA</span>,
   tail_model <span class='op'>=</span> <span class='st'>"gaussian"</span>,
   family <span class='op'>=</span> <span class='st'>"gaussian"</span>
 <span class='op'>)</span></pre>
@@ -188,6 +190,14 @@ different shape than run timing after peak)</p></td>
     <tr>
       <th>est_mu_re</th>
       <td><p>Whether to estimate random effects by year in mu parameter controlling location of distribution. Defaults to TRUE</p></td>
+    </tr>
+    <tr>
+      <th>mu_covariate</th>
+      <td><p>Optional covariate for including in the mu trend. If trend is estimated, and this isn't specified the covariate defaults to time</p></td>
+    </tr>
+    <tr>
+      <th>sigma_covariate</th>
+      <td><p>Optional covariate for including in the sigma trend. If trend is estimated, and this isn't specified the covariate defaults to time</p></td>
     </tr>
     <tr>
       <th>tail_model</th>

@@ -15,6 +15,8 @@ create_data(
   est_mu_trend = TRUE,
   est_sigma_re = TRUE,
   est_mu_re = TRUE,
+  mu_covariate = NA,
+  sigma_covariate = NA,
   tail_model = "gaussian",
   family = "gaussian"
 )
@@ -41,6 +43,10 @@ different shape than run timing after peak)}
 \item{est_sigma_re}{Whether to estimate random effects by year in sigma parameter controlling tail of distribution. Defaults to TRUE}
 
 \item{est_mu_re}{Whether to estimate random effects by year in mu parameter controlling location of distribution. Defaults to TRUE}
+
+\item{mu_covariate}{Optional covariate for including in the mu trend. If trend is estimated, and this isn't specified the covariate defaults to time}
+
+\item{sigma_covariate}{Optional covariate for including in the sigma trend. If trend is estimated, and this isn't specified the covariate defaults to time}
 
 \item{tail_model}{Whether to fit Gaussian ("gaussian" = default) or Student-t ("student_t") or generalized normal ("gnorm"). Defaults to FALSE}
 

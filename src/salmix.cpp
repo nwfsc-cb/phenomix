@@ -102,6 +102,8 @@ Type objective_function<Type>::operator() ()
   DATA_INTEGER(tail_model); // 0 if gaussian, 1 = student_t, 2 = generalized normal for tails
   DATA_INTEGER(est_sigma_re); // 0 if FALSE, 1 = TRUE. Whether to estimate deviations as random effects
   DATA_INTEGER(est_mu_re); // 0 if FALSE, 1 = TRUE. Whether to estimate deviations as random effects
+  DATA_VECTOR(mu_cov); // vector of covariates for mean trend
+  DATA_VECTOR(sigma_cov); // vector of covariates for sigma trend
 
   PARAMETER_VECTOR(sigma1_devs);
   PARAMETER_VECTOR(theta);
@@ -174,9 +176,11 @@ Type objective_function<Type>::operator() ()
     if(asymmetric == 1) {
       temp_calc = sigma2_devs(i);
       if(sig_trend==1) {
-        temp_calc += sigma2_devs(0) + sig2_b1*Type(unique_years(i));
+        //temp_calc += sigma2_devs(0) + sig2_b1*Type(unique_years(i));
+        temp_calc += sigma2_devs(0) + sig2_b1*Type(sigma_cov(i));
         // scalar(i) is just log(sig2) - log(sig1)
-        scalar(i) = sig2_b1*Type(unique_years(i)) + sigma2_devs(i) - (sig1_b1*Type(unique_years(i)) + sigma1_devs(i));
+        //scalar(i) = sig2_b1*Type(unique_years(i)) + sigma2_devs(i) - (sig1_b1*Type(unique_years(i)) + sigma1_devs(i));
+        scalar(i) = sig2_b1*Type(sigma_cov(i)) + sigma2_devs(i) - (sig1_b1*Type(sigma_cov(i)) + sigma1_devs(i));
       } else {
         scalar(i) = sigma2_devs(i) - sigma1_devs(i);
       }
@@ -197,7 +201,8 @@ Type objective_function<Type>::operator() ()
       mu(i) += exp(log_mu_b0);
     }
     if(mu_trend == 1) {
-      mu(i) += mu_b1*Type(unique_years(i));
+      //mu(i) += mu_b1*Type(unique_years(i));
+      mu(i) += mu_b1*Type(mu_cov(i));
     }
 
     // this is all for calculating quantiles on LHS

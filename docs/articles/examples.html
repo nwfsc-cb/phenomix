@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">salmix</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.4</span>
       </span>
     </div>
 
@@ -81,7 +81,7 @@
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Fitting time varying phenology models with the salmix package</h1>
             
-            <h4 class="date">2021-04-06</h4>
+            <h4 class="date">2021-04-29</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/ericward-noaa/salmix/blob/master/vignettes/examples.Rmd"><code>vignettes/examples.Rmd</code></a></small>
       <div class="hidden name"><code>examples.Rmd</code></div>
@@ -94,7 +94,11 @@
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ericward-noaa.github.io/salmix">salmix</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/kaskr/adcomp/wiki">TMB</a></span><span class="op">)</span></code></pre></div>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/kaskr/adcomp/wiki">TMB</a></span><span class="op">)</span>
+<span class="co">#&gt; Warning in checkMatrixPackageVersion(): Package version inconsistency detected.</span>
+<span class="co">#&gt; TMB was built with Matrix version 1.3.2</span>
+<span class="co">#&gt; Current Matrix version is 1.2.18</span>
+<span class="co">#&gt; Please re-install 'TMB' from source using install.packages('TMB', type = 'source') or ask CRAN for a binary version of 'TMB' matching CRAN's 'Matrix' package</span></code></pre></div>
 <div id="overview" class="section level2">
 <h2 class="hasAnchor">
 <a href="#overview" class="anchor"></a>Overview</h2>
@@ -112,12 +116,12 @@
 <p><img src="examples_files/figure-html/unnamed-chunk-1-1.png" width="672"></p>
 <p>For demonstration purposes, we incuded an example dataset, based on run timing data for Pacific salmon.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html">glimpse</a></span><span class="op">(</span><span class="va">fishdist</span><span class="op">)</span>
+<code class="sourceCode R"><span class="fu"><a href="https://tibble.tidyverse.org/reference/glimpse.html">glimpse</a></span><span class="op">(</span><span class="va">fishdist</span><span class="op">)</span>
 <span class="co">#&gt; Rows: 1,005</span>
 <span class="co">#&gt; Columns: 3</span>
-<span class="co">#&gt; $ year   &lt;dbl&gt; 1960, 1960, 1960, 1960, 1960, 1960, 1960, 1960, 1960, 1960, 196…</span>
-<span class="co">#&gt; $ number &lt;int&gt; 5, 5, 5, 3, 9, 4, 3, 3, 5, 3, 3, 7, 2, 9, 21, 11, 75, 368, 385,…</span>
-<span class="co">#&gt; $ doy    &lt;int&gt; 95, 113, 120, 121, 122, 123, 124, 126, 127, 128, 130, 131, 132,…</span></code></pre></div>
+<span class="co">#&gt; $ year   &lt;dbl&gt; 1960, 1960, 1960, 1960, 1960, 1960, 1960, 1960, 1960, 1960, 19…</span>
+<span class="co">#&gt; $ number &lt;int&gt; 5, 5, 5, 3, 9, 4, 3, 3, 5, 3, 3, 7, 2, 9, 21, 11, 75, 368, 385…</span>
+<span class="co">#&gt; $ doy    &lt;int&gt; 95, 113, 120, 121, 122, 123, 124, 126, 127, 128, 130, 131, 132…</span></code></pre></div>
 <div id="manipulating-data-for-estimation" class="section level3">
 <h3 class="hasAnchor">
 <a href="#manipulating-data-for-estimation" class="anchor"></a>Manipulating data for estimation</h3>

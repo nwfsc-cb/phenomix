@@ -16,21 +16,21 @@ NULL
 #' @examples
 #' data(fishdist)
 #'
-#' # example of fitting fixed effects, no trends
-#' # set.seed(1)
-#' # datalist <- create_data(fishdist[which(fishdist$year > 1970),], asymmetric_model = FALSE,
-#' #    est_sigma_trend=FALSE, est_mu_trend=FALSE)
-#' # fit <- fit(datalist)
+#' # example of fitting fixed effects, no trends, no random effects
+#' set.seed(1)
+#' datalist <- create_data(fishdist[which(fishdist$year > 1970),], asymmetric_model = FALSE,
+#' est_mu_re = FALSE, est_sigma_re = FALSE)
+#' fit <- fit(datalist)
 #' #
-#' # # example of model with random effects in means
+#' # # example of model with random effects in means only, and symmetric distribution
 #' # set.seed(1)
-#' # datalist <- create_data(fishdist[which(fishdist$year > 1970),], asymmetric_model = FALSE,
-#' #                         est_sigma_trend=FALSE, est_mu_trend=FALSE, est_mu_re = TRUE)
-#' # fit <- fit(datalist)
+#' #datalist <- create_data(fishdist[which(fishdist$year > 1970),], asymmetric_model = FALSE,
+#' #                      est_sigma_re = FALSE)
+#' #fit <- fit(datalist)
 #' # # example of model with random effects in variances
 #' # set.seed(1)
-#' # datalist <- create_data(fishdist[which(fishdist$year > 1970),], asymmetric_model = FALSE,
-#' #                         est_sigma_trend=FALSE, est_mu_trend=FALSE, est_sigma_re = TRUE)
+#' #datalist <- create_data(fishdist[which(fishdist$year > 1970),], asymmetric_model = TRUE,
+#' #                          est_mu_re = TRUE)
 #' # fit <- fit(datalist)
 #' #
 #' # # example of model with poisson response
@@ -48,38 +48,43 @@ fit <- function(data_list,
   # create list of parameter starting values -- used in both
   # asymmetric and symmetric models
   parameters <- list(
-    sigma1_devs = rep(1, data_list$nLevels),
     theta = rnorm(n = data_list$nLevels, log(mean(data_list$y))),
-    log_mu_b0 = log(mean(data_list$x)),
-    mu_b1 = 0.005,
-    log_sigma_mu_devs = 0.0,
-    sig1_b0 = 0.0,
-    sig1_b1 = 0.0,
+    #log_mu_b0 = log(mean(data_list$x)),
+    #mu_b1 = 0.005,
+    b_mu = rep(0, ncol(data_list$mu_mat)),
+    log_sigma_mu_devs = 1,
+    #sig1_b0 = 0.0,
+    #sig1_b1 = 0.0,
+    b_sig1 = rep(1, ncol(data_list$sig_mat)),
+    b_sig2 = rep(1, ncol(data_list$sig_mat)),
     log_sigma1 = 0.0,
     log_obs_sigma = 0.0,
+    sigma1_devs = rep(0, data_list$nLevels),
     sigma2_devs = rep(0, data_list$nLevels),
-    sig2_b0 = 0.0,
-    sig2_b1 = 0.0,
+    mu_devs = rep(0, data_list$nLevels),
+    #sig2_b0 = 0.0,
+    #sig2_b1 = 0.0,
     log_sigma2 = 0.0,
     log_tdf_1 = 0,
     log_tdf_2 = 0,
     log_beta_1 = 0,
     log_beta_2 = 0
   )
+  parameters$b_mu[1] = mean(data_list$x)
 
-  if (data_list$est_mu_re == 0) {
-    # parameters are fixed effects
-    parameters <- append(
-      parameters,
-      list(mu_devs = rnorm(n = data_list$nLevels, mean(data_list$x)))
-    )
-  } else {
-    # parameters are deviations in log-space from the mean
-    parameters <- append(
-      parameters,
-      list(mu_devs = rep(0, data_list$nLevels))
-    )
-  }
+  # if (data_list$est_mu_re == 0) {
+  #   # parameters are fixed effects
+  #   parameters <- append(
+  #     parameters,
+  #     list(mu_devs = rnorm(n = data_list$nLevels, mean(data_list$x)))
+  #   )
+  # } else {
+  #   # parameters are deviations in log-space from the mean
+  #   parameters <- append(
+  #     parameters,
+  #     list(mu_devs = rep(0, data_list$nLevels))
+  #   )
+  # }
 
   # If inits is included, use that instead of parameters
   if (!is.null(inits)) parameters <- inits
@@ -93,25 +98,10 @@ fit <- function(data_list,
   if (data_list$asymmetric == 0) {
     # map off pars not needed
     tmb_map <- c(tmb_map, list(
+      b_sig2 = rep(as.factor(NA), ncol(data_list$sig_mat)),
       log_sigma2 = as.factor(NA),
       sigma2_devs = rep(as.factor(NA), data_list$nLevels)
     ))
-  }
-
-  if (data_list$sig_trend == 0) {
-    tmb_map <- c(tmb_map, list(
-      sig1_b1 = as.factor(NA),
-      sig2_b1 = as.factor(NA)
-    ))
-  } else {
-    if (data_list$asymmetric == 0) {
-      tmb_map <- c(tmb_map, list(
-        sig2_b1 = as.factor(NA)
-      ))
-    }
-  }
-  if (data_list$mu_trend == 0) {
-    tmb_map <- c(tmb_map, list(mu_b1 = as.factor(NA)))
   }
 
   if (data_list$tail_model == 0) {
@@ -128,7 +118,8 @@ fit <- function(data_list,
     if (data_list$asymmetric == 0) {
       # then map off the tdf2, because model is symmetric
       tmb_map <- c(tmb_map, list(
-        log_tdf_2 = as.factor(NA), log_beta_1 = as.factor(NA),
+        log_tdf_2 = as.factor(NA),
+        log_beta_1 = as.factor(NA),
         log_beta_2 = as.factor(NA)
       ))
     } else {
@@ -143,7 +134,8 @@ fit <- function(data_list,
     if (data_list$asymmetric == 0) {
       # then map off the beta2, because model is symmetric
       tmb_map <- c(tmb_map, list(
-        log_beta_2 = as.factor(NA), log_tdf_1 = as.factor(NA),
+        log_beta_2 = as.factor(NA),
+        log_tdf_1 = as.factor(NA),
         log_tdf_2 = as.factor(NA)
       ))
     } else {
@@ -163,35 +155,37 @@ fit <- function(data_list,
   if (data_list$est_mu_re == 0) {
     tmb_map <- c(tmb_map, list(
       log_sigma_mu_devs = as.factor(NA),
-      log_mu_b0 = as.factor(NA)
+      mu_devs = rep(as.factor(NA), data_list$nLevels)
+      #log_mu_b0 = as.factor(NA)
     ))
     # mu_devs = rep(as.factor(NA), data_list$nLevels))
   }
   # if don't estimate sd random effects map them off
-  if (data_list$est_sigma_re == 0 | data_list$asymmetric == 0) {
-    tmb_map <- c(tmb_map, list(sig2_b0 = as.factor(NA)))
-  }
+  #if (data_list$est_sigma_re == 0 | data_list$asymmetric == 0) {
+  #  tmb_map <- c(tmb_map, list(sig2_b0 = as.factor(NA)))
+  #}
   if (data_list$est_sigma_re == 0) {
     tmb_map <- c(tmb_map, list(
-      sig1_b0 = as.factor(NA),
+      #sig1_b0 = as.factor(NA),
       log_sigma1 = as.factor(NA),
       log_sigma2 = as.factor(NA),
+      sigma1_devs = rep(as.factor(NA), data_list$nLevels),
       sigma2_devs = rep(as.factor(NA), data_list$nLevels)
     ))
   } else {
     if (data_list$asymmetric == 0) {
       tmb_map <- c(tmb_map, list(
-        sig2_b0 = as.factor(NA),
+        #sig2_b0 = as.factor(NA),
         log_sigma2 = as.factor(NA),
-        sig2_b1 = as.factor(NA),
+        #sig2_b1 = as.factor(NA),
         sigma2_devs = rep(as.factor(NA), data_list$nLevels)
       ))
-    } else {
+    } #else {
       # estimate the random effects, just don't estimate the trend
-      if (data_list$sig_trend == 0) {
-        tmb_map <- c(tmb_map, list(sig2_b1 = as.factor(NA)))
-      }
-    }
+      #if (data_list$sig_trend == 0) {
+      #  tmb_map <- c(tmb_map, list(sig2_b1 = as.factor(NA)))
+      #}
+    #}
   }
 
   random <- ""

@@ -11,12 +11,11 @@ create_data(
   time = "year",
   date = "doy",
   asymmetric_model = TRUE,
-  est_sigma_trend = TRUE,
-  est_mu_trend = TRUE,
+  mu = ~1,
+  sigma = ~1,
+  covar_data = NULL,
   est_sigma_re = TRUE,
   est_mu_re = TRUE,
-  mu_covariate = NA,
-  sigma_covariate = NA,
   tail_model = "gaussian",
   family = "gaussian"
 )
@@ -31,22 +30,23 @@ create_data(
 \item{time}{A character string of the name of the variable in 'data' that contains the time variable (e.g. year)}
 
 \item{date}{A character string of the name of the variable in 'data' that contains the response (e.g. day of year). The actual
-column should contain a numeric response -- for example, the result from using lubridate::yday(x)}
+#' column should contain a numeric response -- for example, the result from using lubridate::yday(x)}
 
 \item{asymmetric_model}{Boolean, whether or not to let model be asymmetric (e.g. run timing before peak has a
 different shape than run timing after peak)}
 
-\item{est_sigma_trend}{Whether to fit a log-linear trend in standard deviations. Defaults to TRUE (when FALSE, an intercept and random deviations are estimated)}
+\item{mu}{An optional formula allowing the mean to be a function of covariates. Random effects are not included in the formula
+but specified with the \code{est_mu_re} argument}
 
-\item{est_mu_trend}{Whether to fit a linear trend in means. Defaults to TRUE (when FALSE, an intercept and random deviations are estimated)}
+\item{sigma}{An optional formula allowing the standard deviation to be a function of covariates. For asymmetric models,
+each side of the distribution is allowed a different set of covariates. Random effects are not included in the formula
+but specified with the \code{est_sigma_re} argument}
+
+\item{covar_data}{a data frame containing covariates specific to each time step. These are used in the formulas \code{mu} and \code{sigma}}
 
 \item{est_sigma_re}{Whether to estimate random effects by year in sigma parameter controlling tail of distribution. Defaults to TRUE}
 
 \item{est_mu_re}{Whether to estimate random effects by year in mu parameter controlling location of distribution. Defaults to TRUE}
-
-\item{mu_covariate}{Optional covariate for including in the mu trend. If trend is estimated, and this isn't specified the covariate defaults to time}
-
-\item{sigma_covariate}{Optional covariate for including in the sigma trend. If trend is estimated, and this isn't specified the covariate defaults to time}
 
 \item{tail_model}{Whether to fit Gaussian ("gaussian" = default) or Student-t ("student_t") or generalized normal ("gnorm"). Defaults to FALSE}
 

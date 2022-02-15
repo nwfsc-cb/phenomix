@@ -90,6 +90,7 @@ Type objective_function<Type>::operator() ()
   using namespace density;
 
   DATA_VECTOR(y); // vector of counts
+  //DATA_IVECTOR(yint); // counts for poisson/negbin models
   DATA_VECTOR(x); // vector of calendar dates
   DATA_IVECTOR(years); // vector of years to assign each count to
   DATA_IVECTOR(year_levels);
@@ -97,32 +98,32 @@ Type objective_function<Type>::operator() ()
   DATA_INTEGER(nLevels); // number of unique years
   DATA_INTEGER(asymmetric); // 0 if false, 1 = true. Whether to estimate same shape/scale parameters before/after mean
   DATA_INTEGER(family); // 1 gaussian, 2 = poisson, 3 = neg bin
-  DATA_INTEGER(sig_trend); // 0 if false, 1 = true. Whether to estimate trend parameters with respect to sds
-  DATA_INTEGER(mu_trend); // 0 if false, 1 = true. Whether to estimate trend parameters with respect to mean
+  //DATA_INTEGER(sig_trend); // 0 if false, 1 = true. Whether to estimate trend parameters with respect to sds
+  //DATA_INTEGER(mu_trend); // 0 if false, 1 = true. Whether to estimate trend parameters with respect to mean
   DATA_INTEGER(tail_model); // 0 if gaussian, 1 = student_t, 2 = generalized normal for tails
   DATA_INTEGER(est_sigma_re); // 0 if FALSE, 1 = TRUE. Whether to estimate deviations as random effects
   DATA_INTEGER(est_mu_re); // 0 if FALSE, 1 = TRUE. Whether to estimate deviations as random effects
-  DATA_VECTOR(mu_cov); // vector of covariates for mean trend
-  DATA_VECTOR(sigma_cov); // vector of covariates for sigma trend
+  //DATA_VECTOR(mu_cov); // vector of covariates for mean trend
+  //DATA_VECTOR(sigma_cov); // vector of covariates for sigma trend
+  DATA_MATRIX(mu_mat); // matrix of covariates for mean trend
+  DATA_MATRIX(sig_mat);  // matrix of covariates for sigma trend
 
-  PARAMETER_VECTOR(sigma1_devs);
-  PARAMETER_VECTOR(theta);
-  PARAMETER_VECTOR(mu_devs);
-  PARAMETER(log_mu_b0);
-  PARAMETER(mu_b1);
-  PARAMETER(log_sigma_mu_devs);
-  PARAMETER(sig1_b0);
-  PARAMETER(sig1_b1);
-  PARAMETER(log_sigma1);
-  PARAMETER(log_obs_sigma);
-  PARAMETER(sig2_b0);
-  PARAMETER(sig2_b1);
-  PARAMETER(log_sigma2);
-  PARAMETER_VECTOR(sigma2_devs);
-  PARAMETER(log_tdf_1);
-  PARAMETER(log_tdf_2);
+  PARAMETER(log_sigma1);// log sd of random effects on sigma1
+  PARAMETER_VECTOR(sigma1_devs);// random effects on sigma1
+  PARAMETER(log_sigma2);// log sd of random effects on sigma2
+  PARAMETER_VECTOR(sigma2_devs);// random effects on sigma2
+  PARAMETER_VECTOR(theta); // scaling parameter
+  PARAMETER_VECTOR(mu_devs);// random effects on mean
+  PARAMETER(log_sigma_mu_devs); // log sd of random effects on mean
+  PARAMETER(log_tdf_1);// log of Student t df 1
+  PARAMETER(log_tdf_2);// log of Student t df 2
   PARAMETER(log_beta_1);
   PARAMETER(log_beta_2);
+  PARAMETER(log_obs_sigma);// log sd of observation error
+
+  PARAMETER_VECTOR(b_mu); // coefficients for covariates on mean
+  PARAMETER_VECTOR(b_sig1); // coefficients for covariates on sigma1
+  PARAMETER_VECTOR(b_sig2); // coefficients for covariates on sigma2
 
   // derived parameters
   Type obs_sigma=exp(log_obs_sigma);
@@ -138,6 +139,8 @@ Type objective_function<Type>::operator() ()
   vector<Type> range(nLevels); // 75th - 25th percentile
   int i;
   int n = y.size();
+  vector<Type> log_dens(n);
+  vector<Type> pred(n);
 
   // calculations for beta for gnorm dist if implemented
   vector<Type> beta_ratio(2);
@@ -149,7 +152,7 @@ Type objective_function<Type>::operator() ()
   }
 
   Type nll=0;
-  Type temp_calc=0;
+  //Type temp_calc=0;
 
   // random effects components
   for(i = 0; i < nLevels; i++) {
@@ -158,34 +161,43 @@ Type objective_function<Type>::operator() ()
       nll += dnorm(mu_devs(i), Type(0.0), exp(log_sigma_mu_devs), true);
     }
     if(est_sigma_re==1) {
-      nll += dnorm(sigma1_devs(i),sig1_b0,exp(log_sigma1),true);
+      nll += dnorm(sigma1_devs(i),Type(0.0),exp(log_sigma1),true);
       if(asymmetric == 1) {
-        nll += dnorm(sigma2_devs(i),sig2_b0,exp(log_sigma2),true);
+        nll += dnorm(sigma2_devs(i),Type(0.0),exp(log_sigma2),true);
       }
     }
   }
 
+  // fixed effects for mu and both sigmas
+  mu = mu_mat * b_mu;
+  sigma1 = sig_mat * b_sig1;
+  if(asymmetric == 1) sigma2 = sig_mat * b_sig2;
+
   for(i = 0; i < nLevels; i++) {
 
-    temp_calc = sigma1_devs(i);
-    if(sig_trend==1) {
-      temp_calc += temp_calc + sig1_b1*Type(unique_years(i));
+    //temp_calc = sigma1_devs(i);
+    //if(sig_trend==1) {
+    //  temp_calc += temp_calc + sig1_b1*Type(unique_years(i));
+    //}
+    //sigma1(i) = exp(temp_calc);
+    if(est_sigma_re == 1) {
+      sigma1(i) += sigma1_devs(i);
+      if(asymmetric == 1) sigma2(i) += sigma2_devs(i);
     }
-    sigma1(i) = exp(temp_calc);
 
-    if(asymmetric == 1) {
-      temp_calc = sigma2_devs(i);
-      if(sig_trend==1) {
+    if(asymmetric == 1) scalar(i) = sigma2(i) - sigma1(i);//{
+      //temp_calc = sigma2_devs(i);
+      //if(sig_trend==1) {
         //temp_calc += sigma2_devs(0) + sig2_b1*Type(unique_years(i));
-        temp_calc += sigma2_devs(0) + sig2_b1*Type(sigma_cov(i));
+        //temp_calc += sigma2_devs(0) + sig2_b1*Type(sigma_cov(i));
         // scalar(i) is just log(sig2) - log(sig1)
         //scalar(i) = sig2_b1*Type(unique_years(i)) + sigma2_devs(i) - (sig1_b1*Type(unique_years(i)) + sigma1_devs(i));
-        scalar(i) = sig2_b1*Type(sigma_cov(i)) + sigma2_devs(i) - (sig1_b1*Type(sigma_cov(i)) + sigma1_devs(i));
-      } else {
-        scalar(i) = sigma2_devs(i) - sigma1_devs(i);
-      }
-      sigma2(i) = exp(temp_calc);
-    }
+        //scalar(i) = sig2_b1*Type(sigma_cov(i)) + sigma2_devs(i) - (sig1_b1*Type(sigma_cov(i)) + sigma1_devs(i));
+      //} else {
+        //scalar(i) = sigma2_devs(i) - sigma1_devs(i);
+      //}
+      //sigma2(i) = exp(temp_calc);
+    //}
 
     // calculate alphas if the gnorm model is used
     if(tail_model == 2) {
@@ -196,14 +208,14 @@ Type objective_function<Type>::operator() ()
     }
 
     // trend in in normal space, e.g. not log-linear
-    mu(i) = mu_devs(i);
+    //mu(i) = mu_devs(i);
     if(est_mu_re == 1) {
-      mu(i) += exp(log_mu_b0);
+      mu(i) += mu_devs(i);
     }
-    if(mu_trend == 1) {
+    //if(mu_trend == 1) {
       //mu(i) += mu_b1*Type(unique_years(i));
-      mu(i) += mu_b1*Type(mu_cov(i));
-    }
+    //  mu(i) += mu_b1*Type(mu_cov(i));
+    //}
 
     // this is all for calculating quantiles on LHS
     if(tail_model==0) {
@@ -244,8 +256,7 @@ Type objective_function<Type>::operator() ()
   }
 
   // this is for the predictions
-  vector<Type> log_dens(n), pred(n);
-  for(i = 0; i < n; i++) {
+  for(i = 0; i < y.size(); i++) {
     if(asymmetric == 1) {
       // model is asymmetric, left side smaller / right side bigger
       if(x(i) < mu(years(i)-1)) {
@@ -307,7 +318,7 @@ Type objective_function<Type>::operator() ()
   }
   if(family==2) {
     for(i = 0; i < n; i++) {
-      //std::cout << dpois(y(i), exp(pred(i)), true) << std::endl;
+      //std::cout << pred(i) << std::endl;
       nll += dpois(y(i), exp(pred(i)), true);
     }
   }
@@ -327,25 +338,13 @@ Type objective_function<Type>::operator() ()
   ADREPORT(theta); // nuisance parameter
   ADREPORT(sigma1); // sigma, LHS
   ADREPORT(mu); // mean of curves by year
+  ADREPORT(b_mu); // sigma, LHS
+  ADREPORT(b_sig1); // mean of curves by year
   if(family != 2) {
     ADREPORT(obs_sigma); // obs sd (or phi, NB)
   }
   ADREPORT(pred); // predictions in link space (log)
 
-  if(mu_trend==1) {
-    ADREPORT(mu_b1); // trend in mean
-  }
-  if(est_mu_re==1) {
-    ADREPORT(log_mu_b0); // hypermean, log space
-    ADREPORT(mu_devs); // deviations year to year from hypermean
-  }
-  if(est_sigma_re==1) {
-    ADREPORT(sig1_b0); // mean sigma for LHS
-  }
-
-  if(sig_trend==1) {
-    ADREPORT(sig1_b1); // optional trend parameter for LHS sigmas
-  }
   ADREPORT(lower25); // lower quartile
   ADREPORT(upper75); // upper quartile
   ADREPORT(range); // diff between upper and lower quartiles
@@ -357,20 +356,14 @@ Type objective_function<Type>::operator() ()
   }
   if(asymmetric == 1) {
     // these are only reported for asymmetric model
+    ADREPORT(b_sig2); // mean of curves by year
     if(est_sigma_re==1) {
       ADREPORT(sigma2); // same as above, but RHS optionally
-      ADREPORT(sig2_b0);
     }
     if(tail_model==1) {
       ADREPORT(tdf_2);
     }
-    if(tail_model==2) {
-      ADREPORT(beta_2);
-    }
-    if(sig_trend==1) {
-      ADREPORT(sig2_b1);
-    }
-    //ADREPORT(scalar);
+
   }
   return (-nll);
 }

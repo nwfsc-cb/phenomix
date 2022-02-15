@@ -56,6 +56,15 @@ names(fishdist)
 
 We'll start with the default arguments for the function, before going into detail about what they all mean. The only argument that we've initially changed from the default is using `asymmetric_model = FALSE` to fit the symmetric model.
 
+First, if we're fitting a model with covariates affecting the mean and standard deviation of the phenological response, we need to create a data frame indexed by time step.  
+
+```{r}
+cov_dat = data.frame(nyear = unique(fishdist$year))
+# rescale year -- could also standardize with scale()
+cov_dat$nyear = cov_dat$nyear - min(cov_dat$nyear) 
+```
+
+
 ```{r}
 datalist = create_data(fishdist, 
   min_number=0, 
@@ -63,8 +72,9 @@ datalist = create_data(fishdist,
   time="year", 
   date = "doy",
   asymmetric_model = FALSE, 
-  est_sigma_trend = TRUE, 
-  est_mu_trend = TRUE, 
+  mu = ~ nyear,
+  sigma = ~ nyear,
+  covar_data = cov_dat,
   est_sigma_re = TRUE,
   est_mu_re = TRUE,
   tail_model = "gaussian", 
@@ -73,7 +83,7 @@ datalist = create_data(fishdist,
 
 The `min_number` argument represents an optional threshold below which data is ignored. The `variable` argument is a character identifying the name of the response variable in the data frame. Similarly, the `time` and `date` arguments specify the labels of the temporal (e.g. year) and seasonal variables (day of year).
 
-The remaining arguments to the function concern model fitting. The `salmix` package can fit asymmetric or symmetric models to the distribution data (whether the left side of the curve is the same shape as the right) and defaults to FALSE. The mean and standard deviations that control the distributions are allowed to vary over time (as fixed or random effects) but we can also include temporal trends in the mean and standard deviations (if temporal trends are included, random effects have to also be included). 
+The remaining arguments to the function concern model fitting. The `salmix` package can fit asymmetric or symmetric models to the distribution data (whether the left side of the curve is the same shape as the right) and defaults to FALSE. The mean and standard deviations that control the distributions are allowed to vary over time (as fixed or random effects) but we can also covariates in the mean and standard deviations (via formulas). 
 Mathematically the mean location for a model with random effects is $u_y \sim Normal(u_0, u_{\sigma})$, where $u_0$ is the global mean and $u_{\sigma}$ is the standard deviation. Adding a trend in normal space, this becomes $u_y \sim Normal(u_0 + b_u*y, u_{\sigma})$, where the parameter $b_u$ controlls the trend. To keep the variance parameters controlling the tails of the run timing distribution positive, we estimate those random effects in log-space. This is specified as $\sigma_y = exp(\sigma_0 + b_{\sigma}*y + \delta_{y})$, and $\delta_{y} \sim Normal(0, \sigma_{\sigma})$. Trends in both the mean and variance are estimated by default, and controlled with the `est_sigma_trend` and `est_mu_trend` arguments. As described with the equations above, The trends are log-linear for the standard deviation parameters, but in normal space for the mean parameters. 
 
 Finally, the tails of the response curves may be estimated via fitting a Gaussian (normal) distribution, Student-t distribution, or [generalized normal distribution](https://en.wikipedia.org/wiki/Generalized_normal_distribution). By default, the Gaussian tails are estimated, and this parameter is controlled with the `tail_model` argument ("gaussian", "student_t", "gnorm").
@@ -113,8 +123,6 @@ If for some reason, these need to be re-generated, the `obj` object can be fed i
 ```{r eval = FALSE}
 TMB::sdreport(fitted$obj)
 ```
-
-
 
 
 ### Plotting results

@@ -48,7 +48,7 @@ but specified with the \code{est_sigma_re} argument}
 
 \item{est_mu_re}{Whether to estimate random effects by year in mu parameter controlling location of distribution. Defaults to TRUE}
 
-\item{tail_model}{Whether to fit Gaussian ("gaussian" = default) or Student-t ("student_t") or generalized normal ("gnorm"). Defaults to FALSE}
+\item{tail_model}{Whether to fit Gaussian ("gaussian" = default) or Student-t ("student_t") or generalized normal ("gnorm"). Defaults to "gaussian"}
 
 \item{family}{Response for observation model, options are "gaussian", "poisson", "negbin"}
 }

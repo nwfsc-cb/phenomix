@@ -18,7 +18,7 @@
 #' different shape than run timing after peak)
 #' @param est_sigma_re Whether to estimate random effects by year in sigma parameter controlling tail of distribution. Defaults to TRUE
 #' @param est_mu_re Whether to estimate random effects by year in mu parameter controlling location of distribution. Defaults to TRUE
-#' @param tail_model Whether to fit Gaussian ("gaussian" = default) or Student-t ("student_t") or generalized normal ("gnorm"). Defaults to FALSE
+#' @param tail_model Whether to fit Gaussian ("gaussian" = default) or Student-t ("student_t") or generalized normal ("gnorm"). Defaults to "gaussian"
 #' @param family Response for observation model, options are "gaussian", "poisson", "negbin"
 #' @export
 #' @importFrom stats model.matrix
@@ -71,7 +71,7 @@ create_data <- function(data,
   }
 
   # drop rows below threshold or NAs
-  drop_rows <- which(is.na(data[, variable]) | data[, variable] <= min_number)
+  drop_rows <- which(is.na(data[, variable]) | data[, variable] < min_number)
   if (length(drop_rows) > 0) data <- data[-drop_rows, ]
 
   # rescale year variable to start at 1 for indexing

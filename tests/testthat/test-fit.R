@@ -13,11 +13,11 @@ test_that("gaussian model - symmetric works - 1 year", {
   set.seed(1)
 
   d = df[which(df$year == 1), ]
-  fitted <- fit(create_data(d, asymmetric_model = FALSE), silent = TRUE,
+  fitted <- fit(create_data(d, asymmetric_model = FALSE, min_number=1), silent = TRUE,
                 control = list(eval.max = 4000, iter.max = 5000, rel.tol = 1e-7))
   expect_equal(length(which(is.na(fitted$sdreport$sd))), 0)
 
-  fitted <- fit(create_data(d, asymmetric_model = FALSE), silent = TRUE,
+  fitted <- fit(create_data(d, asymmetric_model = FALSE, min_number=1), silent = TRUE,
                 control = list(eval.max = 4000, iter.max = 5000, rel.tol = 1e-7))
   expect_equal(length(which(is.na(fitted$sdreport$sd))), 0)
 
@@ -45,13 +45,13 @@ test_that("other obs error families work - 1 year", {
                 control = list(eval.max = 4000, iter.max = 5000, rel.tol = 1e-7))
   expect_equal(length(which(is.na(fitted$sdreport$sd))), 0)
 
-  fitted <- fit(create_data(d, asymmetric_model = FALSE, family="poisson"), silent = TRUE,
-                control = list(eval.max = 4000, iter.max = 5000, rel.tol = 1e-7))
-  expect_equal(length(which(is.na(fitted$sdreport$sd))), 0)
-
-  fitted <- fit(create_data(d, asymmetric_model = FALSE, family="poisson"), silent = TRUE,
-                control = list(eval.max = 4000, iter.max = 5000, rel.tol = 1e-7))
-  expect_equal(length(which(is.na(fitted$sdreport$sd))), 0)
+  # fitted <- fit(create_data(d, asymmetric_model = FALSE, family="poisson"), silent = TRUE,
+  #               control = list(eval.max = 4000, iter.max = 5000, rel.tol = 1e-7))
+  # expect_equal(length(which(is.na(fitted$sdreport$sd))), 0)
+  #
+  # fitted <- fit(create_data(d, asymmetric_model = FALSE, family="poisson"), silent = TRUE,
+  #               control = list(eval.max = 4000, iter.max = 5000, rel.tol = 1e-7))
+  # expect_equal(length(which(is.na(fitted$sdreport$sd))), 0)
   # expect_equal(length(which(is.na(fitted$sdreport$sd))), 0)
 
   # set.seed(1)
@@ -68,31 +68,31 @@ test_that("other obs error families work - 1 year", {
 test_that("gaussian model - symmetric works - multiple years", {
   set.seed(1)
 
-  fitted <- fit(create_data(df, asymmetric_model = FALSE), silent = TRUE,
+  fitted <- fit(create_data(df, asymmetric_model = FALSE, min_number = 1), silent = TRUE,
                 control = list(eval.max = 4000, iter.max = 5000, rel.tol = 1e-7))
   expect_equal(length(which(is.na(fitted$sdreport$sd))), 0)
 
-  fitted <- fit(create_data(df, asymmetric_model = TRUE), silent = TRUE,
+  fitted <- fit(create_data(df, asymmetric_model = TRUE, min_number = 1), silent = TRUE,
                 control = list(eval.max = 4000, iter.max = 5000, rel.tol = 1e-7))
   expect_equal(length(which(is.na(fitted$sdreport$sd))), 0)
 
-  fitted <- fit(create_data(df, asymmetric_model = TRUE, est_sigma_re = FALSE), silent = TRUE,
+  fitted <- fit(create_data(df, asymmetric_model = TRUE, est_sigma_re = FALSE, min_number = 1), silent = TRUE,
                 control = list(eval.max = 4000, iter.max = 5000, rel.tol = 1e-7))
   expect_equal(length(which(is.na(fitted$sdreport$sd))), 0)
 
-  fitted <- fit(create_data(df, asymmetric_model = TRUE, est_mu_re = FALSE), silent = TRUE,
+  fitted <- fit(create_data(df, asymmetric_model = TRUE, est_mu_re = FALSE, min_number = 1), silent = TRUE,
                 control = list(eval.max = 4000, iter.max = 5000, rel.tol = 1e-7))
   expect_equal(length(which(is.na(fitted$sdreport$sd))), 0)
 
-  fitted <- fit(create_data(df, asymmetric_model = FALSE, est_mu_re = FALSE), silent = TRUE,
+  fitted <- fit(create_data(df, asymmetric_model = FALSE, est_mu_re = FALSE, min_number = 1), silent = TRUE,
                 control = list(eval.max = 4000, iter.max = 5000, rel.tol = 1e-7))
   expect_equal(length(which(is.na(fitted$sdreport$sd))), 0)
 
-  fitted <- fit(create_data(df, asymmetric_model = FALSE, est_sigma_re = FALSE), silent = TRUE,
+  fitted <- fit(create_data(df, asymmetric_model = FALSE, est_sigma_re = FALSE, min_number = 1), silent = TRUE,
                 control = list(eval.max = 4000, iter.max = 5000, rel.tol = 1e-7))
   expect_equal(length(which(is.na(fitted$sdreport$sd))), 0)
 
-  fitted <- fit(create_data(df, asymmetric_model = FALSE, est_sigma_re = FALSE, est_mu_re = FALSE), silent = TRUE,
+  fitted <- fit(create_data(df, asymmetric_model = FALSE, est_sigma_re = FALSE, est_mu_re = FALSE, min_number = 1), silent = TRUE,
                 control = list(eval.max = 4000, iter.max = 5000, rel.tol = 1e-7))
   expect_equal(length(which(is.na(fitted$sdreport$sd))), 0)
   # set.seed(1)
@@ -109,31 +109,31 @@ test_that("gaussian model - symmetric works - multiple years", {
 test_that("gaussian model works - multiple years", {
   set.seed(1)
 
-  fitted <- fit(create_data(df, asymmetric_model = FALSE), silent = TRUE,
+  fitted <- fit(create_data(df, asymmetric_model = FALSE, min_number = 1), silent = TRUE,
                 control = list(eval.max = 4000, iter.max = 5000, rel.tol = 1e-7))
   expect_equal(length(which(is.na(fitted$sdreport$sd))), 0)
 
-  fitted <- fit(create_data(df, asymmetric_model = TRUE), silent = TRUE,
+  fitted <- fit(create_data(df, asymmetric_model = TRUE, min_number = 1), silent = TRUE,
                 control = list(eval.max = 4000, iter.max = 5000, rel.tol = 1e-7))
   expect_equal(length(which(is.na(fitted$sdreport$sd))), 0)
 
-  fitted <- fit(create_data(df, asymmetric_model = TRUE, est_sigma_re = FALSE), silent = TRUE,
+  fitted <- fit(create_data(df, asymmetric_model = TRUE, est_sigma_re = FALSE, min_number = 1), silent = TRUE,
                 control = list(eval.max = 4000, iter.max = 5000, rel.tol = 1e-7))
   expect_equal(length(which(is.na(fitted$sdreport$sd))), 0)
 
-  fitted <- fit(create_data(df, asymmetric_model = TRUE, est_mu_re = FALSE), silent = TRUE,
+  fitted <- fit(create_data(df, asymmetric_model = TRUE, est_mu_re = FALSE, min_number = 1), silent = TRUE,
                 control = list(eval.max = 4000, iter.max = 5000, rel.tol = 1e-7))
   expect_equal(length(which(is.na(fitted$sdreport$sd))), 0)
 
-  fitted <- fit(create_data(df, asymmetric_model = FALSE, est_mu_re = FALSE), silent = TRUE,
+  fitted <- fit(create_data(df, asymmetric_model = FALSE, est_mu_re = FALSE, min_number = 1), silent = TRUE,
                 control = list(eval.max = 4000, iter.max = 5000, rel.tol = 1e-7))
   expect_equal(length(which(is.na(fitted$sdreport$sd))), 0)
 
-  fitted <- fit(create_data(df, asymmetric_model = FALSE, est_sigma_re = FALSE), silent = TRUE,
+  fitted <- fit(create_data(df, asymmetric_model = FALSE, est_sigma_re = FALSE, min_number = 1), silent = TRUE,
                 control = list(eval.max = 4000, iter.max = 5000, rel.tol = 1e-7))
   expect_equal(length(which(is.na(fitted$sdreport$sd))), 0)
 
-  fitted <- fit(create_data(df, asymmetric_model = FALSE, est_sigma_re = FALSE, est_mu_re = FALSE), silent = TRUE,
+  fitted <- fit(create_data(df, asymmetric_model = FALSE, est_sigma_re = FALSE, est_mu_re = FALSE, min_number = 1), silent = TRUE,
                 control = list(eval.max = 4000, iter.max = 5000, rel.tol = 1e-7))
   expect_equal(length(which(is.na(fitted$sdreport$sd))), 0)
 
@@ -143,7 +143,7 @@ test_that("gaussian model works - multiple years", {
                         est_sigma_re = FALSE,
                         est_mu_re = FALSE,
                         mu = ~ nyear,
-                        covar_data = covar_data),
+                        covar_data = covar_data, min_number = 1),
                 silent = TRUE,
                 control = list(eval.max = 4000, iter.max = 5000, rel.tol = 1e-7))
   # set.seed(1)
@@ -180,7 +180,7 @@ test_that("student-t model - symmetric works - 1 year", {
   d = df[which(df$year == 1), ]
   fitted <- fit(create_data(d,
     asymmetric_model = FALSE,
-    tail_model = "student_t"
+    tail_model = "student_t", min_number = 1
   ),
   silent = TRUE, control = list(eval.max = 4000, iter.max = 5000, rel.tol = 1e-7)
   )
@@ -190,7 +190,7 @@ test_that("student-t model - symmetric works - 1 year", {
   d = df[which(df$year == 1), ]
   fitted <- fit(create_data(d,
                             asymmetric_model = TRUE,
-                            tail_model = "student_t"
+                            tail_model = "student_t", min_number = 1
   ),
   silent = TRUE, control = list(eval.max = 4000, iter.max = 5000, rel.tol = 1e-7)
   )
@@ -199,7 +199,7 @@ test_that("student-t model - symmetric works - 1 year", {
 
   fitted <- fit(create_data(df,
                             asymmetric_model = FALSE,
-                            tail_model = "student_t"
+                            tail_model = "student_t", min_number = 1
   ),
   silent = TRUE, control = list(eval.max = 4000, iter.max = 5000, rel.tol = 1e-7)
   )
@@ -207,7 +207,7 @@ test_that("student-t model - symmetric works - 1 year", {
 
   fitted <- fit(create_data(d,
                             asymmetric_model = FALSE,
-                            tail_model = "student_t"
+                            tail_model = "student_t", min_number = 1
   ),
   silent = TRUE, control = list(eval.max = 4000, iter.max = 5000, rel.tol = 1e-7)
   )
@@ -215,7 +215,7 @@ test_that("student-t model - symmetric works - 1 year", {
 
   fitted <- fit(create_data(df,
                             asymmetric_model = TRUE,
-                            tail_model = "student_t"
+                            tail_model = "student_t", min_number = 1
   ),
   silent = TRUE, control = list(eval.max = 4000, iter.max = 5000, rel.tol = 1e-7)
   )
@@ -229,7 +229,7 @@ test_that("gnorm model - symmetric works - 1 year", {
   d = df[which(df$year == 1), ]
   fitted <- fit(create_data(d,
                             asymmetric_model = FALSE,
-                            tail_model = "gnorm"
+                            tail_model = "gnorm", min_number = 1
   ),
   silent = TRUE, control = list(eval.max = 4000, iter.max = 5000, rel.tol = 1e-7)
   )

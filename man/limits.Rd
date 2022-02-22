@@ -4,10 +4,12 @@
 \alias{limits}
 \title{Internal function to assign upper and lower bounds to parameters, based on their names}
 \usage{
-limits(parnames)
+limits(parnames, max_theta)
 }
 \arguments{
 \item{parnames}{A vector of character strings or names used for estimation}
+
+\item{max_theta}{A scalar (optional) giving the maximum value of theta, log(pred)}
 }
 \description{
 Arguments can be adjusted as needed

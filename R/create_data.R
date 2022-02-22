@@ -20,6 +20,8 @@
 #' @param est_mu_re Whether to estimate random effects by year in mu parameter controlling location of distribution. Defaults to TRUE
 #' @param tail_model Whether to fit Gaussian ("gaussian" = default) or Student-t ("student_t") or generalized normal ("gnorm"). Defaults to "gaussian"
 #' @param family Response for observation model, options are "gaussian", "poisson", "negbin"
+#' @param max_theta Maximum value of log(pred) when `limits=TRUE`. Defaults to 10
+
 #' @export
 #' @importFrom stats model.matrix
 #' @examples
@@ -40,7 +42,8 @@ create_data <- function(data,
                         est_sigma_re = TRUE,
                         est_mu_re = TRUE,
                         tail_model = "gaussian",
-                        family = "gaussian") {
+                        family = "gaussian",
+                        max_theta = 10) {
   dist <- c("gaussian", "poisson", "negbin")
   fam <- match(family, dist)
   if (is.na(fam)) {
@@ -98,7 +101,8 @@ create_data <- function(data,
     sig_mat = sig_mat,
     tail_model = as.numeric(tailmod) - 1,
     est_sigma_re = as.numeric(est_sigma_re),
-    est_mu_re = as.numeric(est_mu_re)
+    est_mu_re = as.numeric(est_mu_re),
+    max_theta = max_theta
   )
 
   return(data_list)

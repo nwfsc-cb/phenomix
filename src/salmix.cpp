@@ -141,9 +141,9 @@ Type objective_function<Type>::operator() ()
   // calculations for beta for gnorm dist if implemented
   vector<Type> beta_ratio(2);
   if(tail_model == 2) {
-    beta_ratio(1) = sqrt(exp(lgamma(1.0/Type(beta_1))) / exp(lgamma(3.0/Type(beta_1))));
+    beta_ratio(0) = sqrt(exp(lgamma(1.0/Type(beta_1))) / exp(lgamma(3.0/Type(beta_1))));
     if(asymmetric == 1) {
-      beta_ratio(2) = sqrt(exp(lgamma(1.0/Type(beta_2))) / exp(lgamma(3.0/Type(beta_2))));
+      beta_ratio(1) = sqrt(exp(lgamma(1.0/Type(beta_2))) / exp(lgamma(3.0/Type(beta_2))));
     }
   }
 
@@ -179,9 +179,9 @@ Type objective_function<Type>::operator() ()
 
     // calculate alphas if the gnorm model is used
     if(tail_model == 2) {
-      alpha1(i) = sigma1(years(i)-1)*beta_ratio(1);
+      alpha1(i) = sigma1(years(i)-1)*beta_ratio(0);
       if(asymmetric==1) {
-        alpha2(i) = sigma2(years(i)-1)*beta_ratio(2);
+        alpha2(i) = sigma2(years(i)-1)*beta_ratio(1);
       }
     }
 
@@ -198,7 +198,7 @@ Type objective_function<Type>::operator() ()
         lower25(i) = qthill(Type(0.25),Type(tdf_1), mu(i), sigma1(i));
       } else {
         // gnorm
-        lower25(i) = qgnorm(Type(0.25), mu(i), sigma1(i)*beta_ratio(1), beta_1);
+        lower25(i) = qgnorm(Type(0.25), mu(i), sigma1(i)*beta_ratio(0), beta_1);
       }
     }
     // this is all for calculating quantiles on RHS
@@ -210,7 +210,7 @@ Type objective_function<Type>::operator() ()
           upper75(i) = qthill(Type(0.75),Type(tdf_2), mu(i), sigma2(i));
         } else {
           // gnorm
-          upper75(i) = qgnorm(Type(0.75), mu(i), sigma2(i)*beta_ratio(2), beta_2);
+          upper75(i) = qgnorm(Type(0.75), mu(i), sigma2(i)*beta_ratio(1), beta_2);
         }
       }
     } else {
@@ -221,7 +221,7 @@ Type objective_function<Type>::operator() ()
           upper75(i) = qthill(Type(0.75),Type(tdf_1), mu(i), sigma1(i));
         } else {
           // gnorm
-          upper75(i) = qgnorm(Type(0.75), mu(i), sigma1(i)*beta_ratio(1), beta_1);
+          upper75(i) = qgnorm(Type(0.75), mu(i), sigma1(i)*beta_ratio(0), beta_1);
         }
       }
     }

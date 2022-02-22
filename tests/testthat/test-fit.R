@@ -235,6 +235,12 @@ test_that("gnorm model - symmetric works - 1 year", {
   )
   expect_equal(length(which(is.na(fitted$sdreport$sd))), 0)
 
+  fitted <- fit(create_data(df,
+                            asymmetric_model = TRUE,
+                            tail_model = "gnorm", min_number = 1
+  ),
+  silent = TRUE, control = list(eval.max = 4000, iter.max = 5000, rel.tol = 1e-7)
+  )
   # set.seed(1)
   # d = df[which(df$year == 1), ]
   # fitted <- fit(create_data(d,

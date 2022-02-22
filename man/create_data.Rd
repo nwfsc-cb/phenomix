@@ -17,7 +17,8 @@ create_data(
   est_sigma_re = TRUE,
   est_mu_re = TRUE,
   tail_model = "gaussian",
-  family = "gaussian"
+  family = "gaussian",
+  max_theta = 10
 )
 }
 \arguments{
@@ -51,6 +52,8 @@ but specified with the \code{est_sigma_re} argument}
 \item{tail_model}{Whether to fit Gaussian ("gaussian" = default) or Student-t ("student_t") or generalized normal ("gnorm"). Defaults to "gaussian"}
 
 \item{family}{Response for observation model, options are "gaussian", "poisson", "negbin"}
+
+\item{max_theta}{Maximum value of log(pred) when \code{limits=TRUE}. Defaults to 10}
 }
 \description{
 Does minimal processing of data to use as argument to fitting function

@@ -1,31 +1,31 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# salmix
+# phenomix
 
 R package for fitting distributions to run timing data via maximum
 likelihood
 
 [![R build
-status](https://github.com/ericward-noaa/salmix/workflows/R-CMD-check/badge.svg)](https://github.com/ericward-noaa/salmix/actions)
+status](https://github.com/ericward-noaa/phenomix/workflows/R-CMD-check/badge.svg)](https://github.com/ericward-noaa/phenomix/actions)
 
 ## Installation
 
-You can install salmix with:
+You can install phenomix with:
 
 ``` r
-devtools::install_github("ericward-noaa/salmix",build_vignettes = TRUE)
+devtools::install_github("ericward-noaa/phenomix",build_vignettes = TRUE)
 ```
 
 Load libraries
 
 ``` r
-library(salmix)
+library(phenomix)
 library(ggplot2)
 ```
 
 ## Functions
 
-The package salmix provides a suite of curve fitting to describe data
+The package pheomix provides a suite of curve fitting to describe data
 that may be generated from a process when distributions in time might be
 concentrated (from fisheries, this occurs with counts over time of
 salmon returning from the ocean to spawn or juvenile fish emigrating
@@ -49,7 +49,7 @@ The main functions are `create_data()` and `fit()`. See `?create_data`
 and `?fit` for additional details and examples. A vignette includes
 additional detail, and examples of several models as well as function
 arguments available
-[here](https://github.com/ericward-noaa/salmix/tree/master/vignettes).
+[here](https://github.com/ericward-noaa/phenomix/tree/master/vignettes).
 
 ## NOAA Disclaimer
 

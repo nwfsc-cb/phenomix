@@ -1,11 +1,17 @@
 Type: Package
-Package: salmix
+Package: phenomix
 Title: Fit Density Curves to Peak Timing Data that Varies over Time
-Version: 0.0.4
+Version: 1.0.1
 Authors@R: c(person(given = c("Eric", "J."),
              family = "Ward",
              role = c("aut", "cre"),
-             email = "eric.ward@noaa.gov"))
+             email = "eric.ward@noaa.gov"),
+             person(given = c("Samantha", "M."),
+             family = "Wilson",
+             role = c("ctb")),
+             person(given = c("Joseph", "H."),
+             family = "Anderson",
+             role = c("ctb")))
 Description: The 'salmix' package fits time-varying density curves to run
     timing type data commonly encountered in fisheries and ecology. Example 
     applications include to peak run timing curves collected for juvenile or 

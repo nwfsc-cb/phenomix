@@ -1,4 +1,4 @@
-#' @useDynLib salmix, .registration = TRUE
+#' @useDynLib phenomix, .registration = TRUE
 NULL
 
 #' Fitting function to be called by user
@@ -170,7 +170,7 @@ fit <- function(data_list,
     data = data_list,
     parameters = parameters,
     map = tmb_map,
-    DLL = "salmix",
+    DLL = "phenomix",
     random = random,
     silent = silent
   )
@@ -205,5 +205,5 @@ fit <- function(data_list,
     sdreport = sdreport,
     init_values = parameters,
     data_list = data_list
-  ), class = "salmix"))
+  ), class = "phenomix"))
 }

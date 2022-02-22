@@ -1,4 +1,4 @@
 library(testthat)
-library(salmix)
+library(phenomix)
 
-test_check("salmix")
+test_check("phenomix")

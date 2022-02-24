@@ -32,18 +32,20 @@ data(fishdist)
 
 # example of fitting fixed effects, no trends, no random effects
 set.seed(1)
-datalist <- create_data(fishdist[which(fishdist$year > 1970),], asymmetric_model = FALSE,
-est_mu_re = FALSE, est_sigma_re = FALSE)
+datalist <- create_data(fishdist[which(fishdist$year > 1970), ],
+  asymmetric_model = FALSE,
+  est_mu_re = FALSE, est_sigma_re = FALSE
+)
 fit <- fit(datalist)
 #
 # # example of model with random effects in means only, and symmetric distribution
 # set.seed(1)
-#datalist <- create_data(fishdist[which(fishdist$year > 1970),], asymmetric_model = FALSE,
+# datalist <- create_data(fishdist[which(fishdist$year > 1970),], asymmetric_model = FALSE,
 #                      est_sigma_re = FALSE)
-#fit <- fit(datalist)
+# fit <- fit(datalist)
 # # example of model with random effects in variances
 # set.seed(1)
-#datalist <- create_data(fishdist[which(fishdist$year > 1970),], asymmetric_model = TRUE,
+# datalist <- create_data(fishdist[which(fishdist$year > 1970),], asymmetric_model = TRUE,
 #                          est_mu_re = TRUE)
 # fit <- fit(datalist)
 #

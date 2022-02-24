@@ -36,8 +36,8 @@ create_data <- function(data,
                         time = "year",
                         date = "doy",
                         asymmetric_model = TRUE,
-                        mu = ~ 1,
-                        sigma = ~ 1,
+                        mu = ~1,
+                        sigma = ~1,
                         covar_data = NULL,
                         est_sigma_re = TRUE,
                         est_mu_re = TRUE,
@@ -81,15 +81,15 @@ create_data <- function(data,
   data$year <- data[, time] - min(data[, time]) + 1
 
   # parse formulas. covar_data contains covariates specific to each time step
-  if(is.null(covar_data)) {
-    covar_data = data.frame(year = unique(data$year))
+  if (is.null(covar_data)) {
+    covar_data <- data.frame(year = unique(data$year))
   }
-  mu_mat = model.matrix(mu, data=covar_data)
-  sig_mat = model.matrix(sigma, data=covar_data)
+  mu_mat <- model.matrix(mu, data = covar_data)
+  sig_mat <- model.matrix(sigma, data = covar_data)
 
   data_list <- list(
     y = data[, variable],
-    yint = round(data[,variable]),
+    yint = round(data[, variable]),
     years = as.numeric(as.factor(data$year)),
     x = data[, date],
     year_levels = as.numeric(as.factor(unique(data$year))),

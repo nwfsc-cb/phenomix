@@ -130,7 +130,6 @@ Type objective_function<Type>::operator() ()
   vector<Type> sigma1(nLevels), mu(nLevels);
   vector<Type> sigma2(nLevels), scalar(nLevels);
   vector<Type> alpha1(nLevels), alpha2(nLevels);
-  vector<Type> logalpha1(nLevels), logalpha2(nLevels);
   vector<Type> lower25(nLevels), upper75(nLevels);
   vector<Type> range(nLevels); // 75th - 25th percentile
   int i;
@@ -183,6 +182,7 @@ Type objective_function<Type>::operator() ()
       if(asymmetric==1) {
         alpha2(i) = sigma2(years(i)-1)*beta_ratio(1);
       }
+
     }
 
     // trend in in normal space, e.g. not log-linear

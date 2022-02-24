@@ -18,18 +18,20 @@ NULL
 #'
 #' # example of fitting fixed effects, no trends, no random effects
 #' set.seed(1)
-#' datalist <- create_data(fishdist[which(fishdist$year > 1970),], asymmetric_model = FALSE,
-#' est_mu_re = FALSE, est_sigma_re = FALSE)
+#' datalist <- create_data(fishdist[which(fishdist$year > 1970), ],
+#'   asymmetric_model = FALSE,
+#'   est_mu_re = FALSE, est_sigma_re = FALSE
+#' )
 #' fit <- fit(datalist)
 #' #
 #' # # example of model with random effects in means only, and symmetric distribution
 #' # set.seed(1)
-#' #datalist <- create_data(fishdist[which(fishdist$year > 1970),], asymmetric_model = FALSE,
+#' # datalist <- create_data(fishdist[which(fishdist$year > 1970),], asymmetric_model = FALSE,
 #' #                      est_sigma_re = FALSE)
-#' #fit <- fit(datalist)
+#' # fit <- fit(datalist)
 #' # # example of model with random effects in variances
 #' # set.seed(1)
-#' #datalist <- create_data(fishdist[which(fishdist$year > 1970),], asymmetric_model = TRUE,
+#' # datalist <- create_data(fishdist[which(fishdist$year > 1970),], asymmetric_model = TRUE,
 #' #                          est_mu_re = TRUE)
 #' # fit <- fit(datalist)
 #' #
@@ -50,21 +52,21 @@ fit <- function(data_list,
   parameters <- list(
     theta = rnorm(n = data_list$nLevels, log(mean(data_list$y[which(!is.na(data_list$y))]))),
     b_mu = rep(0, ncol(data_list$mu_mat)),
-    log_sigma_mu_devs = 1,
+    log_sigma_mu_devs = 0,
     mu_devs = rep(0, data_list$nLevels),
     b_sig1 = rep(1, ncol(data_list$sig_mat)),
     b_sig2 = rep(1, ncol(data_list$sig_mat)),
-    log_sigma1 = 1,
+    log_sigma1 = 0,
     sigma1_devs = rep(0, data_list$nLevels),
-    log_sigma2 = 1,
+    log_sigma2 = 0,
     sigma2_devs = rep(0, data_list$nLevels),
     log_obs_sigma = 0.0,
     log_tdf_1 = 0, # starts ~ 22
     log_tdf_2 = 0, # starts ~ 22
-    log_beta_1 = 0,
-    log_beta_2 = 0
+    log_beta_1 = log(2),
+    log_beta_2 = log(2)
   )
-  parameters$b_mu[1] = mean(data_list$x)
+  parameters$b_mu[1] <- mean(data_list$x[which(!is.na(data_list$y))])
 
   # If inits is included, use that instead of parameters
   if (!is.null(inits)) parameters <- inits
@@ -179,7 +181,7 @@ fit <- function(data_list,
   if (!is.null(inits)) {
     init <- inits
   } else {
-    init <- obj$par + runif(length(obj$par), -0.1, .1)
+    init <- obj$par # + runif(length(obj$par), -0.1, .1)
   }
   if (limits == FALSE) {
     pars <- stats::nlminb(

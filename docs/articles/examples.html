@@ -78,7 +78,7 @@
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Fitting time varying phenology models with the phenomix package</h1>
             
-            <h4 data-toc-skip class="date">2022-02-22</h4>
+            <h4 data-toc-skip class="date">2022-02-24</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/ericward-noaa/salmix/blob/HEAD/vignettes/examples.Rmd" class="external-link"><code>vignettes/examples.Rmd</code></a></small>
       <div class="hidden name"><code>examples.Rmd</code></div>
@@ -172,12 +172,12 @@
   <span class="st">"value"</span><span class="op">=</span><span class="va">fitted</span><span class="op">$</span><span class="va">sdreport</span><span class="op">$</span><span class="va">value</span>, <span class="st">"sd"</span><span class="op">=</span><span class="va">fitted</span><span class="op">$</span><span class="va">sdreport</span><span class="op">$</span><span class="va">sd</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sdrep_df</span><span class="op">)</span>
 <span class="co">#&gt;     par    value        sd</span>
-<span class="co">#&gt; 1 theta 8.400016 0.2234040</span>
-<span class="co">#&gt; 2 theta 8.638924 0.2258453</span>
-<span class="co">#&gt; 3 theta 8.467167 0.2068675</span>
-<span class="co">#&gt; 4 theta 8.154399 0.1577984</span>
-<span class="co">#&gt; 5 theta 8.111865 0.1897446</span>
-<span class="co">#&gt; 6 theta 8.243957 0.2206907</span></code></pre></div>
+<span class="co">#&gt; 1 theta 8.399995 0.2234016</span>
+<span class="co">#&gt; 2 theta 8.638915 0.2258454</span>
+<span class="co">#&gt; 3 theta 8.467173 0.2068679</span>
+<span class="co">#&gt; 4 theta 8.154405 0.1577986</span>
+<span class="co">#&gt; 5 theta 8.111876 0.1897451</span>
+<span class="co">#&gt; 6 theta 8.243943 0.2206906</span></code></pre></div>
 <p>If for some reason, these need to be re-generated, the <code>obj</code> object can be fed into</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">TMB</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/TMB/man/sdreport.html" class="external-link">sdreport</a></span><span class="op">(</span><span class="va">fitted</span><span class="op">$</span><span class="va">obj</span><span class="op">)</span></code></pre></div>

@@ -9,13 +9,13 @@ limits <- function(parnames, max_theta) {
   df <- data.frame(name = parnames, lower = -1000, upper = 1000)
 
   for (i in 1:length(parnames)) {
-    if (length(grep("log_sigma1", parnames[i])) > 0) df[i, c("lower", "upper")] <- c(-5, 6)
-    if (length(grep("log_sigma2", parnames[i])) > 0) df[i, c("lower", "upper")] <- c(-5, 6)
+    if (length(grep("log_sigma1", parnames[i])) > 0) df[i, c("lower", "upper")] <- c(-Inf, 10)
+    if (length(grep("log_sigma2", parnames[i])) > 0) df[i, c("lower", "upper")] <- c(-Inf, 10)
     if (length(grep("theta", parnames[i])) > 0) df[i, c("lower", "upper")] <- c(0, max_theta)
-    if (length(grep("log_sigma_mu_devs", parnames[i])) > 0) df[i, c("lower", "upper")] <- c(-5, 6)
-    if (length(grep("log_obs_sigma", parnames[i])) > 0) df[i, c("lower", "upper")] <- c(-5, 5)
-    if (length(grep("log_tdf", parnames[i])) > 0) df[i, c("lower", "upper")] <- c(-5, 5)
-    if (length(grep("log_beta", parnames[i])) > 0) df[i, c("lower", "upper")] <- c(-3, 3)
+    if (length(grep("log_sigma_mu_devs", parnames[i])) > 0) df[i, c("lower", "upper")] <- c(-Inf, 6)
+    if (length(grep("log_obs_sigma", parnames[i])) > 0) df[i, c("lower", "upper")] <- c(-Inf, 5)
+    if (length(grep("log_tdf", parnames[i])) > 0) df[i, c("lower", "upper")] <- c(-Inf, 10)
+    if (length(grep("log_beta", parnames[i])) > 0) df[i, c("lower", "upper")] <- c(-Inf, 3)
   }
   return(df)
 }

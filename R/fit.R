@@ -61,10 +61,10 @@ fit <- function(data_list,
     log_sigma2 = 0,
     sigma2_devs = rep(0, data_list$nLevels),
     log_obs_sigma = 0.0,
-    log_tdf_1 = 0, # starts ~ 22
-    log_tdf_2 = 0, # starts ~ 22
-    log_beta_1 = log(2),
-    log_beta_2 = log(2)
+    log_tdf_1 = 0,
+    log_tdf_2 = 0,
+    log_beta_1 = 0,
+    log_beta_2 = 0
   )
   parameters$b_mu[1] <- mean(data_list$x[which(!is.na(data_list$y))])
 
@@ -125,6 +125,19 @@ fit <- function(data_list,
         log_tdf_1 = as.factor(NA),
         log_tdf_2 = as.factor(NA)
       ))
+    }
+  }
+  if(data_list$asymmetric == 1) {
+    if(data_list$share_shape==1) {
+      if(data_list$tail_model == 1) {
+        # map off 2nd nu parameter
+        tmb_map <- c(tmb_map, list(
+          log_tdf_2 = as.factor(NA)))
+      }
+      if(data_list$tail_model == 2) {
+        tmb_map <- c(tmb_map, list(
+          log_beta_2 = as.factor(NA)))
+      }
     }
   }
 

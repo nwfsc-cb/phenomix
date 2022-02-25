@@ -18,7 +18,8 @@ create_data(
   est_mu_re = TRUE,
   tail_model = "gaussian",
   family = "gaussian",
-  max_theta = 10
+  max_theta = 10,
+  share_shape = TRUE
 )
 }
 \arguments{
@@ -54,6 +55,9 @@ but specified with the \code{est_sigma_re} argument}
 \item{family}{Response for observation model, options are "gaussian", "poisson", "negbin"}
 
 \item{max_theta}{Maximum value of log(pred) when \code{limits=TRUE}. Defaults to 10}
+
+\item{share_shape}{Boolean argument for whether asymmetric student-t and generalized normal distributions should share the shape parameter (nu for the student-t;
+beta for the generalized normal). Defaults to TRUE}
 }
 \description{
 Does minimal processing of data to use as argument to fitting function

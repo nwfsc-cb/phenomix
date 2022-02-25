@@ -21,7 +21,8 @@
 #' @param tail_model Whether to fit Gaussian ("gaussian" = default) or Student-t ("student_t") or generalized normal ("gnorm"). Defaults to "gaussian"
 #' @param family Response for observation model, options are "gaussian", "poisson", "negbin"
 #' @param max_theta Maximum value of log(pred) when `limits=TRUE`. Defaults to 10
-
+#' @param share_shape Boolean argument for whether asymmetric student-t and generalized normal distributions should share the shape parameter (nu for the student-t;
+#' beta for the generalized normal). Defaults to TRUE
 #' @export
 #' @importFrom stats model.matrix
 #' @examples
@@ -43,7 +44,8 @@ create_data <- function(data,
                         est_mu_re = TRUE,
                         tail_model = "gaussian",
                         family = "gaussian",
-                        max_theta = 10) {
+                        max_theta = 10,
+                        share_shape = TRUE) {
   dist <- c("gaussian", "poisson", "negbin")
   fam <- match(family, dist)
   if (is.na(fam)) {
@@ -102,7 +104,8 @@ create_data <- function(data,
     tail_model = as.numeric(tailmod) - 1,
     est_sigma_re = as.numeric(est_sigma_re),
     est_mu_re = as.numeric(est_mu_re),
-    max_theta = max_theta
+    max_theta = max_theta,
+    share_shape = as.numeric(share_shape)
   )
 
   return(data_list)

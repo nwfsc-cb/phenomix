@@ -103,6 +103,7 @@ Type objective_function<Type>::operator() ()
   DATA_INTEGER(est_mu_re); // 0 if FALSE, 1 = TRUE. Whether to estimate deviations as random effects
   DATA_MATRIX(mu_mat); // matrix of covariates for mean trend
   DATA_MATRIX(sig_mat);  // matrix of covariates for sigma trend
+  DATA_INTEGER(share_shape);
 
   PARAMETER(log_sigma1);// log sd of random effects on sigma1
   PARAMETER_VECTOR(sigma1_devs);// random effects on sigma1
@@ -127,6 +128,11 @@ Type objective_function<Type>::operator() ()
   Type tdf_2 = exp(log_tdf_2) + 2;
   Type beta_1 = exp(log_beta_1);///(1+exp(log_beta_1))*20;
   Type beta_2 = exp(log_beta_2);///(1+exp(log_beta_2))*20;
+  if(share_shape==1) {
+    tdf_2 = tdf_1;
+    beta_2 = beta_1;
+  }
+
   vector<Type> sigma1(nLevels), mu(nLevels);
   vector<Type> sigma2(nLevels), scalar(nLevels);
   vector<Type> alpha1(nLevels), alpha2(nLevels);

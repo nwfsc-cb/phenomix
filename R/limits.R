@@ -15,7 +15,7 @@ limits <- function(parnames, max_theta) {
     if (length(grep("log_sigma_mu_devs", parnames[i])) > 0) df[i, c("lower", "upper")] <- c(-Inf, 6)
     if (length(grep("log_obs_sigma", parnames[i])) > 0) df[i, c("lower", "upper")] <- c(-Inf, 5)
     if (length(grep("log_tdf", parnames[i])) > 0) df[i, c("lower", "upper")] <- c(-Inf, 10)
-    if (length(grep("log_beta", parnames[i])) > 0) df[i, c("lower", "upper")] <- c(-Inf, 3)
+    if (length(grep("log_beta", parnames[i])) > 0) df[i, c("lower", "upper")] <- c(-200, 10)
   }
   return(df)
 }

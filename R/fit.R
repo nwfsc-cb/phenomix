@@ -63,8 +63,8 @@ fit <- function(data_list,
     log_obs_sigma = 0.0,
     log_tdf_1 = 0,
     log_tdf_2 = 0,
-    log_beta_1 = 0,
-    log_beta_2 = 0
+    log_beta_1 = 0.1,
+    log_beta_2 = 0.1
   )
   parameters$b_mu[1] <- mean(data_list$x[which(!is.na(data_list$y))])
 

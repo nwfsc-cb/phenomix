@@ -18,16 +18,17 @@ Description: The 'salmix' package fits time-varying density curves to run
     adult Pacific salmon, though could also be applied to other kinds
     of data such as hydrographs, plant phenology (flowering, leaf out).
 License: GPL (>=3)
-URL: https://ericward-noaa.github.io/salmix, https://github.com/ericward-noaa/salmix
+URL: https://ericward-noaa.github.io/phenomix, https://github.com/ericward-noaa/phenomix
 Depends: 
-    R (>= 3.2.0)
+    R (>= 4.0.0)
 Imports:
-    ggplot2,
     dplyr,
+    ggplot2,
+    gnorm,
     graphics,
     methods,
     stats,
-    TMB (>= 1.7.13)
+    TMB (>= 1.7.20)
 Suggests:
     testthat,
     knitr,

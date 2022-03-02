@@ -36,7 +36,7 @@
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/ericward-noaa/salmix/" class="external-link">
+  <a href="https://github.com/ericward-noaa/phenomix/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -51,7 +51,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Create data file for fitting time varying run timing distributions with TMB</h1>
-    <small class="dont-index">Source: <a href="https://github.com/ericward-noaa/salmix/blob/HEAD/R/create_data.R" class="external-link"><code>R/create_data.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/ericward-noaa/phenomix/blob/HEAD/R/create_data.R" class="external-link"><code>R/create_data.R</code></a></small>
     <div class="hidden name"><code>create_data.Rd</code></div>
     </div>
 
@@ -73,8 +73,9 @@
   est_sigma_re <span class="op">=</span> <span class="cn">TRUE</span>,
   est_mu_re <span class="op">=</span> <span class="cn">TRUE</span>,
   tail_model <span class="op">=</span> <span class="st">"gaussian"</span>,
-  family <span class="op">=</span> <span class="st">"gaussian"</span>,
-  max_theta <span class="op">=</span> <span class="fl">10</span>
+  family <span class="op">=</span> <span class="st">"lognormal"</span>,
+  max_theta <span class="op">=</span> <span class="fl">10</span>,
+  share_shape <span class="op">=</span> <span class="cn">TRUE</span>
 <span class="op">)</span></code></pre></div>
     </div>
 
@@ -110,9 +111,13 @@ but specified with the <code>est_sigma_re</code> argument</p></dd>
 <dt>tail_model</dt>
 <dd><p>Whether to fit Gaussian ("gaussian" = default) or Student-t ("student_t") or generalized normal ("gnorm"). Defaults to "gaussian"</p></dd>
 <dt>family</dt>
-<dd><p>Response for observation model, options are "gaussian", "poisson", "negbin"</p></dd>
+<dd><p>Response for observation model, options are "gaussian", "poisson", "negbin", "binomial", "lognormal". The default ("lognormal") is
+not a true lognormal distribution, but a normal-log in that it assumes log(y) ~ Normal()</p></dd>
 <dt>max_theta</dt>
 <dd><p>Maximum value of log(pred) when <code>limits=TRUE</code>. Defaults to 10</p></dd>
+<dt>share_shape</dt>
+<dd><p>Boolean argument for whether asymmetric student-t and generalized normal distributions should share the shape parameter (nu for the student-t;
+beta for the generalized normal). Defaults to TRUE</p></dd>
 </dl></div>
 
     <div id="ref-examples">

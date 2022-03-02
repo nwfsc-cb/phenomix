@@ -67,13 +67,21 @@ fit <- function(data_list,
     log_beta_2 = 0.1
   )
   parameters$b_mu[1] <- mean(data_list$x[which(!is.na(data_list$y))])
+  CV = 0.1
+  parameters$b_sig1[1] = CV * parameters$b_mu[1]
+  parameters$b_sig2[1] = parameters$b_sig1[1]
+  if(data_list$family == 1) {
+    # for gaussian, don't log-transform theta
+    parameters$theta = rep(0, data_list$nLevels)#rnorm(n = data_list$nLevels, mean(data_list$y))
+  }
 
   # If inits is included, use that instead of parameters
   if (!is.null(inits)) parameters <- inits
 
   # Mapping off params as needed:
   tmb_map <- list()
-  if (data_list$family == 2) {
+  if (data_list$family %in% c(2,4)) {
+    # don't include obs_sigma for poisson or binomial
     tmb_map <- c(tmb_map, list(log_obs_sigma = as.factor(NA)))
   }
 

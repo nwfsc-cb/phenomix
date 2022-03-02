@@ -97,7 +97,7 @@ Type objective_function<Type>::operator() ()
   DATA_IVECTOR(unique_years); // vector containing unique years
   DATA_INTEGER(nLevels); // number of unique years
   DATA_INTEGER(asymmetric); // 0 if false, 1 = true. Whether to estimate same shape/scale parameters before/after mean
-  DATA_INTEGER(family); // 1 gaussian, 2 = poisson, 3 = neg bin
+  DATA_INTEGER(family); // 1 gaussian, 2 = poisson, 3 = neg bin, 4 = binomial, 5 = lognormal
   DATA_INTEGER(tail_model); // 0 if gaussian, 1 = student_t, 2 = generalized normal for tails
   DATA_INTEGER(est_sigma_re); // 0 if FALSE, 1 = TRUE. Whether to estimate deviations as random effects
   DATA_INTEGER(est_mu_re); // 0 if FALSE, 1 = TRUE. Whether to estimate deviations as random effects
@@ -293,29 +293,38 @@ Type objective_function<Type>::operator() ()
 
   if(family==1) {
     // gaussian, both data and predictions in log space
-    nll += sum(dnorm(log(y), pred, obs_sigma, true));
+    nll += sum(dnorm(y, pred, obs_sigma, true));
   }
   if(family==2) {
     for(i = 0; i < n; i++) {
+      if(pred(i) > 20) pred(i) = 20; // not needed
       nll += dpois(y(i), exp(pred(i)), true);
     }
   }
   if(family==3) {
     for(i = 0; i < n; i++) {
-      s1 = exp(pred(i));
+      s1 = pred(i);
       //s2 = s1 + pow(s1, Type(2))*obs_sigma;
       s2 = 2. * s1 - log_obs_sigma; // log(var - mu)
       nll += dnbinom_robust(y(i), s1, s2, true);
     }
   }
-
+  if(family==4) {
+    for(i = 0; i < n; i++) {
+      nll += dbinom_robust(y(i), Type(1.0), pred(i), true);
+    }
+  }
+  if(family==5) {
+    // lognormal, both data and predictions in log space
+    nll += sum(dnorm(log(y), pred, obs_sigma, true));
+  }
   // ADREPORT section
   ADREPORT(theta); // nuisance parameter
   ADREPORT(sigma1); // sigma, LHS
   ADREPORT(mu); // mean of curves by year
   ADREPORT(b_mu); // sigma, LHS
   ADREPORT(b_sig1); // mean of curves by year
-  if(family != 2) {
+  if(family != 2 && family != 4) {
     ADREPORT(obs_sigma); // obs sd (or phi, NB)
   }
   ADREPORT(pred); // predictions in link space (log)

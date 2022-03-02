@@ -13,7 +13,7 @@ status](https://github.com/ericward-noaa/phenomix/workflows/R-CMD-check/badge.sv
 You can install phenomix with:
 
 ``` r
-devtools::install_github("ericward-noaa/phenomix",build_vignettes = TRUE)
+remotes::install_github("ericward-noaa/phenomix",build_vignettes = TRUE)
 ```
 
 Load libraries

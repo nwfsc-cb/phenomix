@@ -26,7 +26,7 @@ R package for fitting distributions to run timing data via maximum likelihood
 You can install phenomix with:
 
 ```{r, eval=FALSE}
-devtools::install_github("ericward-noaa/phenomix",build_vignettes = TRUE)
+remotes::install_github("ericward-noaa/phenomix",build_vignettes = TRUE)
 ```
 
 Load libraries

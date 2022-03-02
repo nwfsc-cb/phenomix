@@ -67,17 +67,49 @@ test_that("other obs error families work - 1 year", {
 
   d <- df[which(df$year == 1), ]
   fitted <- fit(create_data(d, asymmetric_model = FALSE, family = "negbin"),
-    silent = TRUE,
-    control = list(eval.max = 4000, iter.max = 5000, rel.tol = rel_tol)
+                silent = TRUE,
+                control = list(eval.max = 4000, iter.max = 5000, rel.tol = rel_tol)
   )
   expect_equal(length(which(is.na(fitted$sdreport$sd))), 0)
 
-  fitted <- fit(create_data(d, asymmetric_model = TRUE, family = "negbin"),
-    silent = TRUE,
-    control = list(eval.max = 4000, iter.max = 5000, rel.tol = rel_tol)
+  df <- expand.grid("doy" = 100:200, "year" = 1:10, sig = 10)
+  df$mu <- rnorm(10, 150, 5)[df$year]
+  df$pred <- dnorm(df$doy, df$mu, sd = df$sig, log = TRUE)
+  df$pred <- exp(df$pred)
+  df$number <- rnorm(nrow(df), df$pred, 0.001)
+  d <- df[which(df$year == 1), ]
+  fitted <- fit(create_data(d, asymmetric_model = FALSE, family = "gaussian"),
+                silent = TRUE,
+                control = list(eval.max = 4000, iter.max = 5000, rel.tol = rel_tol)
+  )
+  expect_equal(length(which(is.na(fitted$sdreport$sd))), 0)
+
+  df <- expand.grid("doy" = 100:200, "year" = 1:10, sig = 10)
+  df$mu <- rnorm(10, 150, 5)[df$year]
+  df$pred <- dnorm(df$doy, df$mu, sd = df$sig, log = TRUE)
+  df$pred <- exp(df$pred+3)/(3+exp(df$pred+1))
+  df$number <- rbinom(nrow(df), size=1, prob=df$pred)
+  d <- df[which(df$year == 1), ]
+  fitted <- fit(create_data(d, asymmetric_model = FALSE, family = "binomial"),
+                silent = TRUE,
+                control = list(eval.max = 4000, iter.max = 5000, rel.tol = rel_tol)
+  )
+  expect_equal(length(which(is.na(fitted$sdreport$sd))), 0)
+
+  df <- expand.grid("doy" = 100:200, "year" = 1:10, sig = 10)
+  df$mu <- rnorm(10, 150, 5)[df$year]
+  df$pred <- dnorm(df$doy, df$mu, sd = df$sig, log = TRUE)
+  df$pred <- rpois(nrow(df), exp(df$pred + 5))
+  df$number = df$pred
+  d <- df[which(df$year == 1), ]
+  fitted <- fit(create_data(d, asymmetric_model = FALSE, family = "poisson"),
+                silent = TRUE,
+                control = list(eval.max = 4000, iter.max = 5000, rel.tol = rel_tol)
   )
   expect_equal(length(which(is.na(fitted$sdreport$sd))), 0)
 })
+
+
 
 # create 20 years of data
 set.seed(123)

@@ -20,7 +20,7 @@ R package for fitting distributions to run timing data via maximum likelihood
 
 [![R build status](https://github.com/ericward-noaa/phenomix/workflows/R-CMD-check/badge.svg)](https://github.com/ericward-noaa/phenomix/actions)
 
-
+pkgdown site: [https://ericward-noaa.github.io/phenomix/](https://ericward-noaa.github.io/phenomix/)
 ## Installation
 
 You can install phenomix with:
@@ -69,7 +69,7 @@ ggplot(df, aes(doy,exp(y),col=year,group=year)) +
 
 ## Examples
 
-The main functions are `create_data()` and `fit()`. See `?create_data` and `?fit` for additional details and examples. A vignette includes additional detail, and examples of several models as well as function arguments available [here](https://github.com/ericward-noaa/phenomix/tree/master/vignettes).
+The main functions are `create_data()` and `fit()`. See `?create_data` and `?fit` for additional details and examples. A vignette includes additional detail, and examples of several models as well as function arguments available [https://ericward-noaa.github.io/phenomix/](https://ericward-noaa.github.io/phenomix/).
 
 ## NOAA Disclaimer
 

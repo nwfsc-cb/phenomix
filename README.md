@@ -8,7 +8,8 @@ likelihood
 [![R build
 status](https://github.com/ericward-noaa/phenomix/workflows/R-CMD-check/badge.svg)](https://github.com/ericward-noaa/phenomix/actions)
 
-## Installation
+pkgdown site: <https://ericward-noaa.github.io/phenomix/> \#\#
+Installation
 
 You can install phenomix with:
 
@@ -48,8 +49,7 @@ the model support a symmetric or asymmetric distribution?
 The main functions are `create_data()` and `fit()`. See `?create_data`
 and `?fit` for additional details and examples. A vignette includes
 additional detail, and examples of several models as well as function
-arguments available
-[here](https://github.com/ericward-noaa/phenomix/tree/master/vignettes).
+arguments available <https://ericward-noaa.github.io/phenomix/>.
 
 ## NOAA Disclaimer
 

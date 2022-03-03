@@ -77,8 +77,7 @@ datalist = create_data(fishdist,
   covar_data = cov_dat,
   est_sigma_re = TRUE,
   est_mu_re = TRUE,
-  tail_model = "gaussian", 
-  family = "gaussian")
+  tail_model = "gaussian")
 ```
 
 The `min_number` argument represents an optional threshold below which data is ignored. The `variable` argument is a character identifying the name of the response variable in the data frame. Similarly, the `time` and `date` arguments specify the labels of the temporal (e.g. year) and seasonal variables (day of year).
@@ -88,7 +87,7 @@ Mathematically the mean location for a model with random effects is $u_y \sim No
 
 Finally, the tails of the response curves may be estimated via fitting a Gaussian (normal) distribution, Student-t distribution, or [generalized normal distribution](https://en.wikipedia.org/wiki/Generalized_normal_distribution). By default, the Gaussian tails are estimated, and this parameter is controlled with the `tail_model` argument ("gaussian", "student_t", "gnorm").
 
-Last, we can model the observed count data with a number of different distributions, and set this with the `family` argument. Currently supported distributions include the Gaussian (default, "gaussian"), Poisson ("poisson"), and Negative Binomial ("negbin"), and all include a log-link. 
+Last, we can model the observed count data with a number of different distributions, and set this with the `family` argument. Currently supported distributions include the lognorma (default, "lognormal"), Poisson ("poisson"), Negative Binomial ("negbin"), Binomial ("binomial"), and Gaussian ("gaussian"). The lognormal, Poisson and Negative Binomial models include a log link; Gaussian model includes an identity link, and Binomial model includes a logit link. 
 
 ### Fitting the model
 
@@ -192,6 +191,3 @@ fit = fitted(..., control=list(rel.tol = 1.0e-12,
   eval.max=4000, iter.max=4000))
 ```
 
-### Adding covariates
-
-Finally, it's possible to include covariates instead of inter-annual trends - either in the mean or standard deviation parameters. These arguments are `mu_covariate` and `sigma_covariate`, which are string variables declaring the name of the variable in the data frame passed to `create_data`. These variables may be the same or different variables, and for asymmetric models the trend variables are required to be the same on the left and right hand sides of the distribution.

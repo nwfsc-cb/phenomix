@@ -9,3 +9,5 @@ src/*.dll
 docs
 doc
 Meta
+/doc/
+/Meta/

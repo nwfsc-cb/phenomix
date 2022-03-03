@@ -1,7 +1,7 @@
 Type: Package
 Package: phenomix
 Title: Fit Density Curves to Peak Timing Data that Varies over Time
-Version: 1.0.1
+Version: 1.0.2
 Authors@R: c(person(given = c("Eric", "J."),
              family = "Ward",
              role = c("aut", "cre"),
@@ -26,6 +26,7 @@ Imports:
     ggplot2,
     gnorm,
     graphics,
+    LaplacesDemon,
     methods,
     stats,
     TMB (>= 1.7.20)

@@ -10,7 +10,9 @@ NULL
 #' @param silent Boolean passed to TMB::MakeADFun, whether to be verbose or not (defaults to FALSE)
 #' @param inits Optional named list of parameters for starting values, defaults to NULL
 #' @param control Optional control list for stats::nlminb. For arguments see ?nlminb. Defaults to eval.max=2000, iter.max=1000, rel.tol=1e-10. For final model runs, the rel.tol should be even smaller
-#' @param limits Whether to include limits for stats::nlminb, defaults to FALSE
+#' @param limits Whether to include limits for stats::nlminb. Can be a list of (lower, upper), or TRUE to use suggested hardcoded limits. Defaults to NULL,
+#' where no limits used.
+#' @param fit_model Whether to fit the model. If not, returns a list including the data, parameters, and initial values. Defaults to TRUE
 #' @importFrom stats runif rnorm
 #' @export
 #' @examples
@@ -45,7 +47,8 @@ fit <- function(data_list,
                 silent = FALSE,
                 inits = NULL,
                 control = list(eval.max = 2000, iter.max = 1000, rel.tol = 1e-10),
-                limits = FALSE) {
+                limits = NULL, # can also be a list, or TRUE
+                fit_model = TRUE) {
 
   # create list of parameter starting values -- used in both
   # asymmetric and symmetric models
@@ -67,20 +70,20 @@ fit <- function(data_list,
     log_beta_2 = 0.1
   )
   parameters$b_mu[1] <- mean(data_list$x[which(!is.na(data_list$y))])
-  CV = 0.1
-  parameters$b_sig1[1] = CV * parameters$b_mu[1]
-  parameters$b_sig2[1] = parameters$b_sig1[1]
-  if(data_list$family == 1) {
+  CV <- 0.1
+  parameters$b_sig1[1] <- CV * parameters$b_mu[1]
+  parameters$b_sig2[1] <- parameters$b_sig1[1]
+  if (data_list$family == 1) {
     # for gaussian, don't log-transform theta
-    parameters$theta = rep(0, data_list$nLevels)#rnorm(n = data_list$nLevels, mean(data_list$y))
+    parameters$theta <- rep(0, data_list$nLevels) # rnorm(n = data_list$nLevels, mean(data_list$y))
   }
 
   # If inits is included, use that instead of parameters
-  if (!is.null(inits)) parameters <- inits
+  # if (!is.null(inits)) parameters <- inits
 
   # Mapping off params as needed:
   tmb_map <- list()
-  if (data_list$family %in% c(2,4)) {
+  if (data_list$family %in% c(2, 4)) {
     # don't include obs_sigma for poisson or binomial
     tmb_map <- c(tmb_map, list(log_obs_sigma = as.factor(NA)))
   }
@@ -135,16 +138,18 @@ fit <- function(data_list,
       ))
     }
   }
-  if(data_list$asymmetric == 1) {
-    if(data_list$share_shape==1) {
-      if(data_list$tail_model == 1) {
+  if (data_list$asymmetric == 1) {
+    if (data_list$share_shape == 1) {
+      if (data_list$tail_model == 1) {
         # map off 2nd nu parameter
         tmb_map <- c(tmb_map, list(
-          log_tdf_2 = as.factor(NA)))
+          log_tdf_2 = as.factor(NA)
+        ))
       }
-      if(data_list$tail_model == 2) {
+      if (data_list$tail_model == 2) {
         tmb_map <- c(tmb_map, list(
-          log_beta_2 = as.factor(NA)))
+          log_beta_2 = as.factor(NA)
+        ))
       }
     }
   }
@@ -198,35 +203,49 @@ fit <- function(data_list,
     silent = silent
   )
 
-  # Attempt to do estimation
-  if (!is.null(inits)) {
-    init <- inits
-  } else {
-    init <- obj$par # + runif(length(obj$par), -0.1, .1)
-  }
-  if (limits == FALSE) {
-    pars <- stats::nlminb(
-      start = init,
-      objective = obj$fn,
-      gradient = obj$gr,
-      control = control
-    )
-  } else {
-    pars <- stats::nlminb(
-      start = init, objective = obj$fn,
-      gradient = obj$gr, control = control,
-      lower = limits(parnames = names(obj$par), max_theta = data_list$max_theta)$lower,
-      upper = limits(parnames = names(obj$par), max_theta = data_list$max_theta)$upper
-    )
-  }
-
-  sdreport <- TMB::sdreport(obj)
-
-  return(structure(list(
+  mod_list <- list(
     obj = obj,
-    pars = pars,
-    sdreport = sdreport,
-    init_values = parameters,
+    init_vals = obj$par,
+    # pars = pars,
+    # sdreport = sdreport,
     data_list = data_list
-  ), class = "phenomix"))
+  )
+
+  if (fit_model == TRUE) {
+    # Attempt to do estimation
+    if (!is.null(inits)) {
+      init <- inits
+    } else {
+      init <- obj$par
+    }
+    if (is.null(limits)) {
+      pars <- stats::nlminb(
+        start = init,
+        objective = obj$fn,
+        gradient = obj$gr,
+        control = control
+      )
+    } else {
+      if (class(limits) == "list") {
+        lower_limits <- limits$lower
+        upper_limits <- limits$upper
+      } else {
+        lim <- limits(parnames = names(obj$par), max_theta = data_list$max_theta)
+        lower_limits <- lim$lower
+        upper_limits <- lim$upper
+      }
+
+      pars <- stats::nlminb(
+        start = init, objective = obj$fn,
+        gradient = obj$gr, control = control,
+        lower = lower_limits,
+        upper = upper_limits
+      )
+    }
+
+    sdreport <- TMB::sdreport(obj)
+    mod_list <- c(mod_list, list(pars = pars, sdreport = sdreport))
+  }
+
+  return(structure(mod_list, class = "phenomix"))
 }

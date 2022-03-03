@@ -18,7 +18,7 @@ do fitting / estimation"><!-- mathjax --><script src="https://cdnjs.cloudflare.c
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenomix</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.2</span>
       </span>
     </div>
 
@@ -33,7 +33,13 @@ do fitting / estimation"><!-- mathjax --><script src="https://cdnjs.cloudflare.c
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/examples.html">Fitting time varying phenology models with the phenomix package</a>
+      <a href="../articles/a1_examples.html">Fitting time varying phenology models with the phenomix package</a>
+    </li>
+    <li>
+      <a href="../articles/a2_covariates.html">Including covariates</a>
+    </li>
+    <li>
+      <a href="../articles/a3_troubleshooting.html">Troubleshooting</a>
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
@@ -67,7 +73,8 @@ do fitting / estimation</p>
   silent <span class="op">=</span> <span class="cn">FALSE</span>,
   inits <span class="op">=</span> <span class="cn">NULL</span>,
   control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>eval.max <span class="op">=</span> <span class="fl">2000</span>, iter.max <span class="op">=</span> <span class="fl">1000</span>, rel.tol <span class="op">=</span> <span class="fl">1e-10</span><span class="op">)</span>,
-  limits <span class="op">=</span> <span class="cn">FALSE</span>
+  limits <span class="op">=</span> <span class="cn">NULL</span>,
+  fit_model <span class="op">=</span> <span class="cn">TRUE</span>
 <span class="op">)</span></code></pre></div>
     </div>
 
@@ -82,7 +89,10 @@ do fitting / estimation</p>
 <dt>control</dt>
 <dd><p>Optional control list for stats::nlminb. For arguments see ?nlminb. Defaults to eval.max=2000, iter.max=1000, rel.tol=1e-10. For final model runs, the rel.tol should be even smaller</p></dd>
 <dt>limits</dt>
-<dd><p>Whether to include limits for stats::nlminb, defaults to FALSE</p></dd>
+<dd><p>Whether to include limits for stats::nlminb. Can be a list of (lower, upper), or TRUE to use suggested hardcoded limits. Defaults to NULL,
+where no limits used.</p></dd>
+<dt>fit_model</dt>
+<dd><p>Whether to fit the model. If not, returns a list including the data, parameters, and initial values. Defaults to TRUE</p></dd>
 </dl></div>
 
     <div id="ref-examples">

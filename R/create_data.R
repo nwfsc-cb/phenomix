@@ -47,7 +47,6 @@ create_data <- function(data,
                         family = "lognormal",
                         max_theta = 10,
                         share_shape = TRUE) {
-
   dist <- c("gaussian", "poisson", "negbin", "binomial", "lognormal")
   fam <- match(family, dist)
   if (is.na(fam)) {

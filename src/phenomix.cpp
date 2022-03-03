@@ -126,8 +126,8 @@ Type objective_function<Type>::operator() ()
   Type obs_sigma=exp(log_obs_sigma);
   Type tdf_1 = exp(log_tdf_1) + 2;
   Type tdf_2 = exp(log_tdf_2) + 2;
-  Type beta_1 = exp(log_beta_1);///(1+exp(log_beta_1))*20;
-  Type beta_2 = exp(log_beta_2);///(1+exp(log_beta_2))*20;
+  Type beta_1 = exp(log_beta_1);
+  Type beta_2 = exp(log_beta_2);
   if(share_shape==1) {
     tdf_2 = tdf_1;
     beta_2 = beta_1;

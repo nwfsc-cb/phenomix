@@ -9,7 +9,8 @@ fit(
   silent = FALSE,
   inits = NULL,
   control = list(eval.max = 2000, iter.max = 1000, rel.tol = 1e-10),
-  limits = FALSE
+  limits = NULL,
+  fit_model = TRUE
 )
 }
 \arguments{
@@ -21,7 +22,10 @@ fit(
 
 \item{control}{Optional control list for stats::nlminb. For arguments see ?nlminb. Defaults to eval.max=2000, iter.max=1000, rel.tol=1e-10. For final model runs, the rel.tol should be even smaller}
 
-\item{limits}{Whether to include limits for stats::nlminb, defaults to FALSE}
+\item{limits}{Whether to include limits for stats::nlminb. Can be a list of (lower, upper), or TRUE to use suggested hardcoded limits. Defaults to NULL,
+where no limits used.}
+
+\item{fit_model}{Whether to fit the model. If not, returns a list including the data, parameters, and initial values. Defaults to TRUE}
 }
 \description{
 This function creates a list of parameters, sets up TMB object and attempts to

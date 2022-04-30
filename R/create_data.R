@@ -24,6 +24,8 @@
 #' @param max_theta Maximum value of log(pred) when `limits=TRUE`. Defaults to 10
 #' @param share_shape Boolean argument for whether asymmetric student-t and generalized normal distributions should share the shape parameter (nu for the student-t;
 #' beta for the generalized normal). Defaults to TRUE
+#' @param nu_prior Two element vector (optional) for penalized prior on student t df, defaults to a Gamma(shape=2, scale=10) distribution
+#' @param beta_prior Two element vector (optional) for penalized prior on generalized normal beta, defaults to a Normal(2, 1) distribution
 #' @export
 #' @importFrom stats model.matrix
 #' @examples
@@ -46,7 +48,10 @@ create_data <- function(data,
                         tail_model = "gaussian",
                         family = "lognormal",
                         max_theta = 10,
-                        share_shape = TRUE) {
+                        share_shape = TRUE,
+                        nu_prior = c(2,10),
+                        beta_prior = c(2,1)) {
+
   dist <- c("gaussian", "poisson", "negbin", "binomial", "lognormal")
   fam <- match(family, dist)
   if (is.na(fam)) {
@@ -68,6 +73,24 @@ create_data <- function(data,
     if (min(data[, date], na.rm = T) < 1) stop("The date variable in the data frame contains values less than 1")
   } else {
     stop("The date variable in the data frame (e.g. day_of_year) needs to be numeric")
+  }
+
+  # optional priors
+  use_t_prior = TRUE
+  if (length(nu_prior) != 2) {
+    if(is.na(nu_prior)) {
+      use_t_prior = FALSE
+    } else {
+      stop("The nu prior must be a numeric 2-element vector or NA")
+    }
+  }
+  use_beta_prior = TRUE
+  if (length(beta_prior) != 2) {
+    if(is.na(beta_prior)) {
+      use_beta_prior = FALSE
+    } else {
+      stop("The beta prior must be a numeric 2-element vector or NA")
+    }
   }
 
   # if 1 level, turn off trend and random effect estimation
@@ -106,7 +129,11 @@ create_data <- function(data,
     est_sigma_re = as.numeric(est_sigma_re),
     est_mu_re = as.numeric(est_mu_re),
     max_theta = max_theta,
-    share_shape = as.numeric(share_shape)
+    share_shape = as.numeric(share_shape),
+    use_t_prior = as.numeric(use_t_prior),
+    use_beta_prior = as.numeric(use_beta_prior),
+    beta_prior = beta_prior,
+    nu_prior = nu_prior
   )
 
   return(data_list)

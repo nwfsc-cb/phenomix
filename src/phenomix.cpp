@@ -104,6 +104,10 @@ Type objective_function<Type>::operator() ()
   DATA_MATRIX(mu_mat); // matrix of covariates for mean trend
   DATA_MATRIX(sig_mat);  // matrix of covariates for sigma trend
   DATA_INTEGER(share_shape);
+  DATA_INTEGER(use_t_prior);
+  DATA_INTEGER(use_beta_prior);
+  DATA_VECTOR(nu_prior); // prior for student t df parameter
+  DATA_VECTOR(beta_prior); // prior for gnorm parameter
 
   PARAMETER(log_sigma1);// log sd of random effects on sigma1
   PARAMETER_VECTOR(sigma1_devs);// random effects on sigma1
@@ -122,6 +126,8 @@ Type objective_function<Type>::operator() ()
   PARAMETER_VECTOR(b_sig1); // coefficients for covariates on sigma1
   PARAMETER_VECTOR(b_sig2); // coefficients for covariates on sigma2
 
+  Type nll=0;
+
   // derived parameters
   Type obs_sigma=exp(log_obs_sigma);
   Type tdf_1 = exp(log_tdf_1) + 2;
@@ -131,6 +137,17 @@ Type objective_function<Type>::operator() ()
   if(share_shape==1) {
     tdf_2 = tdf_1;
     beta_2 = beta_1;
+  }
+
+  if(use_t_prior && tail_model == 1) {
+    //https://statmodeling.stat.columbia.edu/2015/05/17/do-we-have-any-recommendations-for-priors-for-student_ts-degrees-of-freedom-parameter/
+    nll += dgamma(tdf_1, Type(nu_prior(0)), Type(nu_prior(1)), true);
+    if(asymmetric == 1) nll += dgamma(tdf_2, Type(nu_prior(0)), Type(nu_prior(1)), true);
+  }
+  if(use_beta_prior && tail_model == 2) {
+    // value ~ 2-3 is normal
+    nll += dgamma(beta_1, Type(beta_prior(0)), Type(beta_prior(1)), true);
+    if(asymmetric == 1) nll += dgamma(beta_2, Type(beta_prior(0)), Type(beta_prior(1)), true);
   }
 
   vector<Type> sigma1(nLevels), mu(nLevels);
@@ -151,8 +168,6 @@ Type objective_function<Type>::operator() ()
       beta_ratio(1) = sqrt(exp(lgamma(1.0/Type(beta_2))) / exp(lgamma(3.0/Type(beta_2))));
     }
   }
-
-  Type nll=0;
 
   // random effects components
   for(i = 0; i < nLevels; i++) {

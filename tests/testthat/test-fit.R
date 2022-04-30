@@ -99,10 +99,10 @@ test_that("other obs error families work - 1 year", {
   df <- expand.grid("doy" = 100:200, "year" = 1:10, sig = 10)
   df$mu <- rnorm(10, 150, 5)[df$year]
   df$pred <- dnorm(df$doy, df$mu, sd = df$sig, log = TRUE)
-  df$pred <- rpois(nrow(df), exp(df$pred + 5))
+  df$pred <- rpois(nrow(df), exp(df$pred + 8))
   df$number <- df$pred
   d <- df[which(df$year == 1), ]
-  fitted <- fit(create_data(d, asymmetric_model = FALSE, family = "poisson"),
+  fitted <- fit(create_data(d, asymmetric_model = FALSE, family = "negbin"),
     silent = TRUE,
     control = list(eval.max = 4000, iter.max = 5000, rel.tol = rel_tol)
   )

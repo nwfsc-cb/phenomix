@@ -19,7 +19,9 @@ create_data(
   tail_model = "gaussian",
   family = "lognormal",
   max_theta = 10,
-  share_shape = TRUE
+  share_shape = TRUE,
+  nu_prior = c(2, 10),
+  beta_prior = c(2, 1)
 )
 }
 \arguments{
@@ -59,6 +61,10 @@ not a true lognormal distribution, but a normal-log in that it assumes log(y) ~ 
 
 \item{share_shape}{Boolean argument for whether asymmetric student-t and generalized normal distributions should share the shape parameter (nu for the student-t;
 beta for the generalized normal). Defaults to TRUE}
+
+\item{nu_prior}{Two element vector (optional) for penalized prior on student t df, defaults to a Gamma(shape=2, scale=10) distribution}
+
+\item{beta_prior}{Two element vector (optional) for penalized prior on generalized normal beta, defaults to a Normal(2, 1) distribution}
 }
 \description{
 Does minimal processing of data to use as argument to fitting function

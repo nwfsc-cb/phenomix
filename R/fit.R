@@ -57,8 +57,8 @@ fit <- function(data_list,
     b_mu = rep(0, ncol(data_list$mu_mat)),#runif(ncol(data_list$mu_mat),0,10), #rep(0, ncol(data_list$mu_mat)),
     log_sigma_mu_devs = 0,
     mu_devs = rep(0, data_list$nLevels),
-    b_sig1 = rep(0, ncol(data_list$sig_mat)),
-    b_sig2 = rep(0, ncol(data_list$sig_mat)),
+    b_sig1 = rep(1, ncol(data_list$sig_mat)),
+    b_sig2 = rep(1, ncol(data_list$sig_mat)),
     log_sigma1 = 0,
     sigma1_devs = rep(0, data_list$nLevels),
     log_sigma2 = 0,
@@ -69,10 +69,10 @@ fit <- function(data_list,
     log_beta_1 = 0.1,
     log_beta_2 = 0.1
   )
-  #parameters$b_mu[1] <- mean(data_list$x[which(!is.na(data_list$y))])
+  parameters$b_mu[1] <- mean(data_list$x[which(!is.na(data_list$y))])
   #CV <- 0.1
-  parameters$b_sig1[1] <- 1# CV * parameters$b_mu[1]
-  parameters$b_sig2[1] <- parameters$b_sig1[1]
+  #parameters$b_sig1[1] <- 1# CV * parameters$b_mu[1]
+  #parameters$b_sig2[1] <- parameters$b_sig1[1]
   if (data_list$family == 1) {
     # for gaussian, don't log-transform theta
     parameters$theta <- rep(0, data_list$nLevels) # rnorm(n = data_list$nLevels, mean(data_list$y))

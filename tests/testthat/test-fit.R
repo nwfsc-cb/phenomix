@@ -21,11 +21,12 @@ test_that("gaussian model - symmetric works - 1 year", {
   )
   expect_equal(length(which(is.na(fitted$sdreport$sd))), 0)
 
-  fitted <- fit(create_data(d, asymmetric_model = TRUE, min_number = 1, max_theta = 12),
-    silent = TRUE,
-    control = list(eval.max = 4000, iter.max = 5000, rel.tol = rel_tol)
+  f <- fit(create_data(d, asymmetric_model = TRUE,
+                            min_number = 0.1, max_theta = 12),
+     silent = TRUE,
+     control = list(eval.max = 4000, iter.max = 5000, rel.tol = rel_tol)
   )
-  expect_equal(length(which(is.na(fitted$sdreport$sd))), 0)
+  expect_equal(length(which(is.na(f$sdreport$sd))), 0)
 })
 
 test_that("student-t model - symmetric works - 1 year", {

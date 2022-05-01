@@ -109,9 +109,9 @@ Type objective_function<Type>::operator() ()
   DATA_VECTOR(nu_prior); // prior for student t df parameter
   DATA_VECTOR(beta_prior); // prior for gnorm parameter
 
-  PARAMETER(log_sigma1);// log sd of random effects on sigma1
+  PARAMETER(log_sigma1_sd);// log sd of random effects on sigma1
   PARAMETER_VECTOR(sigma1_devs);// random effects on sigma1
-  PARAMETER(log_sigma2);// log sd of random effects on sigma2
+  PARAMETER(log_sigma2_sd);// log sd of random effects on sigma2
   PARAMETER_VECTOR(sigma2_devs);// random effects on sigma2
   PARAMETER_VECTOR(theta); // scaling parameter
   PARAMETER_VECTOR(mu_devs);// random effects on mean
@@ -176,9 +176,9 @@ Type objective_function<Type>::operator() ()
       nll += dnorm(mu_devs(i), Type(0.0), exp(log_sigma_mu_devs), true);
     }
     if(est_sigma_re==1) {
-      nll += dnorm(sigma1_devs(i),Type(0.0),exp(log_sigma1),true);
+      nll += dnorm(sigma1_devs(i),Type(0.0),exp(log_sigma1_sd),true);
       if(asymmetric == 1) {
-        nll += dnorm(sigma2_devs(i),Type(0.0),exp(log_sigma2),true);
+        nll += dnorm(sigma2_devs(i),Type(0.0),exp(log_sigma2_sd),true);
       }
     }
   }

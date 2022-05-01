@@ -59,9 +59,9 @@ fit <- function(data_list,
     mu_devs = rep(0, data_list$nLevels),
     b_sig1 = rep(1, ncol(data_list$sig_mat)),
     b_sig2 = rep(1, ncol(data_list$sig_mat)),
-    log_sigma1 = 0,
+    log_sigma1_sd = 0,
     sigma1_devs = rep(0, data_list$nLevels),
-    log_sigma2 = 0,
+    log_sigma2_sd = 0,
     sigma2_devs = rep(0, data_list$nLevels),
     log_obs_sigma = 0.0,
     log_tdf_1 = 0,
@@ -92,7 +92,7 @@ fit <- function(data_list,
     # map off pars not needed
     tmb_map <- c(tmb_map, list(
       b_sig2 = rep(as.factor(NA), ncol(data_list$sig_mat)),
-      log_sigma2 = as.factor(NA),
+      log_sigma2_sd = as.factor(NA),
       sigma2_devs = rep(as.factor(NA), data_list$nLevels)
     ))
   }
@@ -169,15 +169,15 @@ fit <- function(data_list,
 
   if (data_list$est_sigma_re == 0) {
     tmb_map <- c(tmb_map, list(
-      log_sigma1 = as.factor(NA),
-      log_sigma2 = as.factor(NA),
+      log_sigma1_sd = as.factor(NA),
+      log_sigma2_sd = as.factor(NA),
       sigma1_devs = rep(as.factor(NA), data_list$nLevels),
       sigma2_devs = rep(as.factor(NA), data_list$nLevels)
     ))
   } else {
     if (data_list$asymmetric == 0) {
       tmb_map <- c(tmb_map, list(
-        log_sigma2 = as.factor(NA),
+        log_sigma2_sd = as.factor(NA),
         sigma2_devs = rep(as.factor(NA), data_list$nLevels)
       ))
     }

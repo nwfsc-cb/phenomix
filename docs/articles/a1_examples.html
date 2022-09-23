@@ -34,7 +34,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenomix</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.3</span>
       </span>
     </div>
 
@@ -44,7 +44,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -79,12 +79,12 @@
 
       
 
-      </header><script src="a1_examples_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Fitting time varying phenology models with the phenomix package</h1>
             
-            <h4 data-toc-skip class="date">2022-03-29</h4>
+            <h4 data-toc-skip class="date">2022-09-23</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/ericward-noaa/phenomix/blob/HEAD/vignettes/a1_examples.Rmd" class="external-link"><code>vignettes/a1_examples.Rmd</code></a></small>
       <div class="hidden name"><code>a1_examples.Rmd</code></div>
@@ -97,7 +97,12 @@
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ericward-noaa.github.io/phenomix" class="external-link">phenomix</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/kaskr/adcomp/wiki" class="external-link">TMB</a></span><span class="op">)</span></code></pre></div>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/kaskr/adcomp/wiki" class="external-link">TMB</a></span><span class="op">)</span>
+<span class="co">#&gt; Warning: package 'TMB' was built under R version 4.1.2</span>
+<span class="co">#&gt; Warning in checkMatrixPackageVersion(): Package version inconsistency detected.</span>
+<span class="co">#&gt; TMB was built with Matrix version 1.4.1</span>
+<span class="co">#&gt; Current Matrix version is 1.4.0</span>
+<span class="co">#&gt; Please re-install 'TMB' from source using install.packages('TMB', type = 'source') or ask CRAN for a binary version of 'TMB' matching CRAN's 'Matrix' package</span></code></pre></div>
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
@@ -115,7 +120,7 @@
 <p><img src="a1_examples_files/figure-html/unnamed-chunk-1-1.png" width="672"></p>
 <p>For demonstration purposes, we incuded an example dataset, based on run timing data for Pacific salmon.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://dplyr.tidyverse.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">fishdist</span><span class="op">)</span>
+<code class="sourceCode R"><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">fishdist</span><span class="op">)</span>
 <span class="co">#&gt; Rows: 1,005</span>
 <span class="co">#&gt; Columns: 3</span>
 <span class="co">#&gt; $ year   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 1960, 1960, 1960, 1960, 1960, 1960, 1960, 1960, 1960, 1960, 196…</span>
@@ -173,12 +178,12 @@
   <span class="st">"value"</span><span class="op">=</span><span class="va">fitted</span><span class="op">$</span><span class="va">sdreport</span><span class="op">$</span><span class="va">value</span>, <span class="st">"sd"</span><span class="op">=</span><span class="va">fitted</span><span class="op">$</span><span class="va">sdreport</span><span class="op">$</span><span class="va">sd</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sdrep_df</span><span class="op">)</span>
 <span class="co">#&gt;     par    value        sd</span>
-<span class="co">#&gt; 1 theta 8.400002 0.2234027</span>
-<span class="co">#&gt; 2 theta 8.638922 0.2258461</span>
-<span class="co">#&gt; 3 theta 8.467173 0.2068685</span>
-<span class="co">#&gt; 4 theta 8.154403 0.1577991</span>
-<span class="co">#&gt; 5 theta 8.111871 0.1897455</span>
-<span class="co">#&gt; 6 theta 8.243945 0.2206912</span></code></pre></div>
+<span class="co">#&gt; 1 theta 8.399995 0.2234016</span>
+<span class="co">#&gt; 2 theta 8.638915 0.2258454</span>
+<span class="co">#&gt; 3 theta 8.467173 0.2068679</span>
+<span class="co">#&gt; 4 theta 8.154405 0.1577986</span>
+<span class="co">#&gt; 5 theta 8.111876 0.1897451</span>
+<span class="co">#&gt; 6 theta 8.243943 0.2206906</span></code></pre></div>
 <p>If for some reason, these need to be re-generated, the <code>obj</code> object can be fed into</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">TMB</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/TMB/man/sdreport.html" class="external-link">sdreport</a></span><span class="op">(</span><span class="va">fitted</span><span class="op">$</span><span class="va">obj</span><span class="op">)</span></code></pre></div>
@@ -210,8 +215,14 @@ Fitted symmetric model with tails from a Gaussian distribution
   variable <span class="op">=</span> <span class="st">"number"</span>, 
   time<span class="op">=</span><span class="st">"year"</span>, 
   date <span class="op">=</span> <span class="st">"doy"</span>,
-  asymmetric_model <span class="op">=</span> <span class="cn">TRUE</span>, 
+  asymmetric_model <span class="op">=</span> <span class="cn">FALSE</span>, 
+  mu <span class="op">=</span> <span class="op">~</span> <span class="va">nyear</span>,
+  sigma <span class="op">=</span> <span class="op">~</span> <span class="va">nyear</span>,
+  covar_data <span class="op">=</span> <span class="va">cov_dat</span>,
+  est_sigma_re <span class="op">=</span> <span class="cn">TRUE</span>,
+  est_mu_re <span class="op">=</span> <span class="cn">TRUE</span>,
   tail_model <span class="op">=</span> <span class="st">"student_t"</span><span class="op">)</span>
+
 <span class="va">fitted_t</span> <span class="op">=</span> <span class="fu"><a href="../reference/fit.html">fit</a></span><span class="op">(</span><span class="va">datalist</span><span class="op">)</span></code></pre></div>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/plot_diagnostics.html">plot_diagnostics</a></span><span class="op">(</span><span class="va">fitted_t</span><span class="op">)</span>
@@ -229,7 +240,7 @@ Fitted asymmetric model with heavy tails from a t-distribution
 
 <span class="va">aic_2</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/extractAIC.html" class="external-link">extractAIC</a></span><span class="op">(</span><span class="va">fitted_t</span><span class="op">)</span><span class="op">$</span><span class="va">AIC</span>
 <span class="va">aic_2</span>
-<span class="co">#&gt; [1] 2361.257</span></code></pre></div>
+<span class="co">#&gt; [1] 2448.533</span></code></pre></div>
 <p>Second, we can we can try to fit the same model, but using a generalized normal distribution. This distribution has a plateau or ‘flat top’. For examples, see the <code>gnorm</code> package on CRAN <a href="https://cran.r-project.org/web/packages/gnorm/index.html" class="external-link">here</a> or <a href="https://en.wikipedia.org/wiki/Generalized_normal_distribution" class="external-link">Wikipedia page</a>.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span>

@@ -146,8 +146,14 @@ datalist = create_data(fishdist,
   variable = "number", 
   time="year", 
   date = "doy",
-  asymmetric_model = TRUE, 
+  asymmetric_model = FALSE, 
+  mu = ~ nyear,
+  sigma = ~ nyear,
+  covar_data = cov_dat,
+  est_sigma_re = TRUE,
+  est_mu_re = TRUE,
   tail_model = "student_t")
+
 fitted_t = fit(datalist)
 ```
 

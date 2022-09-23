@@ -1,9 +1,9 @@
-pandoc: 2.7.3
+pandoc: 2.11.4
 pkgdown: 2.0.2
 pkgdown_sha: ~
 articles:
   a1_examples: a1_examples.html
   a2_covariates: a2_covariates.html
   a3_troubleshooting: a3_troubleshooting.html
-last_built: 2022-03-29T16:37Z
+last_built: 2022-09-23T14:14Z
 

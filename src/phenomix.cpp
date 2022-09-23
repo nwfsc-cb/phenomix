@@ -60,6 +60,45 @@ Type dgnorm(Type x, Type mu, Type alpha, Type beta)
 }
 
 template <class Type>
+Type ddnorm(Type x, Type mu, Type sigma1, Type sigma2)
+{
+  // implements log density of double normal distribution, similar to Rubio et al.
+  Type z = log(2.0) - log(sigma1+sigma2);
+  if(x < mu) {
+    z += dnorm((x-mu)/sigma1, Type(0.0), Type(1.0), true);
+  } else {
+    z += dnorm((x- mu)/sigma2, Type(0.0), Type(1.0), true);
+  }
+  return(z);
+}
+
+template <class Type>
+Type ddt(Type x, Type mu, Type sigma1, Type sigma2, Type tdf_1, Type tdf_2)
+{
+  // implements log density of double Student-t distribution, similar to Rubio et al.
+  Type z = log(2.0) - log(sigma1+sigma2);
+  if(x < mu) {
+    z += dt((x - mu) / sigma1, tdf_1, true);// - log(sigma1);
+  } else {
+    z += dt((x - mu) / sigma2, tdf_2, true);// - log(sigma2);
+  }
+  return(z);
+}
+
+template <class Type>
+Type ddgnorm(Type x, Type mu, Type alpha1, Type alpha2, Type beta1, Type beta2, Type sigma1, Type sigma2)
+{
+  // implements log density of double gnormal distribution, similar to Rubio et al.
+  Type z = log(2.0) - log(sigma1+sigma2);
+  if(x < mu) {
+    z += dgnorm(x, mu, alpha1, beta1);
+  } else {
+    z += dgnorm(x, mu, alpha2, beta2);
+  }
+  return(z);
+}
+
+template <class Type>
 Type qgnorm(Type quantile, Type mu, Type alpha, Type beta)
 {
   // implements qgnorm
@@ -83,6 +122,49 @@ Type qgnorm(Type quantile, Type mu, Type alpha, Type beta)
   Type z = sign*exp(log(qgamma(fabs(p - 0.5)*2, shape, scale))/beta) + mu;
   return (z);
 }
+
+template <class Type>
+Type qdnorm(Type p, Type mu, Type sigma1, Type sigma2)
+{
+  // implements quantile of double normal distribution, similar to Rubio et al.
+  Type z = 0;
+  Type r = sigma1/(sigma1 + sigma2);
+  if(p < r) {
+    z = mu + sigma1 * qnorm(0.5 * p * (sigma1 + sigma2)/sigma1, Type(0.0), Type(1.0));
+  } else {
+    z = mu + sigma2 * qnorm(0.5 * ((sigma1 + sigma2) * (1 + p) - 2 * sigma1)/sigma2, Type(0.0), Type(1.0));
+  }
+  return(z);
+}
+
+template <class Type>
+Type qdt(Type p, Type mu, Type sigma1, Type sigma2, Type tdf_1, Type tdf_2)
+{
+  // implements quantile of double normal distribution, similar to Rubio et al.
+  Type z = 0;
+  Type r = sigma1/(sigma1 + sigma2);
+  if(p < r) {
+    z = mu + sigma1 * qthill(0.5 * p * (sigma1 + sigma2)/sigma1, Type(tdf_1), Type(0.0), Type(1.0));
+  } else {
+    z = mu + sigma2 * qthill(0.5 * ((sigma1 + sigma2) * (1 + p) - 2 * sigma1)/sigma2, Type(tdf_1), Type(0.0), Type(1.0));
+  }
+  return(z);
+}
+
+template <class Type>
+Type qdgnorm(Type p, Type mu, Type sigma1, Type sigma2, Type beta_ratio_1, Type beta_ratio_2, Type beta_1, Type beta_2)
+{
+  // implements quantile of double normal distribution, similar to Rubio et al.
+  Type z = 0;
+  Type r = sigma1/(sigma1 + sigma2);
+  if(p < r) {
+    z = mu + sigma1 * qgnorm(0.5 * p * (sigma1 + sigma2)/sigma1, mu, sigma1*beta_ratio_1, beta_1);
+  } else {
+    z = mu + sigma2 * qgnorm(0.5 * ((sigma1 + sigma2) * (1 + p) - 2 * sigma1)/sigma2, mu, sigma2*beta_ratio_2, beta_2);
+  }
+  return(z);
+}
+
 
 template<class Type>
 Type objective_function<Type>::operator() ()
@@ -151,7 +233,7 @@ Type objective_function<Type>::operator() ()
   }
 
   vector<Type> sigma1(nLevels), mu(nLevels);
-  vector<Type> sigma2(nLevels), scalar(nLevels);
+  vector<Type> sigma2(nLevels);
   vector<Type> alpha1(nLevels), alpha2(nLevels);
   vector<Type> lower25(nLevels), upper75(nLevels);
   vector<Type> range(nLevels); // 75th - 25th percentile
@@ -195,8 +277,6 @@ Type objective_function<Type>::operator() ()
       if(asymmetric == 1) sigma2(i) += sigma2_devs(i);
     }
 
-    if(asymmetric == 1) scalar(i) = sigma2(i) - sigma1(i);
-
     // calculate alphas if the gnorm model is used
     if(tail_model == 2) {
       alpha1(i) = sigma1(years(i)-1)*beta_ratio(0);
@@ -211,39 +291,34 @@ Type objective_function<Type>::operator() ()
       mu(i) += mu_devs(i);
     }
 
-    // this is all for calculating quantiles on LHS
+    // this is all for calculating quantiles of normal distributions
     if(tail_model==0) {
-      lower25(i) = qnorm(Type(0.25), mu(i), sigma1(i));
-    } else {
-      if(tail_model == 1) {
-        lower25(i) = qthill(Type(0.25),Type(tdf_1), mu(i), sigma1(i));
-      } else {
-        // gnorm
-        lower25(i) = qgnorm(Type(0.25), mu(i), sigma1(i)*beta_ratio(0), beta_1);
-      }
-    }
-    // this is all for calculating quantiles on RHS
-    if(asymmetric == 1) {
-      if(tail_model == 0) {
-        upper75(i) = qnorm(Type(0.75), mu(i), sigma2(i));
-      } else {
-        if(tail_model == 1) {
-          upper75(i) = qthill(Type(0.75),Type(tdf_2), mu(i), sigma2(i));
-        } else {
-          // gnorm
-          upper75(i) = qgnorm(Type(0.75), mu(i), sigma2(i)*beta_ratio(1), beta_2);
-        }
-      }
-    } else {
-      if(tail_model == 0) {
+      if(asymmetric == 0) {
+        lower25(i) = qnorm(Type(0.25), mu(i), sigma1(i));
         upper75(i) = qnorm(Type(0.75), mu(i), sigma1(i));
       } else {
-        if(tail_model==1) {
-          upper75(i) = qthill(Type(0.75),Type(tdf_1), mu(i), sigma1(i));
-        } else {
-          // gnorm
-          upper75(i) = qgnorm(Type(0.75), mu(i), sigma1(i)*beta_ratio(0), beta_1);
-        }
+        lower25(i) = qdnorm(Type(0.25), mu(i), sigma1(i), sigma2(i));
+        upper75(i) = qdnorm(Type(0.75), mu(i), sigma1(i), sigma2(i));
+      }
+    }
+    // this is all for calculating quantiles of Student-t distributions
+    if(tail_model==1) {
+      if(asymmetric == 0) {
+        lower25(i) = qthill(Type(0.25),Type(tdf_1), mu(i), sigma1(i));
+        upper75(i) = qthill(Type(0.75),Type(tdf_1), mu(i), sigma1(i));
+      } else {
+        lower25(i) = qdt(Type(0.25), mu(i), sigma1(i), sigma2(i), Type(tdf_1), Type(tdf_2));
+        upper75(i) = qdt(Type(0.75), mu(i), sigma1(i), sigma2(i), Type(tdf_1), Type(tdf_2));
+      }
+    }
+    // this is all for calculating quantiles of Student-t distributions
+    if(tail_model==2) {
+      if(asymmetric == 0) {
+        lower25(i) = qgnorm(Type(0.25), mu(i), sigma1(i)*beta_ratio(0), beta_1);
+        upper75(i) = qgnorm(Type(0.75), mu(i), sigma1(i)*beta_ratio(0), beta_1);
+      } else {
+        lower25(i) = qdgnorm(Type(0.25), mu(i), sigma1(i), sigma2(i), beta_ratio(0), beta_ratio(1), beta_1, beta_2);
+        upper75(i) = qdgnorm(Type(0.75), mu(i), sigma1(i), sigma2(i), beta_ratio(0), beta_ratio(1), beta_1, beta_2);
       }
     }
     range(i) = upper75(i) - lower25(i);
@@ -253,37 +328,17 @@ Type objective_function<Type>::operator() ()
   for(i = 0; i < y.size(); i++) {
     if(asymmetric == 1) {
       // model is asymmetric, left side smaller / right side bigger
-      if(x(i) < mu(years(i)-1)) {
-        if(tail_model==0) {
-          // model is asymmetric around mu, gaussian tails
-          log_dens(i) = dnorm(x(i), mu(years(i)-1), sigma1(years(i)-1), true);
-        } else {
-          if(tail_model==1) {
-            // model is asymmetric around mu, student-t tails
-            log_dens(i) = dt((x(i) - mu(years(i)-1)) / sigma1(years(i)-1), Type(tdf_1), true) - log(sigma1(years(i)-1));
-          } else {
-            // gnorm, copied from maryclare/gnorm
-            // alpha = sqrt( var * gamma(1/beta) / gamma(3/beta) ), alpha = sigma(1)*beta_ratio(1)
-            log_dens(i) = dgnorm(x(i), mu(years(i)-1), alpha1(years(i)-1), beta_1);
-          }
-        }
-        pred(i) = log_dens(i) + theta(years(i)-1);
-      } else {
-        if(tail_model==0) {
-          // model is asymmetric around mu, gaussian tails
-          log_dens(i) = dnorm(x(i), mu(years(i)-1), sigma2(years(i)-1), true);
-        } else {
-          if(tail_model==1) {
-            // model is asymmetric around mu, student-t tails
-            log_dens(i) = dt((x(i) - mu(years(i)-1)) / sigma2(years(i)-1), tdf_2, true) - log(sigma2(years(i)-1));
-          } else {
-            // gnorm, copied from maryclare/gnorm
-            // alpha = sqrt( var * gamma(1/beta) / gamma(3/beta) ), alpha = sigma(1)*beta_ratio(1)
-            log_dens(i) = dgnorm(x(i), mu(years(i)-1), alpha2(years(i)-1), beta_2);
-          }
-        }
-        pred(i) = log_dens(i) + theta(years(i)-1) + scalar(years(i)-1);
+      if(tail_model==0) {
+        log_dens(i) = ddnorm(x(i), mu(years(i)-1), sigma1(years(i)-1), sigma2(years(i)-1));
       }
+      if(tail_model==1) {
+        log_dens(i) = ddt(x(i), mu(years(i)-1), sigma1(years(i)-1), sigma2(years(i)-1), Type(tdf_1), Type(tdf_2));
+      }
+      if(tail_model==2) {
+        log_dens(i) = ddgnorm(x(i), mu(years(i)-1), alpha1(years(i)-1), alpha2(years(i)-1), beta_1, beta_2, sigma1(years(i)-1), sigma2(years(i)-1));
+      }
+      pred(i) = log_dens(i) + theta(years(i)-1);
+
     } else {
       if(tail_model==0) {
         // model is symmetric around mu, gaussian tails
@@ -335,34 +390,52 @@ Type objective_function<Type>::operator() ()
   }
   // ADREPORT section
   ADREPORT(theta); // nuisance parameter
+  REPORT(theta);
   ADREPORT(sigma1); // sigma, LHS
+  REPORT(sigma1);
   ADREPORT(mu); // mean of curves by year
+  REPORT(mu);
   ADREPORT(b_mu); // sigma, LHS
+  REPORT(b_mu);
   ADREPORT(b_sig1); // mean of curves by year
+  REPORT(b_sig1);
   if(family != 2 && family != 4) {
     ADREPORT(obs_sigma); // obs sd (or phi, NB)
+    REPORT(obs_sigma);
   }
   ADREPORT(pred); // predictions in link space (log)
+  REPORT(pred);
 
   ADREPORT(lower25); // lower quartile
+  REPORT(lower25);
   ADREPORT(upper75); // upper quartile
+  REPORT(upper75);
   ADREPORT(range); // diff between upper and lower quartiles
+  REPORT(range);
   if(tail_model==1) {
     ADREPORT(tdf_1); // tdf for LHS
+    REPORT(tdf_1);
   }
   if(tail_model==2) {
     ADREPORT(beta_1); // tdf for LHS
+    REPORT(beta_1);
   }
   if(asymmetric == 1) {
     // these are only reported for asymmetric model
     ADREPORT(b_sig2); // mean of curves by year
+    REPORT(b_sig2);
     if(est_sigma_re==1) {
       ADREPORT(sigma2); // same as above, but RHS optionally
+      REPORT(sigma2);
     }
     if(tail_model==1) {
       ADREPORT(tdf_2);
+      REPORT(tdf_2);
     }
-
+    if(tail_model==2) {
+      ADREPORT(beta_2);
+      REPORT(beta_2);
+    }
   }
   return (-nll);
 }

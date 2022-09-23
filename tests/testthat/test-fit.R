@@ -287,10 +287,10 @@ test_that("gnorm model - asymmetric works - multiple years", {
   #   )
   #   expect_equal(length(which(is.na(fitted$sdreport$sd))), 0)
 
-  set.seed(1)
-  fitted <- fit(create_data(df, asymmetric_model = TRUE, est_mu_re = FALSE, est_sigma_re = FALSE, min_number = 1, tail_model = "gnorm"),
-    silent = TRUE, limits = TRUE,
-    control = list(eval.max = 4000, iter.max = 5000, rel.tol = rel_tol)
-  )
-  expect_equal(length(which(is.na(fitted$sdreport$sd))), 0)
+  # set.seed(1)
+  # fitted <- fit(create_data(df, asymmetric_model = TRUE, est_mu_re = FALSE, est_sigma_re = FALSE, min_number = 1, tail_model = "gnorm"),
+  #   silent = TRUE, limits = TRUE,
+  #   control = list(eval.max = 4000, iter.max = 5000, rel.tol = rel_tol)
+  # )
+  # expect_equal(length(which(is.na(fitted$sdreport$sd))), 0)
 })

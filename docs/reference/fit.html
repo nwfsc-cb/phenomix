@@ -18,7 +18,7 @@ do fitting / estimation"><!-- mathjax --><script src="https://cdnjs.cloudflare.c
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenomix</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.3</span>
       </span>
     </div>
 
@@ -27,7 +27,7 @@ do fitting / estimation"><!-- mathjax --><script src="https://cdnjs.cloudflare.c
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -106,14 +106,18 @@ where no limits used.</p></dd>
 <span class="r-in">  est_mu_re <span class="op">=</span> <span class="cn">FALSE</span>, est_sigma_re <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span class="r-in"><span class="op">)</span></span>
 <span class="r-in"><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">fit</span><span class="op">(</span><span class="va">datalist</span><span class="op">)</span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Package version inconsistency detected.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> TMB was built with Matrix version 1.4.1</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> Current Matrix version is 1.4.0</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> Please re-install 'TMB' from source using install.packages('TMB', type = 'source') or ask CRAN for a binary version of 'TMB' matching CRAN's 'Matrix' package</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Order of parameters:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "theta"             "b_mu"              "log_sigma_mu_devs"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [4] "mu_devs"           "b_sig1"            "b_sig2"           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "log_sigma1"        "sigma1_devs"       "log_sigma2"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "log_sigma1_sd"     "sigma1_devs"       "log_sigma2_sd"    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [10] "sigma2_devs"       "log_obs_sigma"     "log_tdf_1"        </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [13] "log_tdf_2"         "log_beta_1"        "log_beta_2"       </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Not matching template order:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "log_sigma1"        "sigma1_devs"       "log_sigma2"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "log_sigma1_sd"     "sigma1_devs"       "log_sigma2_sd"    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [4] "sigma2_devs"       "theta"             "mu_devs"          </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "log_sigma_mu_devs" "log_tdf_1"         "log_tdf_2"        </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [10] "log_beta_1"        "log_beta_2"        "log_obs_sigma"    </span>

@@ -1,5 +1,6 @@
 context("Fitting")
 
+library(gnorm)
 rel_tol <- 1e-4
 
 set.seed(123)
@@ -269,7 +270,7 @@ df$alpha1 <- rnorm(unique(df$year), 30, 5)[df$year]
 df$sig <- df$alpha1
 df$pred <- 0
 for (i in 1:nrow(df)) {
-  df$pred[i] <- gnorm::dgnorm(df$doy[i],
+  df$pred[i] <- dgnorm(df$doy[i],
     mu = df$mu[i],
     alpha = df$sig[i], beta = 10, log = TRUE
   )

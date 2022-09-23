@@ -44,15 +44,16 @@ extractAIC.phenomix <- function(fit, scale, k = 2, ...) {
 #' Get fitted values from model object, copying glmmTMB 'fast' implementation
 #'
 #' @param fit The fitted phenomix model
+#' @param ... Extra parameters
 #'
 #' @export
-fitted.phenomix <- function(fit) {
-  ee <- environment(fit$obj$fn)
+fitted.phenomix <- function (object, ...) {
+  ee <- environment(object$obj$fn)
   lp <- ee$last.par.best #
   dat <- data.frame(y = ee$data$y,
                     yint = ee$data$yint,
                     x = ee$data$x,
                     years = ee$data$years,
-                    pred = fit$obj$report(lp)$pred)
+                    pred = object$obj$report(lp)$pred)
   return(dat)
 }

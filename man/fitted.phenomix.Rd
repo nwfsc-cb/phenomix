@@ -4,9 +4,11 @@
 \alias{fitted.phenomix}
 \title{Get fitted values from model object, copying glmmTMB 'fast' implementation}
 \usage{
-\method{fitted}{phenomix}(fit)
+\method{fitted}{phenomix}(object, ...)
 }
 \arguments{
+\item{...}{Extra parameters}
+
 \item{fit}{The fitted phenomix model}
 }
 \description{

@@ -3,14 +3,14 @@
 \docType{data}
 \name{fishdist}
 \alias{fishdist}
-\title{Example data for fish distributions from multiple years}
+\title{Example simulate data for fish distributions from multiple years}
 \format{
-A data frame.
+A data frame containing simulated data.
 }
 \usage{
 fishdist
 }
 \description{
-Example data for fish distributions from multiple years
+Example simulate data for fish distributions from multiple years
 }
 \keyword{datasets}

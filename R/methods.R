@@ -43,7 +43,7 @@ extractAIC.phenomix <- function(fit, scale, k = 2, ...) {
 
 #' Get predicted values from model object, copying glmmTMB 'fast' implementation
 #'
-#' @param fit The fitted phenomix model
+#' @param object The fitted phenomix model
 #' @param se.fit Boolean, whether to produce SEs defaults to FALSE
 #' @param ... Extra parameters
 #'

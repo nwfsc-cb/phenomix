@@ -11,7 +11,7 @@
 plot_diagnostics <- function(fitted, type = "timing", logspace = TRUE) {
 
   # rebuild data frame
-  df <- fitted.phenomix(fitted)
+  df <- predict(fitted)
 
   # join in mean
   mus <- data.frame(

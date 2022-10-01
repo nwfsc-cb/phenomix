@@ -7,11 +7,11 @@
 \method{predict}{phenomix}(object, se.fit = FALSE, ...)
 }
 \arguments{
+\item{object}{The fitted phenomix model}
+
 \item{se.fit}{Boolean, whether to produce SEs defaults to FALSE}
 
 \item{...}{Extra parameters}
-
-\item{fit}{The fitted phenomix model}
 }
 \description{
 Get predicted values from model object, copying glmmTMB 'fast' implementation

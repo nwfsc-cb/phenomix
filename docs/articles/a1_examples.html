@@ -84,7 +84,7 @@
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Fitting time varying phenology models with the phenomix package</h1>
             
-            <h4 data-toc-skip class="date">2022-09-23</h4>
+            <h4 data-toc-skip class="date">2022-10-03</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/ericward-noaa/phenomix/blob/HEAD/vignettes/a1_examples.Rmd" class="external-link"><code>vignettes/a1_examples.Rmd</code></a></small>
       <div class="hidden name"><code>a1_examples.Rmd</code></div>
@@ -96,13 +96,13 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ericward-noaa.github.io/phenomix" class="external-link">phenomix</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/kaskr/adcomp/wiki" class="external-link">TMB</a></span><span class="op">)</span>
-<span class="co">#&gt; Warning: package 'TMB' was built under R version 4.1.2</span>
 <span class="co">#&gt; Warning in checkMatrixPackageVersion(): Package version inconsistency detected.</span>
 <span class="co">#&gt; TMB was built with Matrix version 1.4.1</span>
 <span class="co">#&gt; Current Matrix version is 1.4.0</span>
-<span class="co">#&gt; Please re-install 'TMB' from source using install.packages('TMB', type = 'source') or ask CRAN for a binary version of 'TMB' matching CRAN's 'Matrix' package</span></code></pre></div>
+<span class="co">#&gt; Please re-install 'TMB' from source using install.packages('TMB', type = 'source') or ask CRAN for a binary version of 'TMB' matching CRAN's 'Matrix' package</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/kaskr/adcomp/wiki" class="external-link">TMB</a></span><span class="op">)</span>
+<span class="co">#&gt; Warning: package 'TMB' was built under R version 4.1.2</span></code></pre></div>
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
@@ -167,7 +167,8 @@
 <p>We don’t get any warnings out of the estimation, but let’s look at the sdreport in more detail. <code>fitted</code> is of the <code>phenomix</code> class and contains the following</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">fitted</span><span class="op">)</span>
-<span class="co">#&gt; [1] "obj"       "init_vals" "data_list" "pars"      "sdreport"</span></code></pre></div>
+<span class="co">#&gt; [1] "obj"            "init_vals"      "data_list"      "pars"          </span>
+<span class="co">#&gt; [5] "sdreport"       "tmb_map"        "tmb_random"     "tmb_parameters"</span></code></pre></div>
 <p>The <code>init_values</code> are the initial parameter values where optimization was started from, and the <code>data_list</code> represents the raw data. The <code>pars</code> component contains information relative to convergence and iterations, including the convergence code (0 = successful convergence),</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">fitted</span><span class="op">$</span><span class="va">pars</span><span class="op">$</span><span class="va">convergence</span>
@@ -189,15 +190,65 @@
 <code class="sourceCode R"><span class="fu">TMB</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/TMB/man/sdreport.html" class="external-link">sdreport</a></span><span class="op">(</span><span class="va">fitted</span><span class="op">$</span><span class="va">obj</span><span class="op">)</span></code></pre></div>
 </div>
 <div class="section level3">
+<h3 id="getting-coefficients">Getting coefficients<a class="anchor" aria-label="anchor" href="#getting-coefficients"></a>
+</h3>
+<p>There are three ways we can get coefficients and uncertainty estimates out of model objects. First, we can use the standard <code>fixef</code> and <code>ranef</code> arguments to return fixed and random coefficients, respectively</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">fixef</span><span class="op">(</span><span class="va">fitted</span><span class="op">)</span>
+
+<span class="fu">ranef</span><span class="op">(</span><span class="va">fitted</span><span class="op">)</span></code></pre></div>
+<p>Calling the <code>pars</code> function is another way; this returns a list of objects including the full variance-covariance matrix of fixed effects, and gradient.</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/pars.html">pars</a></span><span class="op">(</span><span class="va">fitted</span><span class="op">)</span>
+<span class="co">#&gt; sdreport(.) result</span>
+<span class="co">#&gt;                       Estimate Std. Error</span>
+<span class="co">#&gt; log_sigma1_sd       1.06408862 0.17047802</span>
+<span class="co">#&gt; theta               8.39999520 0.22340156</span>
+<span class="co">#&gt; theta               8.63891511 0.22584537</span>
+<span class="co">#&gt; theta               8.46717349 0.20686792</span>
+<span class="co">#&gt; theta               8.15440479 0.15779864</span>
+<span class="co">#&gt; theta               8.11187621 0.18974509</span>
+<span class="co">#&gt; theta               8.24394280 0.22069056</span>
+<span class="co">#&gt; theta               8.16297796 0.20627479</span>
+<span class="co">#&gt; theta               8.18093910 0.18399646</span>
+<span class="co">#&gt; theta               8.44583430 0.18735588</span>
+<span class="co">#&gt; theta               8.11022595 0.15356321</span>
+<span class="co">#&gt; theta               7.82421118 0.16969770</span>
+<span class="co">#&gt; theta               8.19871110 0.19105389</span>
+<span class="co">#&gt; theta               8.24277549 0.20384630</span>
+<span class="co">#&gt; theta               8.29030016 0.20386679</span>
+<span class="co">#&gt; theta               8.40639952 0.18200414</span>
+<span class="co">#&gt; theta               8.14420041 0.19208359</span>
+<span class="co">#&gt; theta               7.87879972 0.17770564</span>
+<span class="co">#&gt; theta               8.08659425 0.18277170</span>
+<span class="co">#&gt; theta               8.10094697 0.16879708</span>
+<span class="co">#&gt; theta               8.10021209 0.19721592</span>
+<span class="co">#&gt; theta               7.88135896 0.17350336</span>
+<span class="co">#&gt; log_sigma_mu_devs   1.54231647 0.17917533</span>
+<span class="co">#&gt; log_obs_sigma       0.11308948 0.02285357</span>
+<span class="co">#&gt; b_mu              144.09324084 2.11794216</span>
+<span class="co">#&gt; b_mu               -0.12661800 0.18018190</span>
+<span class="co">#&gt; b_sig1             10.63160621 1.27793188</span>
+<span class="co">#&gt; b_sig1             -0.02649123 0.10913118</span>
+<span class="co">#&gt; Maximum gradient component: 0.0004729994</span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="getting-predicted-values">Getting predicted values<a class="anchor" aria-label="anchor" href="#getting-predicted-values"></a>
+</h3>
+<p>Predicted values can be returned with a call to <code>predict</code>. The <code>se.fit</code> argument is optional,</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">fitted</span>, se.fit<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+</div>
+<div class="section level3">
 <h3 id="plotting-results">Plotting results<a class="anchor" aria-label="anchor" href="#plotting-results"></a>
 </h3>
 <p>Using our fitted object, there are some basic plotting functions included for diagnostics. Let’s plot run timing over time, by year:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">g</span> <span class="op">=</span> <span class="fu"><a href="../reference/plot_diagnostics.html">plot_diagnostics</a></span><span class="op">(</span><span class="va">fitted</span>, type<span class="op">=</span><span class="st">"timing"</span>, logspace<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>
 <span class="co">#&gt; Joining, by = "years"</span>
 <span class="va">g</span></code></pre></div>
 <div class="figure">
-<img src="a1_examples_files/figure-html/unnamed-chunk-11-1.png" alt="Fitted symmetric model with tails from a  Gaussian distribution" width="768"><p class="caption">
+<img src="a1_examples_files/figure-html/unnamed-chunk-14-1.png" alt="Fitted symmetric model with tails from a  Gaussian distribution" width="768"><p class="caption">
 Fitted symmetric model with tails from a Gaussian distribution
 </p>
 </div>
@@ -207,7 +258,7 @@ Fitted symmetric model with tails from a Gaussian distribution
 <h3 id="additional-examples">Additional examples<a class="anchor" aria-label="anchor" href="#additional-examples"></a>
 </h3>
 <p>First, we can try to fit the same model, but using an asymmetric t-distribution.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span>
 
 <span class="va">datalist</span> <span class="op">=</span> <span class="fu"><a href="../reference/create_data.html">create_data</a></span><span class="op">(</span><span class="va">fishdist</span>, 
@@ -224,16 +275,16 @@ Fitted symmetric model with tails from a Gaussian distribution
   tail_model <span class="op">=</span> <span class="st">"student_t"</span><span class="op">)</span>
 
 <span class="va">fitted_t</span> <span class="op">=</span> <span class="fu"><a href="../reference/fit.html">fit</a></span><span class="op">(</span><span class="va">datalist</span><span class="op">)</span></code></pre></div>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/plot_diagnostics.html">plot_diagnostics</a></span><span class="op">(</span><span class="va">fitted_t</span><span class="op">)</span>
 <span class="co">#&gt; Joining, by = "years"</span></code></pre></div>
 <div class="figure">
-<img src="a1_examples_files/figure-html/unnamed-chunk-13-1.png" alt="Fitted asymmetric model with heavy tails from a t-distribution" width="768"><p class="caption">
+<img src="a1_examples_files/figure-html/unnamed-chunk-16-1.png" alt="Fitted asymmetric model with heavy tails from a t-distribution" width="768"><p class="caption">
 Fitted asymmetric model with heavy tails from a t-distribution
 </p>
 </div>
 <p>We can also compare the two models using AIC. Note we’re not comparing random effects structures (where we’d need REML), and that this is an approximation (because only fixed effects parameters are included). This comparison shows that maybe not surprisingly, the Student-t model is more parsimoinious than the Gaussian tailed model (aic_2 &lt; aic_1).</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">aic_1</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/extractAIC.html" class="external-link">extractAIC</a></span><span class="op">(</span><span class="va">fitted</span><span class="op">)</span><span class="op">$</span><span class="va">AIC</span>
 <span class="va">aic_1</span>
 <span class="co">#&gt; [1] 3226.133</span>
@@ -242,7 +293,7 @@ Fitted asymmetric model with heavy tails from a t-distribution
 <span class="va">aic_2</span>
 <span class="co">#&gt; [1] 2448.533</span></code></pre></div>
 <p>Second, we can we can try to fit the same model, but using a generalized normal distribution. This distribution has a plateau or ‘flat top’. For examples, see the <code>gnorm</code> package on CRAN <a href="https://cran.r-project.org/web/packages/gnorm/index.html" class="external-link">here</a> or <a href="https://en.wikipedia.org/wiki/Generalized_normal_distribution" class="external-link">Wikipedia page</a>.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span>
 
 <span class="va">datalist</span> <span class="op">=</span> <span class="fu"><a href="../reference/create_data.html">create_data</a></span><span class="op">(</span><span class="va">fishdist</span>, 
@@ -259,7 +310,7 @@ Fitted asymmetric model with heavy tails from a t-distribution
 </h3>
 <p>In addition to the warning message about the Hessian not being positive definite, the NaNs in the <code>sd</code> column are a sure sign that things aren’t converging.</p>
 <p>Fixes to improve convergence may be to start from a different set of starting values (try passing <code>inits</code> into the <code>fit</code> function), or placing stricter bounds on convergence statistics. Or it may be that the model isn’t a good fit to the data. Specifically, the convergence criterion can be modified with the <code>control</code> argument – which is passed into <code><a href="https://rdrr.io/r/stats/nlminb.html" class="external-link">stats::nlminb</a></code>. One parameter in this list that can be changed is <code>rel.tol</code>, e.g.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">fit</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/fitted.values.html" class="external-link">fitted</a></span><span class="op">(</span><span class="va">...</span>, control<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>rel.tol <span class="op">=</span> <span class="fl">1.0e-12</span>, 
   eval.max<span class="op">=</span><span class="fl">4000</span>, iter.max<span class="op">=</span><span class="fl">4000</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 </div>

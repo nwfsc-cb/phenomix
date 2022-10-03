@@ -25,6 +25,9 @@
     <loc>/index.html</loc>
   </url>
   <url>
+    <loc>/reference/chum.html</loc>
+  </url>
+  <url>
     <loc>/reference/create_data.html</loc>
   </url>
   <url>
@@ -37,15 +40,27 @@
     <loc>/reference/fitted.phenomix.html</loc>
   </url>
   <url>
+    <loc>/reference/fixef.phenomix.html</loc>
+  </url>
+  <url>
+    <loc>/reference/get_sdreport.html</loc>
+  </url>
+  <url>
     <loc>/reference/index.html</loc>
   </url>
   <url>
     <loc>/reference/limits.html</loc>
   </url>
   <url>
+    <loc>/reference/pars.html</loc>
+  </url>
+  <url>
     <loc>/reference/phenomix-package.html</loc>
   </url>
   <url>
     <loc>/reference/plot_diagnostics.html</loc>
+  </url>
+  <url>
+    <loc>/reference/ranef.phenomix.html</loc>
   </url>
 </urlset>

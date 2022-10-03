@@ -41,6 +41,12 @@ extractAIC.phenomix <- function(fit, scale, k = 2, ...) {
   return(data.frame("df" = edf, "AIC" = -2 * L + k * edf))
 }
 
+#' @importFrom stats predict
+#' @export
+fitted.phenomix <- function(object, ...) {
+  predict(object)
+}
+
 #' Get predicted values from model object, copying glmmTMB 'fast' implementation
 #'
 #' @param object The fitted phenomix model

@@ -123,6 +123,27 @@ If for some reason, these need to be re-generated, the `obj` object can be fed i
 TMB::sdreport(fitted$obj)
 ```
 
+### Getting coefficients
+
+There are three ways we can get coefficients and uncertainty estimates out of model objects. First, we can use the standard `fixef` and `ranef` arguments to return fixed and random coefficients, respectively
+```{r eval = FALSE}
+fixef(fitted)
+
+ranef(fitted)
+```
+
+Calling the `pars` function is another way; this returns a list of objects including the full variance-covariance matrix of fixed effects, and gradient.  
+```{r}
+pars(fitted)
+```
+
+### Getting predicted values
+
+Predicted values can be returned with a call to `predict`. The `se.fit` argument is optional, 
+
+```{r eval=FALSE}
+predict(fitted, se.fit=TRUE)
+```
 
 ### Plotting results
 

@@ -244,7 +244,7 @@ fit <- function(data_list,
     }
 
     sdreport <- TMB::sdreport(obj)
-    mod_list <- c(mod_list, list(pars = pars, sdreport = sdreport))
+    mod_list <- c(mod_list, list(pars = pars, sdreport = sdreport, tmb_map = tmb_map, tmb_random = random, tmb_parameters = parameters))
   }
 
   return(structure(mod_list, class = "phenomix"))

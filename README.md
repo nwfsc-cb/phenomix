@@ -3,8 +3,7 @@
 
 # phenomix
 
-R package for fitting distributions to run timing data via maximum
-likelihood
+R package for fitting distributions to run timing data
 
 [![R build
 status](https://github.com/ericward-noaa/phenomix/workflows/R-CMD-check/badge.svg)](https://github.com/ericward-noaa/phenomix/actions)
@@ -17,6 +16,14 @@ You can install phenomix with:
 ``` r
 remotes::install_github("ericward-noaa/phenomix",build_vignettes = TRUE)
 ```
+
+## Citations
+
+Wilson, S.M. et al. 2023. Variable phenological change and mismatch in juvenile Pacific salmon. *In review Nature Climate Change*
+
+Wilson, S.M, J.H. Anderson, and E.J. Ward. XXXX. Estimating phenology and phenological shifts using a hierarchical state space model, *In review*
+
+
 
 Load libraries
 

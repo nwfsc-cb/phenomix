@@ -24,15 +24,7 @@ Wilson, S.M. et al. 2023. Variable phenological change and mismatch in juvenile 
 Wilson, S.M, J.H. Anderson, and E.J. Ward. XXXX. Estimating phenology and phenological shifts using a hierarchical state space model, *In review*
 
 
-
-Load libraries
-
-``` r
-library(phenomix)
-library(ggplot2)
-```
-
-## Functions
+## Overview
 
 The package pheomix provides a suite of curve fitting to describe data
 that may be generated from a process when distributions in time might be
@@ -52,7 +44,7 @@ the model support a symmetric or asymmetric distribution?
 
 ![](README-figs/unnamed-chunk-6-1.png)<!-- -->
 
-## Examples
+## Functions
 
 The main functions are `create_data()` and `fit()`. See `?create_data`
 and `?fit` for additional details and examples. A vignette includes

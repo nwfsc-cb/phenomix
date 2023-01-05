@@ -109,7 +109,6 @@ pars <- function (object) {
 #' @param ... Additional arguments
 #' @importFrom TMB MakeADFun sdreport
 #' @importFrom nlme fixef
-#' @export fixef
 #' @export
 fixef.phenomix <- function (object, ...) {
   new_sdreport <- get_sdreport(object)
@@ -126,7 +125,6 @@ fixef.phenomix <- function (object, ...) {
 #' @param ... Additional arguments
 #' @importFrom TMB MakeADFun sdreport
 #' @importFrom nlme ranef
-#' @export ranef
 #' @export
 ranef.phenomix <- function (object, ...) {
   new_sdreport <- get_sdreport(object)

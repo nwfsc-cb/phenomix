@@ -14,6 +14,7 @@ NULL
 #' where no limits used.
 #' @param fit_model Whether to fit the model. If not, returns a list including the data, parameters, and initial values. Defaults to TRUE
 #' @importFrom stats runif rnorm
+#' @importFrom methods is
 #' @export
 #' @examples
 #' data(fishdist)
@@ -226,7 +227,7 @@ fit <- function(data_list,
         control = control
       )
     } else {
-      if (class(limits) == "list") {
+      if (is(limits,"list")) {
         lower_limits <- limits$lower
         upper_limits <- limits$upper
       } else {

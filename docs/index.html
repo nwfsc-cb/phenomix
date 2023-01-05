@@ -48,7 +48,7 @@
   <a href="reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -90,14 +90,18 @@
 </h1></div>
 <p>R package for fitting distributions to run timing data via maximum likelihood</p>
 <p><a href="https://github.com/ericward-noaa/phenomix/actions" class="external-link"><img src="https://github.com/ericward-noaa/phenomix/workflows/R-CMD-check/badge.svg" alt="R build status"></a></p>
-<p>pkgdown site: <a href="https://ericward-noaa.github.io/phenomix/" class="external-link uri">https://ericward-noaa.github.io/phenomix/</a> ## Installation</p>
+<p>pkgdown site: <a href="https://ericward-noaa.github.io/phenomix/" class="external-link uri">https://ericward-noaa.github.io/phenomix/</a></p>
+<div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h2>
 <p>You can install phenomix with:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"ericward-noaa/phenomix"</span>,build_vignettes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"ericward-noaa/phenomix"</span>,build_vignettes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>Load libraries</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ericward-noaa.github.io/phenomix" class="external-link">phenomix</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ericward-noaa.github.io/phenomix" class="external-link">phenomix</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span></code></pre></div>
+</div>
 <div class="section level2">
 <h2 id="functions">Functions<a class="anchor" aria-label="anchor" href="#functions"></a>
 </h2>
@@ -106,12 +110,21 @@
 <img src="README-figs/unnamed-chunk-5-1.png" alt=""><p class="caption">Predicted (black line) and observed counts (red dots) for hypothetical dataset. Multiple observations may exist for some days, or no observations on others.</p>
 </div>
 <p>In a given year, the curve might be described by a symmetric or asymmetric Gaussian or Student-t distribution (shown here in log-scale on the y-axis). Questions of interest might be - are the means (x-axis) shifting through time? - are the variances shifting through time? - does the model support a symmetric or asymmetric distribution?</p>
-<p><img src="README-figs/unnamed-chunk-6-1.png"><!-- --></p>
+<p><img src="reference/figures/unnamed-chunk-6-1.png"><!-- --></p>
 </div>
 <div class="section level2">
 <h2 id="examples">Examples<a class="anchor" aria-label="anchor" href="#examples"></a>
 </h2>
 <p>The main functions are <code><a href="reference/create_data.html">create_data()</a></code> and <code><a href="reference/fit.html">fit()</a></code>. See <code><a href="reference/create_data.html">?create_data</a></code> and <code><a href="reference/fit.html">?fit</a></code> for additional details and examples. A vignette includes additional detail, and examples of several models as well as function arguments available <a href="https://ericward-noaa.github.io/phenomix/" class="external-link uri">https://ericward-noaa.github.io/phenomix/</a>.</p>
+</div>
+<div class="section level2">
+<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h2>
+<p>For description of fisheries applications of asymmetric models:</p>
+<p>Methot, R.D. 2000. Technical description of the stock synthesis assessment program. U.S. Dept. Commer., NOAA Tech. Memo. NMFS-NWFSC-43, 46 p. <a href="https://repository.library.noaa.gov/view/noaa/3172/noaa_3172_DS1.pdf" class="external-link">link</a></p>
+<p>For statistical background of asymmetric models:</p>
+<p>Rubio, F.J. and Steel, M.F.J. 2020. The family of two-piece distributions. Significance, 17(1) 120–13. <a href="https://rss.onlinelibrary.wiley.com/doi/full/10.1111/j.1740-9713.2020.01352.x" class="external-link">link</a></p>
+<p>Wallis, K.F. 2014. The two-piece normal, binormal, or double Gaussian distribution: Its origin and rediscoveries. Statistical Science, 29(1), 106–112. <a href="https://arxiv.org/abs/1405.4995" class="external-link">link</a></p>
 </div>
 <div class="section level2">
 <h2 id="noaa-disclaimer">NOAA Disclaimer<a class="anchor" aria-label="anchor" href="#noaa-disclaimer"></a>
@@ -167,7 +180,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>

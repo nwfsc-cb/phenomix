@@ -3,13 +3,15 @@
 
 # phenomix
 
-R package for fitting distributions to run timing data
+R package for fitting distributions to run timing data via maximum
+likelihood
 
 [![R build
 status](https://github.com/ericward-noaa/phenomix/workflows/R-CMD-check/badge.svg)](https://github.com/ericward-noaa/phenomix/actions)
 
-pkgdown site: <https://ericward-noaa.github.io/phenomix/> \#\#
-Installation
+pkgdown site: <https://ericward-noaa.github.io/phenomix/>
+
+## Installation
 
 You can install phenomix with:
 
@@ -17,14 +19,14 @@ You can install phenomix with:
 remotes::install_github("ericward-noaa/phenomix",build_vignettes = TRUE)
 ```
 
-## Citations
+Load libraries
 
-Wilson, S.M. et al. 2023. Variable phenological change and mismatch in juvenile Pacific salmon. *In review Nature Climate Change*
+``` r
+library(phenomix)
+library(ggplot2)
+```
 
-Wilson, S.M, J.H. Anderson, and E.J. Ward. XXXX. Estimating phenology and phenological shifts using a hierarchical state space model, *In review*
-
-
-## Overview
+## Functions
 
 The package pheomix provides a suite of curve fitting to describe data
 that may be generated from a process when distributions in time might be
@@ -42,14 +44,33 @@ on the y-axis). Questions of interest might be - are the means (x-axis)
 shifting through time? - are the variances shifting through time? - does
 the model support a symmetric or asymmetric distribution?
 
-![](README-figs/unnamed-chunk-6-1.png)<!-- -->
+![](man/figures/unnamed-chunk-6-1.png)<!-- -->
 
-## Functions
+## Examples
 
 The main functions are `create_data()` and `fit()`. See `?create_data`
 and `?fit` for additional details and examples. A vignette includes
 additional detail, and examples of several models as well as function
 arguments available <https://ericward-noaa.github.io/phenomix/>.
+
+## References
+
+For description of fisheries applications of asymmetric models:
+
+Methot, R.D. 2000. Technical description of the stock synthesis
+assessment program. U.S. Dept. Commer., NOAA Tech. Memo. NMFS-NWFSC-43,
+46
+p. [link](https://repository.library.noaa.gov/view/noaa/3172/noaa_3172_DS1.pdf)
+
+For statistical background of asymmetric models:
+
+Rubio, F.J. and Steel, M.F.J. 2020. The family of two-piece
+distributions. Significance, 17(1) 120–13.
+[link](https://rss.onlinelibrary.wiley.com/doi/full/10.1111/j.1740-9713.2020.01352.x)
+
+Wallis, K.F. 2014. The two-piece normal, binormal, or double Gaussian
+distribution: Its origin and rediscoveries. Statistical Science, 29(1),
+106–112. [link](https://arxiv.org/abs/1405.4995)
 
 ## NOAA Disclaimer
 

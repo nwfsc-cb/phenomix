@@ -25,7 +25,7 @@ pkgdown site: [https://ericward-noaa.github.io/phenomix/](https://ericward-noaa.
 
 You can install phenomix with:
 
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 remotes::install_github("ericward-noaa/phenomix",build_vignettes = TRUE)
 ```
 
@@ -71,7 +71,6 @@ ggplot(df, aes(doy,exp(y),col=year,group=year)) +
 The main functions are `create_data()` and `fit()`. See `?create_data` and `?fit` for additional details and examples. A vignette includes additional detail, and examples of several models as well as function arguments available [https://ericward-noaa.github.io/phenomix/](https://ericward-noaa.github.io/phenomix/).
 
 ## References
-
 
 For description of fisheries applications of asymmetric models:
 

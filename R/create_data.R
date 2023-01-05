@@ -18,7 +18,7 @@
 #' different shape than run timing after peak)
 #' @param est_sigma_re Whether to estimate random effects by year in sigma parameter controlling tail of distribution. Defaults to TRUE
 #' @param est_mu_re Whether to estimate random effects by year in mu parameter controlling location of distribution. Defaults to TRUE
-#' @param tail_model Whether to fit Gaussian ("gaussian" = default) or Student-t ("student_t") or generalized normal ("gnorm"). Defaults to "gaussian"
+#' @param tail_model Whether to fit Gaussian ("gaussian"), Student-t ("student_t") or generalized normal ("gnorm"). Defaults to Student-t
 #' @param family Response for observation model, options are "gaussian", "poisson", "negbin", "binomial", "lognormal". The default ("lognormal") is
 #' not a true lognormal distribution, but a normal-log in that it assumes log(y) ~ Normal()
 #' @param max_theta Maximum value of log(pred) when `limits=TRUE`. Defaults to 10
@@ -45,7 +45,7 @@ create_data <- function(data,
                         covar_data = NULL,
                         est_sigma_re = TRUE,
                         est_mu_re = TRUE,
-                        tail_model = "gaussian",
+                        tail_model = "student_t",
                         family = "lognormal",
                         max_theta = 10,
                         share_shape = TRUE,

@@ -9,6 +9,7 @@ likelihood
 [![R build
 status](https://github.com/ericward-noaa/phenomix/workflows/R-CMD-check/badge.svg)](https://github.com/ericward-noaa/phenomix/actions)
 
+[![DOI](https://zenodo.org/badge/243336401.svg)](https://zenodo.org/badge/latestdoi/243336401)
 pkgdown site: <https://ericward-noaa.github.io/phenomix/>
 
 ## Installation

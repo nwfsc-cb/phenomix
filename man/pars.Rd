@@ -25,3 +25,4 @@ fit <- fit(datalist)
 p <- pars(fit)
 names(p)
 }
+\keyword{internal}

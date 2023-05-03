@@ -13,6 +13,9 @@
     <loc>/articles/a3_troubleshooting.html</loc>
   </url>
   <url>
+    <loc>/articles/a4_derived.html</loc>
+  </url>
+  <url>
     <loc>/articles/examples.html</loc>
   </url>
   <url>
@@ -29,6 +32,24 @@
   </url>
   <url>
     <loc>/reference/create_data.html</loc>
+  </url>
+  <url>
+    <loc>/reference/extract_all.html</loc>
+  </url>
+  <url>
+    <loc>/reference/extract_lower.html</loc>
+  </url>
+  <url>
+    <loc>/reference/extract_means.html</loc>
+  </url>
+  <url>
+    <loc>/reference/extract_sigma.html</loc>
+  </url>
+  <url>
+    <loc>/reference/extract_theta.html</loc>
+  </url>
+  <url>
+    <loc>/reference/extract_upper.html</loc>
   </url>
   <url>
     <loc>/reference/fishdist.html</loc>

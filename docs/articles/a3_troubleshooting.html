@@ -44,7 +44,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -58,6 +58,9 @@
     </li>
     <li>
       <a href="../articles/a3_troubleshooting.html">Troubleshooting</a>
+    </li>
+    <li>
+      <a href="../articles/a4_derived.html">Extracting estimated and derived parameters</a>
     </li>
   </ul>
 </li>
@@ -84,7 +87,7 @@
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Troubleshooting</h1>
             
-            <h4 data-toc-skip class="date">2022-10-03</h4>
+            <h4 data-toc-skip class="date">2023-05-03</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/ericward-noaa/phenomix/blob/HEAD/vignettes/a3_troubleshooting.Rmd" class="external-link"><code>vignettes/a3_troubleshooting.Rmd</code></a></small>
       <div class="hidden name"><code>a3_troubleshooting.Rmd</code></div>
@@ -94,144 +97,158 @@
     
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ericward-noaa.github.io/phenomix" class="external-link">phenomix</a></span><span class="op">)</span>
-<span class="co">#&gt; Warning in checkMatrixPackageVersion(): Package version inconsistency detected.</span>
-<span class="co">#&gt; TMB was built with Matrix version 1.4.1</span>
-<span class="co">#&gt; Current Matrix version is 1.4.0</span>
-<span class="co">#&gt; Please re-install 'TMB' from source using install.packages('TMB', type = 'source') or ask CRAN for a binary version of 'TMB' matching CRAN's 'Matrix' package</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/kaskr/adcomp/wiki" class="external-link">TMB</a></span><span class="op">)</span>
-<span class="co">#&gt; Warning: package 'TMB' was built under R version 4.1.2</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ericward-noaa.github.io/phenomix" class="external-link">phenomix</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/kaskr/adcomp/wiki" class="external-link">TMB</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="troubleshooting">Troubleshooting<a class="anchor" aria-label="anchor" href="#troubleshooting"></a>
 </h2>
-<p>There are a number of reasons why <code>phenomix</code> models may not converge. First, it’s likely that all models won’t converge for a single dataset. As an example, we can create some data representing an asymmetric distribution, with gaussian tails (no extremes) and random variability by year (both in the mean and standard deviations).</p>
+<p>There are a number of reasons why <code>phenomix</code> models may
+not converge. First, it’s likely that all models won’t converge for a
+single dataset. As an example, we can create some data representing an
+asymmetric distribution, with gaussian tails (no extremes) and random
+variability by year (both in the mean and standard deviations).</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># create 20 years of data</span>
-<span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span>
-<span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html" class="external-link">expand.grid</a></span><span class="op">(</span><span class="st">"doy"</span> <span class="op">=</span> <span class="fl">100</span><span class="op">:</span><span class="fl">200</span>, <span class="st">"year"</span> <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">20</span><span class="op">)</span>
-<span class="va">df</span><span class="op">$</span><span class="va">mu</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">year</span><span class="op">)</span>, <span class="fl">150</span>, <span class="fl">5</span><span class="op">)</span><span class="op">[</span><span class="va">df</span><span class="op">$</span><span class="va">year</span><span class="op">]</span>
-<span class="va">df</span><span class="op">$</span><span class="va">sig1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">year</span><span class="op">)</span>, <span class="fl">30</span>, <span class="fl">5</span><span class="op">)</span><span class="op">[</span><span class="va">df</span><span class="op">$</span><span class="va">year</span><span class="op">]</span>
-<span class="va">df</span><span class="op">$</span><span class="va">sig2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">year</span><span class="op">)</span>, <span class="fl">30</span>, <span class="fl">5</span><span class="op">)</span><span class="op">[</span><span class="va">df</span><span class="op">$</span><span class="va">year</span><span class="op">]</span>
-<span class="va">df</span><span class="op">$</span><span class="va">sig</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">doy</span> <span class="op">&lt;</span> <span class="va">df</span><span class="op">$</span><span class="va">mu</span>, <span class="va">df</span><span class="op">$</span><span class="va">sig1</span>, <span class="va">df</span><span class="op">$</span><span class="va">sig2</span><span class="op">)</span>
-<span class="va">df</span><span class="op">$</span><span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">dnorm</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">doy</span>, <span class="va">df</span><span class="op">$</span><span class="va">mu</span>, sd <span class="op">=</span> <span class="va">df</span><span class="op">$</span><span class="va">sig</span>, log <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="va">df</span><span class="op">$</span><span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">pred</span> <span class="op">+</span> <span class="fl">8</span><span class="op">)</span>
-<span class="va">df</span><span class="op">$</span><span class="va">number</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span>, <span class="va">df</span><span class="op">$</span><span class="va">pred</span>, <span class="fl">0.1</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># create 20 years of data</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
+<span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html" class="external-link">expand.grid</a></span><span class="op">(</span><span class="st">"doy"</span> <span class="op">=</span> <span class="fl">100</span><span class="op">:</span><span class="fl">200</span>, <span class="st">"year"</span> <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">20</span><span class="op">)</span></span>
+<span><span class="va">df</span><span class="op">$</span><span class="va">mu</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">year</span><span class="op">)</span>, <span class="fl">150</span>, <span class="fl">5</span><span class="op">)</span><span class="op">[</span><span class="va">df</span><span class="op">$</span><span class="va">year</span><span class="op">]</span></span>
+<span><span class="va">df</span><span class="op">$</span><span class="va">sig1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">year</span><span class="op">)</span>, <span class="fl">30</span>, <span class="fl">5</span><span class="op">)</span><span class="op">[</span><span class="va">df</span><span class="op">$</span><span class="va">year</span><span class="op">]</span></span>
+<span><span class="va">df</span><span class="op">$</span><span class="va">sig2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">year</span><span class="op">)</span>, <span class="fl">30</span>, <span class="fl">5</span><span class="op">)</span><span class="op">[</span><span class="va">df</span><span class="op">$</span><span class="va">year</span><span class="op">]</span></span>
+<span><span class="va">df</span><span class="op">$</span><span class="va">sig</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">doy</span> <span class="op">&lt;</span> <span class="va">df</span><span class="op">$</span><span class="va">mu</span>, <span class="va">df</span><span class="op">$</span><span class="va">sig1</span>, <span class="va">df</span><span class="op">$</span><span class="va">sig2</span><span class="op">)</span></span>
+<span><span class="va">df</span><span class="op">$</span><span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">dnorm</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">doy</span>, <span class="va">df</span><span class="op">$</span><span class="va">mu</span>, sd <span class="op">=</span> <span class="va">df</span><span class="op">$</span><span class="va">sig</span>, log <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">df</span><span class="op">$</span><span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">pred</span> <span class="op">+</span> <span class="fl">8</span><span class="op">)</span></span>
+<span><span class="va">df</span><span class="op">$</span><span class="va">number</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span>, <span class="va">df</span><span class="op">$</span><span class="va">pred</span>, <span class="fl">0.1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>The model with student-t errors that is fit to these data</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>
-<span class="va">fit_t</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit.html">fit</a></span><span class="op">(</span><span class="fu"><a href="../reference/create_data.html">create_data</a></span><span class="op">(</span><span class="va">df</span>, asymmetric_model <span class="op">=</span> <span class="cn">TRUE</span>, min_number <span class="op">=</span> <span class="fl">1</span>,
-                          tail_model <span class="op">=</span> <span class="st">"student_t"</span><span class="op">)</span>,
-   silent <span class="op">=</span> <span class="cn">TRUE</span>,
-   control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>eval.max <span class="op">=</span> <span class="fl">4000</span>, iter.max <span class="op">=</span> <span class="fl">5000</span>, rel.tol <span class="op">=</span> <span class="fl">1e-7</span><span class="op">)</span>
-<span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">fit_t</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit.html">fit</a></span><span class="op">(</span><span class="fu"><a href="../reference/create_data.html">create_data</a></span><span class="op">(</span><span class="va">df</span>, asymmetric_model <span class="op">=</span> <span class="cn">TRUE</span>, min_number <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>                          tail_model <span class="op">=</span> <span class="st">"student_t"</span><span class="op">)</span>,</span>
+<span>   silent <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>   control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>eval.max <span class="op">=</span> <span class="fl">4000</span>, iter.max <span class="op">=</span> <span class="fl">5000</span>, rel.tol <span class="op">=</span> <span class="fl">1e-7</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <p>But the model with the generalized normal tails struggles.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">fit_gnorm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit.html">fit</a></span><span class="op">(</span><span class="fu"><a href="../reference/create_data.html">create_data</a></span><span class="op">(</span><span class="va">df</span>, asymmetric_model <span class="op">=</span> <span class="cn">TRUE</span>, min_number <span class="op">=</span> <span class="fl">1</span>,
-                          tail_model <span class="op">=</span> <span class="st">"gnorm"</span><span class="op">)</span>,
-   silent <span class="op">=</span> <span class="cn">TRUE</span>,limits<span class="op">=</span><span class="cn">TRUE</span>,
-   control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>eval.max <span class="op">=</span> <span class="fl">4000</span>, iter.max <span class="op">=</span> <span class="fl">5000</span>, rel.tol <span class="op">=</span> <span class="fl">1e-7</span><span class="op">)</span>
-<span class="op">)</span></code></pre></div>
-<p>This is an example where simplifying helps greatly. The model with generalized normal tails will converge when the random effects in the mean and variance are turned off, but has a hard time estimating the shape parameters with them on.</p>
+<code class="sourceCode R"><span><span class="va">fit_gnorm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit.html">fit</a></span><span class="op">(</span><span class="fu"><a href="../reference/create_data.html">create_data</a></span><span class="op">(</span><span class="va">df</span>, asymmetric_model <span class="op">=</span> <span class="cn">TRUE</span>, min_number <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>                          tail_model <span class="op">=</span> <span class="st">"gnorm"</span><span class="op">)</span>,</span>
+<span>   silent <span class="op">=</span> <span class="cn">TRUE</span>,limits<span class="op">=</span><span class="cn">TRUE</span>,</span>
+<span>   control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>eval.max <span class="op">=</span> <span class="fl">4000</span>, iter.max <span class="op">=</span> <span class="fl">5000</span>, rel.tol <span class="op">=</span> <span class="fl">1e-7</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>This is an example where simplifying helps greatly. The model with
+generalized normal tails will converge when the random effects in the
+mean and variance are turned off, but has a hard time estimating the
+shape parameters with them on.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">fit_gnorm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit.html">fit</a></span><span class="op">(</span><span class="fu"><a href="../reference/create_data.html">create_data</a></span><span class="op">(</span><span class="va">df</span>, asymmetric_model <span class="op">=</span> <span class="cn">TRUE</span>, min_number <span class="op">=</span> <span class="fl">1</span>,
-                          tail_model <span class="op">=</span> <span class="st">"gnorm"</span>,
-                          est_mu_re <span class="op">=</span> <span class="cn">FALSE</span>,
-                          est_sigma_re <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>,
-   silent <span class="op">=</span> <span class="cn">TRUE</span>,
-   control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>eval.max <span class="op">=</span> <span class="fl">4000</span>, iter.max <span class="op">=</span> <span class="fl">5000</span>, rel.tol <span class="op">=</span> <span class="fl">1e-7</span><span class="op">)</span>
-<span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">fit_gnorm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit.html">fit</a></span><span class="op">(</span><span class="fu"><a href="../reference/create_data.html">create_data</a></span><span class="op">(</span><span class="va">df</span>, asymmetric_model <span class="op">=</span> <span class="cn">TRUE</span>, min_number <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>                          tail_model <span class="op">=</span> <span class="st">"gnorm"</span>,</span>
+<span>                          est_mu_re <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>                          est_sigma_re <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>,</span>
+<span>   silent <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>   control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>eval.max <span class="op">=</span> <span class="fl">4000</span>, iter.max <span class="op">=</span> <span class="fl">5000</span>, rel.tol <span class="op">=</span> <span class="fl">1e-7</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="using-initial-values">Using initial values<a class="anchor" aria-label="anchor" href="#using-initial-values"></a>
 </h3>
-<p>Sometimes, it helps to specify the initial values for a model. We can do that in a couple ways, but it may be easiest to first construct a model to see what initial values are needed.</p>
-<p>Using the above example, we can specify <code>fit_model = FALSE</code>.</p>
+<p>Sometimes, it helps to specify the initial values for a model. We can
+do that in a couple ways, but it may be easiest to first construct a
+model to see what initial values are needed.</p>
+<p>Using the above example, we can specify
+<code>fit_model = FALSE</code>.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">fit_gnorm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit.html">fit</a></span><span class="op">(</span><span class="fu"><a href="../reference/create_data.html">create_data</a></span><span class="op">(</span><span class="va">df</span>, asymmetric_model <span class="op">=</span> <span class="cn">TRUE</span>, min_number <span class="op">=</span> <span class="fl">1</span>,
-                          tail_model <span class="op">=</span> <span class="st">"gnorm"</span>,
-                          est_mu_re <span class="op">=</span> <span class="cn">FALSE</span>,
-                          est_sigma_re <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>,
-   silent <span class="op">=</span> <span class="cn">TRUE</span>,
-   control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>eval.max <span class="op">=</span> <span class="fl">4000</span>, iter.max <span class="op">=</span> <span class="fl">5000</span>, rel.tol <span class="op">=</span> <span class="fl">1e-7</span><span class="op">)</span>,
-   fit_model <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span></code></pre></div>
-<p>The <code>$init_vals</code> contains the initial values that would be used to fit the model.</p>
+<code class="sourceCode R"><span><span class="va">fit_gnorm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit.html">fit</a></span><span class="op">(</span><span class="fu"><a href="../reference/create_data.html">create_data</a></span><span class="op">(</span><span class="va">df</span>, asymmetric_model <span class="op">=</span> <span class="cn">TRUE</span>, min_number <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>                          tail_model <span class="op">=</span> <span class="st">"gnorm"</span>,</span>
+<span>                          est_mu_re <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>                          est_sigma_re <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>,</span>
+<span>   silent <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>   control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>eval.max <span class="op">=</span> <span class="fl">4000</span>, iter.max <span class="op">=</span> <span class="fl">5000</span>, rel.tol <span class="op">=</span> <span class="fl">1e-7</span><span class="op">)</span>,</span>
+<span>   fit_model <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>The <code>$init_vals</code> contains the initial values that would be
+used to fit the model.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">fit_gnorm</span><span class="op">$</span><span class="va">init_vals</span>
-<span class="co">#&gt;         theta         theta         theta         theta         theta </span>
-<span class="co">#&gt;     2.0308397     2.2015325     3.5295172     3.1596658     2.9785872 </span>
-<span class="co">#&gt;         theta         theta         theta         theta         theta </span>
-<span class="co">#&gt;     0.9586761     1.9551192     3.1481328     2.4014047     2.4826709 </span>
-<span class="co">#&gt;         theta         theta         theta         theta         theta </span>
-<span class="co">#&gt;     4.3289806     3.4550282     2.2355953     2.8107439     2.9945364 </span>
-<span class="co">#&gt;         theta         theta         theta         theta         theta </span>
-<span class="co">#&gt;     2.5991447     2.3153863     3.2276358     4.0206346     3.5062919 </span>
-<span class="co">#&gt;    log_beta_1 log_obs_sigma          b_mu        b_sig1        b_sig2 </span>
-<span class="co">#&gt;     0.1000000     0.0000000   150.0000000     1.0000000     1.0000000</span></code></pre></div>
-<p>Suppose we wanted to start at a higher value for <code>log_beta_1</code>. We could change that with</p>
+<code class="sourceCode R"><span><span class="va">fit_gnorm</span><span class="op">$</span><span class="va">init_vals</span></span>
+<span><span class="co">#&gt;         theta         theta         theta         theta         theta </span></span>
+<span><span class="co">#&gt;     2.0308397     2.2015325     3.5295172     3.1596658     2.9785872 </span></span>
+<span><span class="co">#&gt;         theta         theta         theta         theta         theta </span></span>
+<span><span class="co">#&gt;     0.9586761     1.9551192     3.1481328     2.4014047     2.4826709 </span></span>
+<span><span class="co">#&gt;         theta         theta         theta         theta         theta </span></span>
+<span><span class="co">#&gt;     4.3289806     3.4550282     2.2355953     2.8107439     2.9945364 </span></span>
+<span><span class="co">#&gt;         theta         theta         theta         theta         theta </span></span>
+<span><span class="co">#&gt;     2.5991447     2.3153863     3.2276358     4.0206346     3.5062919 </span></span>
+<span><span class="co">#&gt;    log_beta_1 log_obs_sigma          b_mu        b_sig1        b_sig2 </span></span>
+<span><span class="co">#&gt;     0.1000000     0.0000000   150.0000000     1.0000000     1.0000000</span></span></code></pre></div>
+<p>Suppose we wanted to start at a higher value for
+<code>log_beta_1</code>. We could change that with</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">inits</span> <span class="op">=</span> <span class="va">fit_gnorm</span><span class="op">$</span><span class="va">init_vals</span>
-<span class="va">inits</span><span class="op">[</span><span class="st">"log_beta_1"</span><span class="op">]</span> <span class="op">=</span> <span class="fl">2</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">inits</span> <span class="op">=</span> <span class="va">fit_gnorm</span><span class="op">$</span><span class="va">init_vals</span></span>
+<span><span class="va">inits</span><span class="op">[</span><span class="st">"log_beta_1"</span><span class="op">]</span> <span class="op">=</span> <span class="fl">2</span></span></code></pre></div>
 <p>Now we can try re-fitting the model,</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">fit_gnorm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit.html">fit</a></span><span class="op">(</span><span class="fu"><a href="../reference/create_data.html">create_data</a></span><span class="op">(</span><span class="va">df</span>, asymmetric_model <span class="op">=</span> <span class="cn">TRUE</span>, min_number <span class="op">=</span> <span class="fl">1</span>,
-                          tail_model <span class="op">=</span> <span class="st">"gnorm"</span>,
-                          est_mu_re <span class="op">=</span> <span class="cn">FALSE</span>,
-                          est_sigma_re <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>,
-   silent <span class="op">=</span> <span class="cn">TRUE</span>,
-   control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>eval.max <span class="op">=</span> <span class="fl">4000</span>, iter.max <span class="op">=</span> <span class="fl">5000</span>, rel.tol <span class="op">=</span> <span class="fl">1e-7</span><span class="op">)</span>,
-   fit_model <span class="op">=</span> <span class="cn">TRUE</span>
-<span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">fit_gnorm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit.html">fit</a></span><span class="op">(</span><span class="fu"><a href="../reference/create_data.html">create_data</a></span><span class="op">(</span><span class="va">df</span>, asymmetric_model <span class="op">=</span> <span class="cn">TRUE</span>, min_number <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>                          tail_model <span class="op">=</span> <span class="st">"gnorm"</span>,</span>
+<span>                          est_mu_re <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>                          est_sigma_re <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>,</span>
+<span>   silent <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>   control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>eval.max <span class="op">=</span> <span class="fl">4000</span>, iter.max <span class="op">=</span> <span class="fl">5000</span>, rel.tol <span class="op">=</span> <span class="fl">1e-7</span><span class="op">)</span>,</span>
+<span>   fit_model <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="specifying-limits">Specifying limits<a class="anchor" aria-label="anchor" href="#specifying-limits"></a>
 </h3>
-<p>There are two ways to specify limits on estimated parameters. First, we include hard coded limits that may be turned on with <code>limits = TRUE</code>, e.g.</p>
+<p>There are two ways to specify limits on estimated parameters. First,
+we include hard coded limits that may be turned on with
+<code>limits = TRUE</code>, e.g.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">fit_gnorm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit.html">fit</a></span><span class="op">(</span><span class="fu"><a href="../reference/create_data.html">create_data</a></span><span class="op">(</span><span class="va">df</span>, asymmetric_model <span class="op">=</span> <span class="cn">TRUE</span>, min_number <span class="op">=</span> <span class="fl">1</span>,
-                          tail_model <span class="op">=</span> <span class="st">"gnorm"</span>,
-                          est_mu_re <span class="op">=</span> <span class="cn">FALSE</span>,
-                          est_sigma_re <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>,
-   silent <span class="op">=</span> <span class="cn">TRUE</span>, 
-   limits <span class="op">=</span> <span class="cn">TRUE</span>,
-   control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>eval.max <span class="op">=</span> <span class="fl">4000</span>, iter.max <span class="op">=</span> <span class="fl">5000</span>, rel.tol <span class="op">=</span> <span class="fl">1e-7</span><span class="op">)</span>,
-   fit_model <span class="op">=</span> <span class="cn">TRUE</span>
-<span class="op">)</span></code></pre></div>
-<p>However these limits may not be reasonable for every situation. We can also change these manually, but including a list of limits based on the parameters being estimated. We do this using the same approach above, with specifying initial values. First we construct the model but don’t do estimation,</p>
+<code class="sourceCode R"><span><span class="va">fit_gnorm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit.html">fit</a></span><span class="op">(</span><span class="fu"><a href="../reference/create_data.html">create_data</a></span><span class="op">(</span><span class="va">df</span>, asymmetric_model <span class="op">=</span> <span class="cn">TRUE</span>, min_number <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>                          tail_model <span class="op">=</span> <span class="st">"gnorm"</span>,</span>
+<span>                          est_mu_re <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>                          est_sigma_re <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>,</span>
+<span>   silent <span class="op">=</span> <span class="cn">TRUE</span>, </span>
+<span>   limits <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>   control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>eval.max <span class="op">=</span> <span class="fl">4000</span>, iter.max <span class="op">=</span> <span class="fl">5000</span>, rel.tol <span class="op">=</span> <span class="fl">1e-7</span><span class="op">)</span>,</span>
+<span>   fit_model <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>However these limits may not be reasonable for every situation. We
+can also change these manually, but including a list of limits based on
+the parameters being estimated. We do this using the same approach
+above, with specifying initial values. First we construct the model but
+don’t do estimation,</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">fit_gnorm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit.html">fit</a></span><span class="op">(</span><span class="fu"><a href="../reference/create_data.html">create_data</a></span><span class="op">(</span><span class="va">df</span>, asymmetric_model <span class="op">=</span> <span class="cn">TRUE</span>, min_number <span class="op">=</span> <span class="fl">1</span>,
-                          tail_model <span class="op">=</span> <span class="st">"gnorm"</span>,
-                          est_mu_re <span class="op">=</span> <span class="cn">FALSE</span>,
-                          est_sigma_re <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>,
-   silent <span class="op">=</span> <span class="cn">TRUE</span>,
-   control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>eval.max <span class="op">=</span> <span class="fl">4000</span>, iter.max <span class="op">=</span> <span class="fl">5000</span>, rel.tol <span class="op">=</span> <span class="fl">1e-7</span><span class="op">)</span>,
-   fit_model <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span></code></pre></div>
-<p>The parameters need to be in the same order as <code>init_vals</code>, so we can try something like this:</p>
+<code class="sourceCode R"><span><span class="va">fit_gnorm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit.html">fit</a></span><span class="op">(</span><span class="fu"><a href="../reference/create_data.html">create_data</a></span><span class="op">(</span><span class="va">df</span>, asymmetric_model <span class="op">=</span> <span class="cn">TRUE</span>, min_number <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>                          tail_model <span class="op">=</span> <span class="st">"gnorm"</span>,</span>
+<span>                          est_mu_re <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>                          est_sigma_re <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>,</span>
+<span>   silent <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>   control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>eval.max <span class="op">=</span> <span class="fl">4000</span>, iter.max <span class="op">=</span> <span class="fl">5000</span>, rel.tol <span class="op">=</span> <span class="fl">1e-7</span><span class="op">)</span>,</span>
+<span>   fit_model <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>The parameters need to be in the same order as
+<code>init_vals</code>, so we can try something like this:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">lower</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">20</span><span class="op">)</span>, <span class="co"># lower for theta</span>
-          <span class="fl">0.05</span>, <span class="co"># lower log_beta_1</span>
-          <span class="op">-</span><span class="fl">3</span>, <span class="co"># lower log_obs_sigma</span>
-          <span class="fl">140</span>, <span class="co"># lower on mu</span>
-          <span class="fl">15</span>,<span class="co"># lower on b_sig1</span>
-          <span class="fl">15</span><span class="op">)</span><span class="co"># lower on b_sig2</span>
-<span class="va">upper</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">20</span><span class="op">)</span>,<span class="co"># upper for theta</span>
-          <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span>,<span class="co"># upper log_beta_1</span>
-          <span class="fl">0</span>, <span class="co"># upper log_obs_sigma</span>
-          <span class="fl">160</span>,<span class="co"># upper on mu</span>
-          <span class="fl">40</span>,<span class="co"># upper on b_sig1</span>
-          <span class="fl">40</span><span class="op">)</span><span class="co"># upper on b_sig2</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">lower</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">20</span><span class="op">)</span>, <span class="co"># lower for theta</span></span>
+<span>          <span class="fl">0.05</span>, <span class="co"># lower log_beta_1</span></span>
+<span>          <span class="op">-</span><span class="fl">3</span>, <span class="co"># lower log_obs_sigma</span></span>
+<span>          <span class="fl">140</span>, <span class="co"># lower on mu</span></span>
+<span>          <span class="fl">15</span>,<span class="co"># lower on b_sig1</span></span>
+<span>          <span class="fl">15</span><span class="op">)</span><span class="co"># lower on b_sig2</span></span>
+<span><span class="va">upper</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">20</span><span class="op">)</span>,<span class="co"># upper for theta</span></span>
+<span>          <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span>,<span class="co"># upper log_beta_1</span></span>
+<span>          <span class="fl">0</span>, <span class="co"># upper log_obs_sigma</span></span>
+<span>          <span class="fl">160</span>,<span class="co"># upper on mu</span></span>
+<span>          <span class="fl">40</span>,<span class="co"># upper on b_sig1</span></span>
+<span>          <span class="fl">40</span><span class="op">)</span><span class="co"># upper on b_sig2</span></span></code></pre></div>
 <p>Then we can pass these in as a list,</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">fit_gnorm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit.html">fit</a></span><span class="op">(</span><span class="fu"><a href="../reference/create_data.html">create_data</a></span><span class="op">(</span><span class="va">df</span>, asymmetric_model <span class="op">=</span> <span class="cn">TRUE</span>, min_number <span class="op">=</span> <span class="fl">1</span>,
-                          tail_model <span class="op">=</span> <span class="st">"gnorm"</span>,
-                          est_mu_re <span class="op">=</span> <span class="cn">FALSE</span>,
-                          est_sigma_re <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>,
-   silent <span class="op">=</span> <span class="cn">TRUE</span>, 
-   limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>lower <span class="op">=</span> <span class="va">lower</span>, upper <span class="op">=</span> <span class="va">upper</span><span class="op">)</span>,
-   control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>eval.max <span class="op">=</span> <span class="fl">4000</span>, iter.max <span class="op">=</span> <span class="fl">5000</span>, rel.tol <span class="op">=</span> <span class="fl">1e-7</span><span class="op">)</span>
-<span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">fit_gnorm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit.html">fit</a></span><span class="op">(</span><span class="fu"><a href="../reference/create_data.html">create_data</a></span><span class="op">(</span><span class="va">df</span>, asymmetric_model <span class="op">=</span> <span class="cn">TRUE</span>, min_number <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>                          tail_model <span class="op">=</span> <span class="st">"gnorm"</span>,</span>
+<span>                          est_mu_re <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>                          est_sigma_re <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>,</span>
+<span>   silent <span class="op">=</span> <span class="cn">TRUE</span>, </span>
+<span>   limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>lower <span class="op">=</span> <span class="va">lower</span>, upper <span class="op">=</span> <span class="va">upper</span><span class="op">)</span>,</span>
+<span>   control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>eval.max <span class="op">=</span> <span class="fl">4000</span>, iter.max <span class="op">=</span> <span class="fl">5000</span>, rel.tol <span class="op">=</span> <span class="fl">1e-7</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
   </div>
@@ -253,7 +270,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>

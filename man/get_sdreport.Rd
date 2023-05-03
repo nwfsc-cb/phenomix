@@ -12,3 +12,4 @@ get_sdreport(object)
 \description{
 Get sdreport for predictions / coefficients, copying glmmTMB 'fast' implementation
 }
+\keyword{internal}

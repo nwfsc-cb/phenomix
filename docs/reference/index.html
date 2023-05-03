@@ -26,7 +26,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -39,6 +39,9 @@
     </li>
     <li>
       <a href="../articles/a3_troubleshooting.html">Troubleshooting</a>
+    </li>
+    <li>
+      <a href="../articles/a4_derived.html">Extracting estimated and derived parameters</a>
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
@@ -87,6 +90,42 @@
           <p><code><a href="plot_diagnostics.html">plot_diagnostics()</a></code> </p>
         </td>
         <td><p>Plotting function to be called by user</p></td>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h2 id="extracting-output">Extracting output <a href="#extracting-output" class="anchor" aria-hidden="true"></a></h2>
+          <p class="section-desc"></p><p>Functions for extracting estimates</p>
+        </th>
+      </tr></tbody><tbody><tr><td>
+          <p><code><a href="extract_means.html">extract_means()</a></code> </p>
+        </td>
+        <td><p>Output processing function to be called by user</p></td>
+      </tr><tr><td>
+          <p><code><a href="extract_sigma.html">extract_sigma()</a></code> </p>
+        </td>
+        <td><p>Output processing function to be called by user</p></td>
+      </tr><tr><td>
+          <p><code><a href="extract_lower.html">extract_lower()</a></code> </p>
+        </td>
+        <td><p>Output processing function to be called by user</p></td>
+      </tr><tr><td>
+          <p><code><a href="extract_upper.html">extract_upper()</a></code> </p>
+        </td>
+        <td><p>Output processing function to be called by user</p></td>
+      </tr><tr><td>
+          <p><code><a href="extract_theta.html">extract_theta()</a></code> </p>
+        </td>
+        <td><p>Output processing function to be called by user</p></td>
+      </tr><tr><td>
+          <p><code><a href="extract_all.html">extract_all()</a></code> </p>
+        </td>
+        <td><p>Output processing function to be called by user</p></td>
+      </tr><tr><td>
+          <p><code><a href="fixef.phenomix.html">fixef(<i>&lt;phenomix&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Get fixed effects parameters from model object, copying glmmTMB 'fast' implementation</p></td>
+      </tr><tr><td>
+          <p><code><a href="ranef.phenomix.html">ranef(<i>&lt;phenomix&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Get random effects parameters from model object, copying glmmTMB 'fast' implementation</p></td>
       </tr></tbody></table></div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -100,7 +139,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

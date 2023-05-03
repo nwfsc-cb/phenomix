@@ -13,3 +13,14 @@ reference:
   desc: "Function for plotting estimates and diagnostics"
 - contents:
   - plot_diagnostics
+- title: "Extracting output"
+  desc: "Functions for extracting estimates"
+- contents:
+  - extract_means
+  - extract_sigma
+  - extract_lower
+  - extract_upper
+  - extract_theta
+  - extract_all
+  - fixef.phenomix
+  - ranef.phenomix

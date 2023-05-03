@@ -13,4 +13,4 @@ fishdist
 \description{
 Example simulate data for fish distributions from multiple years
 }
-\keyword{datasets}
+\keyword{internal}

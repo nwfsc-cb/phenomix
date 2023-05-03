@@ -4,5 +4,6 @@
 #'
 #' @docType package
 #' @name phenomix-package
+#' @keywords internal
 #' @useDynLib phenomix, .registration = TRUE
 NULL

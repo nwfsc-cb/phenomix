@@ -26,7 +26,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -39,6 +39,9 @@
     </li>
     <li>
       <a href="../articles/a3_troubleshooting.html">Troubleshooting</a>
+    </li>
+    <li>
+      <a href="../articles/a4_derived.html">Extracting estimated and derived parameters</a>
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
@@ -66,79 +69,112 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">create_data</span><span class="op">(</span>
-  <span class="va">data</span>,
-  min_number <span class="op">=</span> <span class="fl">0</span>,
-  variable <span class="op">=</span> <span class="st">"number"</span>,
-  time <span class="op">=</span> <span class="st">"year"</span>,
-  date <span class="op">=</span> <span class="st">"doy"</span>,
-  asymmetric_model <span class="op">=</span> <span class="cn">TRUE</span>,
-  mu <span class="op">=</span> <span class="op">~</span><span class="fl">1</span>,
-  sigma <span class="op">=</span> <span class="op">~</span><span class="fl">1</span>,
-  covar_data <span class="op">=</span> <span class="cn">NULL</span>,
-  est_sigma_re <span class="op">=</span> <span class="cn">TRUE</span>,
-  est_mu_re <span class="op">=</span> <span class="cn">TRUE</span>,
-  tail_model <span class="op">=</span> <span class="st">"gaussian"</span>,
-  family <span class="op">=</span> <span class="st">"lognormal"</span>,
-  max_theta <span class="op">=</span> <span class="fl">10</span>,
-  share_shape <span class="op">=</span> <span class="cn">TRUE</span>,
-  nu_prior <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">10</span><span class="op">)</span>,
-  beta_prior <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">create_data</span><span class="op">(</span></span>
+<span>  <span class="va">data</span>,</span>
+<span>  min_number <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  variable <span class="op">=</span> <span class="st">"number"</span>,</span>
+<span>  time <span class="op">=</span> <span class="st">"year"</span>,</span>
+<span>  date <span class="op">=</span> <span class="st">"doy"</span>,</span>
+<span>  asymmetric_model <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  mu <span class="op">=</span> <span class="op">~</span><span class="fl">1</span>,</span>
+<span>  sigma <span class="op">=</span> <span class="op">~</span><span class="fl">1</span>,</span>
+<span>  covar_data <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  est_sigma_re <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  est_mu_re <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  tail_model <span class="op">=</span> <span class="st">"student_t"</span>,</span>
+<span>  family <span class="op">=</span> <span class="st">"lognormal"</span>,</span>
+<span>  max_theta <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  share_shape <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  nu_prior <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">10</span><span class="op">)</span>,</span>
+<span>  beta_prior <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>data</dt>
 <dd><p>A data frame</p></dd>
+
+
 <dt>min_number</dt>
 <dd><p>A minimum threshold to use, defaults to 0</p></dd>
+
+
 <dt>variable</dt>
 <dd><p>A character string of the name of the variable in 'data' that contains the response (e.g. counts)</p></dd>
+
+
 <dt>time</dt>
 <dd><p>A character string of the name of the variable in 'data' that contains the time variable (e.g. year)</p></dd>
+
+
 <dt>date</dt>
 <dd><p>A character string of the name of the variable in 'data' that contains the response (e.g. day of year). The actual
 #' column should contain a numeric response -- for example, the result from using lubridate::yday(x)</p></dd>
+
+
 <dt>asymmetric_model</dt>
 <dd><p>Boolean, whether or not to let model be asymmetric (e.g. run timing before peak has a
 different shape than run timing after peak)</p></dd>
+
+
 <dt>mu</dt>
 <dd><p>An optional formula allowing the mean to be a function of covariates. Random effects are not included in the formula
 but specified with the <code>est_mu_re</code> argument</p></dd>
+
+
 <dt>sigma</dt>
 <dd><p>An optional formula allowing the standard deviation to be a function of covariates. For asymmetric models,
 each side of the distribution is allowed a different set of covariates. Random effects are not included in the formula
 but specified with the <code>est_sigma_re</code> argument</p></dd>
+
+
 <dt>covar_data</dt>
 <dd><p>a data frame containing covariates specific to each time step. These are used in the formulas <code>mu</code> and <code>sigma</code></p></dd>
+
+
 <dt>est_sigma_re</dt>
 <dd><p>Whether to estimate random effects by year in sigma parameter controlling tail of distribution. Defaults to TRUE</p></dd>
+
+
 <dt>est_mu_re</dt>
 <dd><p>Whether to estimate random effects by year in mu parameter controlling location of distribution. Defaults to TRUE</p></dd>
+
+
 <dt>tail_model</dt>
-<dd><p>Whether to fit Gaussian ("gaussian" = default) or Student-t ("student_t") or generalized normal ("gnorm"). Defaults to "gaussian"</p></dd>
+<dd><p>Whether to fit Gaussian ("gaussian"), Student-t ("student_t") or generalized normal ("gnorm"). Defaults to Student-t</p></dd>
+
+
 <dt>family</dt>
 <dd><p>Response for observation model, options are "gaussian", "poisson", "negbin", "binomial", "lognormal". The default ("lognormal") is
 not a true lognormal distribution, but a normal-log in that it assumes log(y) ~ Normal()</p></dd>
+
+
 <dt>max_theta</dt>
 <dd><p>Maximum value of log(pred) when <code>limits=TRUE</code>. Defaults to 10</p></dd>
+
+
 <dt>share_shape</dt>
 <dd><p>Boolean argument for whether asymmetric student-t and generalized normal distributions should share the shape parameter (nu for the student-t;
 beta for the generalized normal). Defaults to TRUE</p></dd>
+
+
 <dt>nu_prior</dt>
 <dd><p>Two element vector (optional) for penalized prior on student t df, defaults to a Gamma(shape=2, scale=10) distribution</p></dd>
+
+
 <dt>beta_prior</dt>
 <dd><p>Two element vector (optional) for penalized prior on generalized normal beta, defaults to a Normal(2, 1) distribution</p></dd>
+
 </dl></div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">fishdist</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">datalist</span> <span class="op">&lt;-</span> <span class="fu">create_data</span><span class="op">(</span><span class="va">fishdist</span>,</span>
-<span class="r-in">  min_number <span class="op">=</span> <span class="fl">0</span>, variable <span class="op">=</span> <span class="st">"number"</span>, time <span class="op">=</span> <span class="st">"year"</span>,</span>
-<span class="r-in">  date <span class="op">=</span> <span class="st">"doy"</span>, asymmetric_model <span class="op">=</span> <span class="cn">TRUE</span>, family <span class="op">=</span> <span class="st">"gaussian"</span></span>
-<span class="r-in"><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">fishdist</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">datalist</span> <span class="op">&lt;-</span> <span class="fu">create_data</span><span class="op">(</span><span class="va">fishdist</span>,</span></span>
+<span class="r-in"><span>  min_number <span class="op">=</span> <span class="fl">0</span>, variable <span class="op">=</span> <span class="st">"number"</span>, time <span class="op">=</span> <span class="st">"year"</span>,</span></span>
+<span class="r-in"><span>  date <span class="op">=</span> <span class="st">"doy"</span>, asymmetric_model <span class="op">=</span> <span class="cn">TRUE</span>, family <span class="op">=</span> <span class="st">"gaussian"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -153,7 +189,7 @@ beta for the generalized normal). Defaults to TRUE</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

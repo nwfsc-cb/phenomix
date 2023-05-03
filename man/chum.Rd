@@ -19,4 +19,4 @@ chum salmon from the Skagit River (Washington state). Each row of the
 dataframe contains an observation ("number") on a given date ("date").
 The year ("year") and calendar day ("doy") are also included.
 }
-\keyword{datasets}
+\keyword{internal}

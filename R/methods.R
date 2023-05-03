@@ -94,6 +94,8 @@ predict.phenomix <- function (object, se.fit=FALSE, ...) {
 #' fit <- fit(datalist)
 #' p <- pars(fit)
 #' names(p)
+#' @export
+#' @keywords internal
 pars <- function (object) {
   new_sdreport <- get_sdreport(object)
   #new_sdreport[["pdHess"]] = NULL
@@ -138,6 +140,7 @@ ranef.phenomix <- function (object, ...) {
 #' Get sdreport for predictions / coefficients, copying glmmTMB 'fast' implementation
 #'
 #' @param object The fitted phenomix model
+#' @keywords internal
 get_sdreport = function(object) {
   ee <- environment(object$obj$fn)
   lp <- ee$last.par.best # best maximum likelihood estimate, similar to what glmmTMB uses

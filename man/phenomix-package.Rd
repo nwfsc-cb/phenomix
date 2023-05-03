@@ -7,3 +7,4 @@
 \description{
 A DESCRIPTION OF THE PACKAGE
 }
+\keyword{internal}

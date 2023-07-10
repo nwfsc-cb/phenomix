@@ -34,7 +34,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">phenomix</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.4</span>
       </span>
     </div>
 
@@ -88,7 +88,7 @@
       <h1 data-toc-skip>Fitting time varying phenology models with the
 phenomix package</h1>
             
-            <h4 data-toc-skip class="date">2023-05-03</h4>
+            <h4 data-toc-skip class="date">2023-07-10</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/ericward-noaa/phenomix/blob/HEAD/vignettes/a1_examples.Rmd" class="external-link"><code>vignettes/a1_examples.Rmd</code></a></small>
       <div class="hidden name"><code>a1_examples.Rmd</code></div>
@@ -100,6 +100,10 @@ phenomix package</h1>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ericward-noaa.github.io/phenomix" class="external-link">phenomix</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in checkMatrixPackageVersion(): Package version inconsistency detected.</span></span>
+<span><span class="co">#&gt; TMB was built with Matrix version 1.5.4</span></span>
+<span><span class="co">#&gt; Current Matrix version is 1.5.4.1</span></span>
+<span><span class="co">#&gt; Please re-install 'TMB' from source using install.packages('TMB', type = 'source') or ask CRAN for a binary version of 'TMB' matching CRAN's 'Matrix' package</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/kaskr/adcomp/wiki" class="external-link">TMB</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
@@ -270,35 +274,35 @@ effects, and gradient.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/pars.html">pars</a></span><span class="op">(</span><span class="va">fitted</span><span class="op">)</span></span>
 <span><span class="co">#&gt; sdreport(.) result</span></span>
 <span><span class="co">#&gt;                       Estimate Std. Error</span></span>
-<span><span class="co">#&gt; log_sigma1_sd       1.06408862 0.17047802</span></span>
-<span><span class="co">#&gt; theta               8.39999520 0.22340156</span></span>
-<span><span class="co">#&gt; theta               8.63891511 0.22584537</span></span>
+<span><span class="co">#&gt; log_sigma1_sd       1.06408861 0.17047802</span></span>
+<span><span class="co">#&gt; theta               8.39999518 0.22340156</span></span>
+<span><span class="co">#&gt; theta               8.63891509 0.22584537</span></span>
 <span><span class="co">#&gt; theta               8.46717349 0.20686792</span></span>
 <span><span class="co">#&gt; theta               8.15440479 0.15779864</span></span>
-<span><span class="co">#&gt; theta               8.11187621 0.18974509</span></span>
-<span><span class="co">#&gt; theta               8.24394280 0.22069056</span></span>
+<span><span class="co">#&gt; theta               8.11187622 0.18974509</span></span>
+<span><span class="co">#&gt; theta               8.24394282 0.22069056</span></span>
 <span><span class="co">#&gt; theta               8.16297796 0.20627479</span></span>
-<span><span class="co">#&gt; theta               8.18093910 0.18399646</span></span>
-<span><span class="co">#&gt; theta               8.44583430 0.18735588</span></span>
+<span><span class="co">#&gt; theta               8.18093911 0.18399646</span></span>
+<span><span class="co">#&gt; theta               8.44583428 0.18735588</span></span>
 <span><span class="co">#&gt; theta               8.11022595 0.15356321</span></span>
 <span><span class="co">#&gt; theta               7.82421118 0.16969770</span></span>
-<span><span class="co">#&gt; theta               8.19871110 0.19105389</span></span>
-<span><span class="co">#&gt; theta               8.24277549 0.20384630</span></span>
-<span><span class="co">#&gt; theta               8.29030016 0.20386679</span></span>
-<span><span class="co">#&gt; theta               8.40639952 0.18200414</span></span>
-<span><span class="co">#&gt; theta               8.14420041 0.19208359</span></span>
+<span><span class="co">#&gt; theta               8.19871109 0.19105389</span></span>
+<span><span class="co">#&gt; theta               8.24277550 0.20384630</span></span>
+<span><span class="co">#&gt; theta               8.29030015 0.20386679</span></span>
+<span><span class="co">#&gt; theta               8.40639953 0.18200414</span></span>
+<span><span class="co">#&gt; theta               8.14420040 0.19208359</span></span>
 <span><span class="co">#&gt; theta               7.87879972 0.17770564</span></span>
 <span><span class="co">#&gt; theta               8.08659425 0.18277170</span></span>
 <span><span class="co">#&gt; theta               8.10094697 0.16879708</span></span>
-<span><span class="co">#&gt; theta               8.10021209 0.19721592</span></span>
+<span><span class="co">#&gt; theta               8.10021210 0.19721592</span></span>
 <span><span class="co">#&gt; theta               7.88135896 0.17350336</span></span>
 <span><span class="co">#&gt; log_sigma_mu_devs   1.54231647 0.17917533</span></span>
 <span><span class="co">#&gt; log_obs_sigma       0.11308948 0.02285357</span></span>
-<span><span class="co">#&gt; b_mu              144.09324084 2.11794216</span></span>
-<span><span class="co">#&gt; b_mu               -0.12661800 0.18018190</span></span>
-<span><span class="co">#&gt; b_sig1             10.63160621 1.27793188</span></span>
-<span><span class="co">#&gt; b_sig1             -0.02649123 0.10913118</span></span>
-<span><span class="co">#&gt; Maximum gradient component: 0.0004729994</span></span></code></pre></div>
+<span><span class="co">#&gt; b_mu              144.09324082 2.11794216</span></span>
+<span><span class="co">#&gt; b_mu               -0.12661799 0.18018190</span></span>
+<span><span class="co">#&gt; b_sig1             10.63160617 1.27793188</span></span>
+<span><span class="co">#&gt; b_sig1             -0.02649122 0.10913118</span></span>
+<span><span class="co">#&gt; Maximum gradient component: 0.000472572</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="getting-predicted-values">Getting predicted values<a class="anchor" aria-label="anchor" href="#getting-predicted-values"></a>

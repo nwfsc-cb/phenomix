@@ -22,5 +22,6 @@ reference:
   - extract_upper
   - extract_theta
   - extract_all
+  - extract_annual
   - fixef.phenomix
   - ranef.phenomix

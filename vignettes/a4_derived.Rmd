@@ -98,3 +98,13 @@ Or if you want to extact all of the above, you can use
 e <- extract_all(fitted)
 ```
 
+## Annual summaries
+
+In addition to the parameters above, we can extract the derived annual totals (predicted across all days 1-365). These are extracted with the following `extract_annual` function. Note that the second parameter controls whether the estimates are in normal or log space. 
+
+```{r}
+est_log <- extract_annual(fitted, log=TRUE)
+est_normal <- extract_annual(fitted, log=FALSE)
+```
+
+

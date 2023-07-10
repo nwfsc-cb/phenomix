@@ -1,5 +1,31 @@
 #' Output processing function to be called by user
 #'
+#' This function extracts the annual totals
+#'
+#' @param fit A fitted object returned from fit()
+#' @param log Whether to return estimates in log space, defaults to TRUE
+#' @export
+#'
+extract_annual <- function(fit, log = TRUE) {
+  all_name <- names(fit$sdreport$value)
+  if(log==TRUE) {
+    idx <- grep("year_log_tot", all_name)
+  } else {
+    idx <- grep("year_tot", all_name)
+  }
+
+  par_name <- "year_tot"
+  if(log==TRUE) par_name <- "year_log_tot"
+
+  df <- data.frame("value" = fit$sdreport$value[idx],
+                   "sd" = fit$sdreport$sd[idx],
+                   "par" = par_name)
+  return(df)
+}
+
+
+#' Output processing function to be called by user
+#'
 #' This function extracts the parameter means and respective sds
 #'
 #' @param fit A fitted object returned from fit()
@@ -105,4 +131,7 @@ extract_all <- function(fit) {
               upper)
   return(df)
 }
+
+
+
 

@@ -360,6 +360,7 @@ Type objective_function<Type>::operator() ()
   // this is for the cumulative annual predictions
   vector<Type> year_log_tot(nLevels);
   vector<Type> year_tot(nLevels);
+  Type dens;
   for(i = 0; i < nLevels; i++) {
     year_log_tot(i) = 0;
     year_tot(i) = 0;
@@ -368,33 +369,33 @@ Type objective_function<Type>::operator() ()
         if(asymmetric == 1) {
           // model is asymmetric, left side smaller / right side bigger
           if(tail_model==0) {
-            log_dens(i) = ddnorm(t, mu(years(i)-1), sigma1(years(i)-1), sigma2(years(i)-1));
+            dens = ddnorm(Type(t), mu(i), sigma1(i), sigma2(i));
           }
           if(tail_model==1) {
-            log_dens(i) = ddt(t, mu(years(i)-1), sigma1(years(i)-1), sigma2(years(i)-1), Type(tdf_1), Type(tdf_2));
+            dens = ddt(Type(t), mu(i), sigma1(i), sigma2(i), Type(tdf_1), Type(tdf_2));
           }
           if(tail_model==2) {
-            log_dens(i) = ddgnorm(t, mu(years(i)-1), alpha1(years(i)-1), alpha2(years(i)-1), beta_1, beta_2, sigma1(years(i)-1), sigma2(years(i)-1));
+            dens = ddgnorm(Type(t), mu(i), alpha1(i), alpha2(i), beta_1, beta_2, sigma1(i), sigma2(i));
           }
-          year_log_tot(i) = year_log_tot(i) + log_dens(i) + theta(years(i)-1);
-          year_tot(i) = year_tot(i) + exp(log_dens(i) + theta(years(i)-1));
+          year_log_tot(i) = year_log_tot(i) + dens + theta(i);
+          year_tot(i) = year_tot(i) + exp(dens + theta(i));
 
         } else {
           if(tail_model==0) {
             // model is symmetric around mu, gaussian tails
-            log_dens(i) = dnorm(t, mu(years(i)-1), sigma1(years(i)-1), true);
+            dens = dnorm(Type(t), mu(i), sigma1(i), true);
           } else {
             if(tail_model==1) {
               // model is symmetric around mu, student-t tails
-              log_dens(i) = dt((t - mu(years(i)-1)) / sigma1(years(i)-1), tdf_1, true) - log(sigma1(years(i)-1));
+              dens = dt((Type(t) - mu(i)) / sigma1(i), tdf_1, true) - log(sigma1(i));
             } else {
               // gnorm, copied from maryclare/gnorm
               // alpha = sqrt( var * gamma(1/beta) / gamma(3/beta) ), alpha = sigma(1)*beta_ratio(1)
-              log_dens(i) = dgnorm(t, mu(years(i)-1), alpha1(years(i)-1), beta_1);
+              dens = dgnorm(Type(t), mu(i), alpha1(i), beta_1);
             }
           }
-          year_log_tot(i) = year_log_tot(i) + log_dens(i) + theta(years(i)-1);
-          year_tot(i) = year_tot(i) + exp(log_dens(i) + theta(years(i)-1));
+          year_log_tot(i) = year_log_tot(i) + dens + theta(i);
+          year_tot(i) = year_tot(i) + exp(dens + theta(i));
         }
     }
   }

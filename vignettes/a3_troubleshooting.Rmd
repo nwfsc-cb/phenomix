@@ -1,0 +1,180 @@
+---
+title: "Troubleshooting"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Troubleshooting}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE, cache=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 7,
+  fig.asp = 0.618
+)
+```
+
+```{r packages, message=FALSE, warning=TRUE}
+library(ggplot2)
+library(phenomix)
+library(dplyr)
+library(TMB)
+```
+
+## Troubleshooting
+
+There are a number of reasons why `phenomix` models may not converge. First, it's likely that all models won't converge for a single dataset. As an example, we can create some data representing an asymmetric distribution, with gaussian tails (no extremes) and random variability by year (both in the mean and standard deviations). 
+
+```{r}
+# create 20 years of data
+set.seed(123)
+df <- expand.grid("doy" = 100:200, "year" = 1:20)
+df$mu <- rnorm(unique(df$year), 150, 5)[df$year]
+df$sig1 <- rnorm(unique(df$year), 30, 5)[df$year]
+df$sig2 <- rnorm(unique(df$year), 30, 5)[df$year]
+df$sig <- ifelse(df$doy < df$mu, df$sig1, df$sig2)
+df$pred <- dnorm(df$doy, df$mu, sd = df$sig, log = TRUE)
+df$pred <- exp(df$pred + 8)
+df$number <- round(rnorm(nrow(df), df$pred, 0.1))
+
+```
+
+The model with student-t errors that is fit to these data 
+```{r eval=FALSE}
+set.seed(1)
+fit_t <- fit(create_data(df, asymmetric_model = TRUE, min_number = 1,
+                          tail_model = "student_t"),
+   silent = TRUE,
+   control = list(eval.max = 4000, iter.max = 5000, rel.tol = 1e-7)
+)
+
+```
+
+But the model with the generalized normal tails struggles. 
+```{r eval=FALSE}
+fit_gnorm <- fit(create_data(df, asymmetric_model = TRUE, min_number = 1,
+                          tail_model = "gnorm"),
+   silent = TRUE,limits=TRUE,
+   control = list(eval.max = 4000, iter.max = 5000, rel.tol = 1e-7)
+)
+```
+
+This is an example where simplifying helps greatly. The model with generalized normal tails will converge when the random effects in the mean and variance are turned off, but has a hard time estimating the shape parameters with them on.
+
+```{r eval=FALSE}
+fit_gnorm <- fit(create_data(df, asymmetric_model = TRUE, min_number = 1,
+                          tail_model = "gnorm",
+                          est_mu_re = FALSE,
+                          est_sigma_re = FALSE),
+   silent = TRUE,
+   control = list(eval.max = 4000, iter.max = 5000, rel.tol = 1e-7)
+)
+```
+
+### Using initial values
+
+Sometimes, it helps to specify the initial values for a model. We can do that in a couple ways, but it may be easiest to first construct a model to see what initial values are needed. 
+
+Using the above example, we can specify `fit_model = FALSE`. 
+
+```{r}
+fit_gnorm <- fit(create_data(df, asymmetric_model = TRUE, min_number = 1,
+                          tail_model = "gnorm",
+                          est_mu_re = FALSE,
+                          est_sigma_re = FALSE),
+   silent = TRUE,
+   control = list(eval.max = 4000, iter.max = 5000, rel.tol = 1e-7),
+   fit_model = FALSE
+)
+```
+
+The `$init_vals` contains the initial values that would be used to fit the model. 
+```{r}
+fit_gnorm$init_vals
+```
+
+Suppose we wanted to start at a higher value for `log_beta_1`. We could change that with
+
+```{r}
+inits = fit_gnorm$init_vals
+inits["log_beta_1"] = 2
+```
+
+Now we can try re-fitting the model,
+
+```{r}
+fit_gnorm <- fit(create_data(df, asymmetric_model = TRUE, min_number = 1,
+                          tail_model = "gnorm",
+                          est_mu_re = FALSE,
+                          est_sigma_re = FALSE),
+   silent = TRUE,
+   control = list(eval.max = 4000, iter.max = 5000, rel.tol = 1e-7),
+   fit_model = TRUE
+)
+```
+
+### Specifying limits
+
+There are two ways to specify limits on estimated parameters. First, we include hard coded limits that may be turned on with `limits = TRUE`, e.g.
+
+```{r eval = FALSE}
+fit_gnorm <- fit(create_data(df, asymmetric_model = TRUE, min_number = 1,
+                          tail_model = "gnorm",
+                          est_mu_re = FALSE,
+                          est_sigma_re = FALSE),
+   silent = TRUE, 
+   limits = TRUE,
+   control = list(eval.max = 4000, iter.max = 5000, rel.tol = 1e-7),
+   fit_model = TRUE
+)
+```
+
+However these limits may not be reasonable for every situation. We can also change these manually, but including a list of limits based on the parameters being estimated. We do this using the same approach above, with specifying initial values. First we construct the model but don't do estimation,
+
+```{r eval = FALSE}
+fit_gnorm <- fit(create_data(df, asymmetric_model = TRUE, min_number = 1,
+                          tail_model = "gnorm",
+                          est_mu_re = FALSE,
+                          est_sigma_re = FALSE),
+   silent = TRUE,
+   control = list(eval.max = 4000, iter.max = 5000, rel.tol = 1e-7),
+   fit_model = FALSE
+)
+```
+
+The parameters need to be in the same order as `init_vals`, so we can try something like this:
+
+```{r eval = FALSE}
+lower = c(rep(0, 20), # lower for theta
+          0.05, # lower log_beta_1
+          -3, # lower log_obs_sigma
+          140, # lower on mu
+          15,# lower on b_sig1
+          15)# lower on b_sig2
+upper = c(rep(10, 20),# upper for theta
+          log(10),# upper log_beta_1
+          0, # upper log_obs_sigma
+          160,# upper on mu
+          40,# upper on b_sig1
+          40)# upper on b_sig2
+```
+
+Then we can pass these in as a list, 
+
+```{r eval = FALSE}
+fit_gnorm <- fit(create_data(df, asymmetric_model = TRUE, min_number = 1,
+                          tail_model = "gnorm",
+                          est_mu_re = FALSE,
+                          est_sigma_re = FALSE),
+   silent = TRUE, 
+   limits = list(lower = lower, upper = upper),
+   control = list(eval.max = 4000, iter.max = 5000, rel.tol = 1e-7)
+)
+```
+
+
+
+

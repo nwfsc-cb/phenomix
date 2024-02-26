@@ -1,19 +1,14 @@
-#' Data from Satterthwaite, W.H., Ciancio, J., Crandall, E., Palmer-Zwahlen,
-#' M.L., Grover, A.M., O’Farrell, M.R., Anson, E.C., Mohr, M.S. & Garza,
-#' J.C. (2015). Stock composition and ocean spatial distribution from
-#' California recreational chinook salmon fisheries using genetic stock
-#' identification. Fisheries Research, 170, 166–178. The data
-#' genetic data collected from port-based sampling of recreationally-landed
-#' Chinook salmon in California from 1998-2002.
+#' Example simulate data for fish distributions from multiple years
 #'
-#' @format A data frame.
-"chinook"
+#' @format A data frame containing simulated data.
+#' @keywords internal
+"fishdist"
 
-#' Data from Magnussen, E. 2011. Food and feeding habits of cod (Gadus morhua)
-#' on the Faroe Bank. – ICES Journal of Marine Science, 68: 1909–1917. The data
-#' here are Table 3 from the paper, with sample proportions (columns w) multiplied
-#' by total weight to yield total grams (g) for each sample-diet item combination. Dashes
-#' have been replaced with 0s.
+#' Count data collected by Washington Department of Fish and Wildlife on
+#' chum salmon from the Skagit River (Washington state). Each row of the
+#' dataframe contains an observation ("number") on a given date ("date").
+#' The year ("year") and calendar day ("doy") are also included.
 #'
 #' @format A data frame.
-"coddiet"
+#' @keywords internal
+"chum"

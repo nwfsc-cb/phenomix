@@ -1,0 +1,110 @@
+---
+title: "Extracting estimated and derived parameters"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Extracting estimated and derived parameters}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE, cache=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 7,
+  fig.asp = 0.618
+)
+```
+
+```{r packages, message=FALSE, warning=TRUE}
+library(ggplot2)
+library(phenomix)
+library(dplyr)
+library(TMB)
+```
+
+We will start with the original simple model fit to the `fishdist` data,  
+
+```{r}
+data("fishdist")
+cov_dat = data.frame(nyear = unique(fishdist$year))
+# rescale year -- could also standardize with scale()
+cov_dat$nyear = cov_dat$nyear - min(cov_dat$nyear) 
+```
+
+
+```{r}
+datalist = create_data(fishdist, 
+  min_number=0, 
+  variable = "number", 
+  time="year", 
+  date = "doy",
+  asymmetric_model = FALSE, 
+  mu = ~ nyear,
+  sigma = ~ nyear,
+  covar_data = cov_dat,
+  est_sigma_re = TRUE,
+  est_mu_re = TRUE,
+  tail_model = "gaussian")
+```
+
+```{r message=FALSE, warning=FALSE, results='hide'}
+set.seed(1)
+fitted = fit(datalist)
+```
+
+## Extracting parameters manually
+
+The first option for extracting parameters manually is via the `sdreport` of TMB objects. This includes both estimated and derived quantities. You can see the names of what's available by looking at 
+
+```{r eval=FALSE}
+fitted$sdreport$value
+```
+
+or perhaps look at these in tabular form,  
+```{r}
+table(names(fitted$sdreport$value))
+```
+
+So if you wanted to extract the mean phenological peak in each time step (named `mu`), you could look at the indices of the names 
+
+```{r}
+idx <- which(names(fitted$sdreport$value) == "mu")
+```
+
+And then use the respective means and sds corresponding to those indices,
+
+```{r}
+m <- fitted$sdreport$value[idx]
+s <- fitted$sdreport$sd[idx]
+```
+
+## Helper functions
+
+We've also included some helper functions to extract these more quickly yourself. These all take in a fitted model object, and can be called as 
+
+```{r}
+m <- extract_means(fitted) # means
+s <- extract_sigma(fitted) # sigmas, describing tails
+t <- extract_theta(fitted) # theta parameters (scaling)
+u <- extract_upper(fitted) # upper quartile
+m <- extract_lower(fitted) # lower quartile
+```
+
+Or if you want to extact all of the above, you can use
+
+```{r}
+e <- extract_all(fitted)
+```
+
+## Annual summaries
+
+In addition to the parameters above, we can extract the derived annual totals (predicted across all days 1-365). These are extracted with the following `extract_annual` function. Note that the second parameter controls whether the estimates are in normal or log space. 
+
+```{r}
+est_log <- extract_annual(fitted, log=TRUE)
+est_normal <- extract_annual(fitted, log=FALSE)
+```
+
+

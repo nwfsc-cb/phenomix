@@ -29,7 +29,7 @@ library(ggplot2)
 
 ## Functions
 
-The package pheomix provides a suite of curve fitting to describe data
+The package phenomix provides a suite of curve fitting to describe data
 that may be generated from a process when distributions in time might be
 concentrated (from fisheries, this occurs with counts over time of
 salmon returning from the ocean to spawn or juvenile fish emigrating

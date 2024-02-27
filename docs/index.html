@@ -71,7 +71,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/ericward-noaa/phenomix/" class="external-link">
+  <a href="https://github.com/noaa-nwfsc/phenomix/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -92,33 +92,48 @@
 <div class="page-header"><h1 id="phenomix">phenomix<a class="anchor" aria-label="anchor" href="#phenomix"></a>
 </h1></div>
 <p>R package for fitting distributions to run timing data via maximum likelihood</p>
-<p><a href="https://github.com/ericward-noaa/phenomix/actions" class="external-link"><img src="https://github.com/ericward-noaa/phenomix/workflows/R-CMD-check/badge.svg" alt="R build status"></a></p>
-<p><a href="https://zenodo.org/badge/latestdoi/243336401" class="external-link"><img src="https://zenodo.org/badge/243336401.svg" alt="DOI"></a> pkgdown site: <a href="https://ericward-noaa.github.io/phenomix/" class="external-link uri">https://ericward-noaa.github.io/phenomix/</a></p>
+<p><a href="https://github.com/noaa-nwfsc/phenomix/actions" class="external-link"><img src="https://github.com/noaa-nwfsc/phenomix/workflows/R-CMD-check/badge.svg" alt="R build status"></a></p>
+<p>pkgdown site: <a href="https://noaa-nwfsc.github.io/phenomix/" class="external-link uri">https://noaa-nwfsc.github.io/phenomix/</a></p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
 <p>You can install phenomix with:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"ericward-noaa/phenomix"</span>,build_vignettes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"noaa-nwfsc/phenomix"</span>,build_vignettes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Downloading GitHub repo noaa-nwfsc/phenomix@HEAD</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ── R CMD build ─────────────────────────────────────────────────────────────────</span></span>
+<span><span class="co">#&gt;      checking for file ‘/private/var/folders/ts/4x6hzmfx7d52vbhjqmrs_3pw0000gp/T/RtmpmdCE3X/remotes13c339d5e769/noaa-nwfsc-phenomix-9f8e792/DESCRIPTION’ ...  ✔  checking for file ‘/private/var/folders/ts/4x6hzmfx7d52vbhjqmrs_3pw0000gp/T/RtmpmdCE3X/remotes13c339d5e769/noaa-nwfsc-phenomix-9f8e792/DESCRIPTION’</span></span>
+<span><span class="co">#&gt;   ─  preparing ‘phenomix’:</span></span>
+<span><span class="co">#&gt;      checking DESCRIPTION meta-information ...  ✔  checking DESCRIPTION meta-information</span></span>
+<span><span class="co">#&gt;   ─  cleaning src</span></span>
+<span><span class="co">#&gt;   ─  installing the package to build vignettes</span></span>
+<span><span class="co">#&gt;      creating vignettes ...  ✔  creating vignettes (1m 39.8s)</span></span>
+<span><span class="co">#&gt;   ─  cleaning src</span></span>
+<span><span class="co">#&gt;   ─  checking for LF line-endings in source and make files and shell scripts</span></span>
+<span><span class="co">#&gt;   ─  checking for empty or unneeded directories</span></span>
+<span><span class="co">#&gt;   ─  building ‘phenomix_1.0.4.tar.gz’</span></span>
+<span><span class="co">#&gt;      </span></span>
+<span><span class="co">#&gt; </span></span></code></pre></div>
 <p>Load libraries</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ericward-noaa.github.io/phenomix" class="external-link">phenomix</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://noaa-nwfsc.github.io/phenomix" class="external-link">phenomix</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: package 'ggplot2' was built under R version 4.3.2</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="functions">Functions<a class="anchor" aria-label="anchor" href="#functions"></a>
 </h2>
 <p>The package pheomix provides a suite of curve fitting to describe data that may be generated from a process when distributions in time might be concentrated (from fisheries, this occurs with counts over time of salmon returning from the ocean to spawn or juvenile fish emigrating from streams to the ocean).</p>
-<div class="float">
-<img src="README-figs/unnamed-chunk-5-1.png" alt="Predicted (black line) and observed counts (red dots) for hypothetical dataset. Multiple observations may exist for some days, or no observations on others."><div class="figcaption">Predicted (black line) and observed counts (red dots) for hypothetical dataset. Multiple observations may exist for some days, or no observations on others.</div>
-</div>
-<p>In a given year, the curve might be described by a symmetric or asymmetric Gaussian or Student-t distribution (shown here in log-scale on the y-axis). Questions of interest might be - are the means (x-axis) shifting through time? - are the variances shifting through time? - does the model support a symmetric or asymmetric distribution?</p>
-<p><img src="reference/figures/unnamed-chunk-6-1.png"><!-- --></p>
+<figure><img src="README-figs/unnamed-chunk-5-1.png" alt="Predicted (black line) and observed counts (red dots) for hypothetical dataset. Multiple observations may exist for some days, or no observations on others."><figcaption aria-hidden="true">
+Predicted (black line) and observed counts (red dots) for hypothetical dataset. Multiple observations may exist for some days, or no observations on others.
+</figcaption></figure><p>In a given year, the curve might be described by a symmetric or asymmetric Gaussian or Student-t distribution (shown here in log-scale on the y-axis). Questions of interest might be - are the means (x-axis) shifting through time? - are the variances shifting through time? - does the model support a symmetric or asymmetric distribution?</p>
+<p><img src="README-figs/unnamed-chunk-6-1.png"><!-- --></p>
 </div>
 <div class="section level2">
 <h2 id="examples">Examples<a class="anchor" aria-label="anchor" href="#examples"></a>
 </h2>
-<p>The main functions are <code><a href="reference/create_data.html">create_data()</a></code> and <code><a href="reference/fit.html">fit()</a></code>. See <code><a href="reference/create_data.html">?create_data</a></code> and <code><a href="reference/fit.html">?fit</a></code> for additional details and examples. A vignette includes additional detail, and examples of several models as well as function arguments available <a href="https://ericward-noaa.github.io/phenomix/" class="external-link uri">https://ericward-noaa.github.io/phenomix/</a>.</p>
+<p>The main functions are <code><a href="reference/create_data.html">create_data()</a></code> and <code><a href="reference/fit.html">fit()</a></code>. See <code><a href="reference/create_data.html">?create_data</a></code> and <code><a href="reference/fit.html">?fit</a></code> for additional details and examples. A vignette includes additional detail, and examples of several models as well as function arguments available <a href="https://noaa-nwfsc.github.io/phenomix/" class="external-link uri">https://noaa-nwfsc.github.io/phenomix/</a>.</p>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
@@ -143,7 +158,7 @@
     <div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li><a href="https://github.com/ericward-noaa/phenomix/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/noaa-nwfsc/phenomix/" class="external-link">Browse source code</a></li>
 </ul>
 </div>
 

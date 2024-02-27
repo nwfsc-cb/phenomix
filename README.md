@@ -7,17 +7,31 @@ R package for fitting distributions to run timing data via maximum
 likelihood
 
 [![R build
-status](https://github.com/ericward-noaa/phenomix/workflows/R-CMD-check/badge.svg)](https://github.com/ericward-noaa/phenomix/actions)
+status](https://github.com/noaa-nwfsc/phenomix/workflows/R-CMD-check/badge.svg)](https://github.com/noaa-nwfsc/phenomix/actions)
 
-[![DOI](https://zenodo.org/badge/243336401.svg)](https://zenodo.org/badge/latestdoi/243336401)
-pkgdown site: <https://ericward-noaa.github.io/phenomix/>
+pkgdown site: <https://noaa-nwfsc.github.io/phenomix/>
 
 ## Installation
 
 You can install phenomix with:
 
 ``` r
-remotes::install_github("ericward-noaa/phenomix",build_vignettes = TRUE)
+remotes::install_github("noaa-nwfsc/phenomix",build_vignettes = TRUE)
+#> Downloading GitHub repo noaa-nwfsc/phenomix@HEAD
+#> 
+#> ── R CMD build ─────────────────────────────────────────────────────────────────
+#>      checking for file ‘/private/var/folders/ts/4x6hzmfx7d52vbhjqmrs_3pw0000gp/T/RtmpmdCE3X/remotes13c339d5e769/noaa-nwfsc-phenomix-9f8e792/DESCRIPTION’ ...  ✔  checking for file ‘/private/var/folders/ts/4x6hzmfx7d52vbhjqmrs_3pw0000gp/T/RtmpmdCE3X/remotes13c339d5e769/noaa-nwfsc-phenomix-9f8e792/DESCRIPTION’
+#>   ─  preparing ‘phenomix’:
+#>      checking DESCRIPTION meta-information ...  ✔  checking DESCRIPTION meta-information
+#>   ─  cleaning src
+#>   ─  installing the package to build vignettes
+#>      creating vignettes ...  ✔  creating vignettes (1m 39.8s)
+#>   ─  cleaning src
+#>   ─  checking for LF line-endings in source and make files and shell scripts
+#>   ─  checking for empty or unneeded directories
+#>   ─  building ‘phenomix_1.0.4.tar.gz’
+#>      
+#> 
 ```
 
 Load libraries
@@ -25,19 +39,24 @@ Load libraries
 ``` r
 library(phenomix)
 library(ggplot2)
+#> Warning: package 'ggplot2' was built under R version 4.3.2
 ```
 
 ## Functions
 
-The package phenomix provides a suite of curve fitting to describe data
+The package pheomix provides a suite of curve fitting to describe data
 that may be generated from a process when distributions in time might be
 concentrated (from fisheries, this occurs with counts over time of
 salmon returning from the ocean to spawn or juvenile fish emigrating
 from streams to the ocean).
 
-![Predicted (black line) and observed counts (red dots) for hypothetical
-dataset. Multiple observations may exist for some days, or no
-observations on others.](README-figs/unnamed-chunk-5-1.png)
+<figure>
+<img src="README-figs/unnamed-chunk-5-1.png"
+alt="Predicted (black line) and observed counts (red dots) for hypothetical dataset. Multiple observations may exist for some days, or no observations on others." />
+<figcaption aria-hidden="true">Predicted (black line) and observed
+counts (red dots) for hypothetical dataset. Multiple observations may
+exist for some days, or no observations on others.</figcaption>
+</figure>
 
 In a given year, the curve might be described by a symmetric or
 asymmetric Gaussian or Student-t distribution (shown here in log-scale
@@ -45,14 +64,14 @@ on the y-axis). Questions of interest might be - are the means (x-axis)
 shifting through time? - are the variances shifting through time? - does
 the model support a symmetric or asymmetric distribution?
 
-![](man/figures/unnamed-chunk-6-1.png)<!-- -->
+![](README-figs/unnamed-chunk-6-1.png)<!-- -->
 
 ## Examples
 
 The main functions are `create_data()` and `fit()`. See `?create_data`
 and `?fit` for additional details and examples. A vignette includes
 additional detail, and examples of several models as well as function
-arguments available <https://ericward-noaa.github.io/phenomix/>.
+arguments available <https://noaa-nwfsc.github.io/phenomix/>.
 
 ## References
 

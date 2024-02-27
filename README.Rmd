@@ -21,6 +21,10 @@ R package for fitting distributions to run timing data via maximum likelihood
 
 pkgdown site: [https://noaa-nwfsc.github.io/phenomix/](https://noaa-nwfsc.github.io/phenomix/)
 
+### DOI
+
+The DOI for this repository is [![DOI](https://zenodo.org/badge/243336401.svg)](https://zenodo.org/doi/10.5281/zenodo.4435275)
+
 ## Installation
 
 You can install phenomix with:

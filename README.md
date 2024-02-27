@@ -11,6 +11,11 @@ status](https://github.com/noaa-nwfsc/phenomix/workflows/R-CMD-check/badge.svg)]
 
 pkgdown site: <https://noaa-nwfsc.github.io/phenomix/>
 
+### DOI
+
+The DOI for this repository is
+[![DOI](https://zenodo.org/badge/243336401.svg)](https://zenodo.org/doi/10.5281/zenodo.4435275)
+
 ## Installation
 
 You can install phenomix with:
@@ -20,12 +25,12 @@ remotes::install_github("noaa-nwfsc/phenomix",build_vignettes = TRUE)
 #> Downloading GitHub repo noaa-nwfsc/phenomix@HEAD
 #> 
 #> ── R CMD build ─────────────────────────────────────────────────────────────────
-#>      checking for file ‘/private/var/folders/ts/4x6hzmfx7d52vbhjqmrs_3pw0000gp/T/RtmpmdCE3X/remotes13c339d5e769/noaa-nwfsc-phenomix-9f8e792/DESCRIPTION’ ...  ✔  checking for file ‘/private/var/folders/ts/4x6hzmfx7d52vbhjqmrs_3pw0000gp/T/RtmpmdCE3X/remotes13c339d5e769/noaa-nwfsc-phenomix-9f8e792/DESCRIPTION’
+#>      checking for file ‘/private/var/folders/ts/4x6hzmfx7d52vbhjqmrs_3pw0000gp/T/Rtmp0qtkWs/remotes1782f5f11a2e2/noaa-nwfsc-phenomix-232e30e/DESCRIPTION’ ...  ✔  checking for file ‘/private/var/folders/ts/4x6hzmfx7d52vbhjqmrs_3pw0000gp/T/Rtmp0qtkWs/remotes1782f5f11a2e2/noaa-nwfsc-phenomix-232e30e/DESCRIPTION’
 #>   ─  preparing ‘phenomix’:
 #>      checking DESCRIPTION meta-information ...  ✔  checking DESCRIPTION meta-information
 #>   ─  cleaning src
 #>   ─  installing the package to build vignettes
-#>      creating vignettes ...  ✔  creating vignettes (1m 39.8s)
+#>      creating vignettes ...  ✔  creating vignettes (1m 32.7s)
 #>   ─  cleaning src
 #>   ─  checking for LF line-endings in source and make files and shell scripts
 #>   ─  checking for empty or unneeded directories

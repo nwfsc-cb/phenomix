@@ -12,13 +12,13 @@ Authors@R: c(person(given = c("Eric", "J."),
              person(given = c("Joseph", "H."),
              family = "Anderson",
              role = c("ctb")))
-Description: The 'salmix' package fits time-varying density curves to run
+Description: The 'phenomix' package fits time-varying density curves to run
     timing type data commonly encountered in fisheries and ecology. Example 
     applications include to peak run timing curves collected for juvenile or 
     adult Pacific salmon, though could also be applied to other kinds
     of data such as hydrographs, plant phenology (flowering, leaf out).
 License: GPL (>=3)
-URL: https://noaa-nwfsc.github.io/phenomix, https://github.com/noaa-nwfsc/phenomix
+URL: https://nwfsc-cb.github.io/phenomix, https://github.com/nwfsc-cb/phenomix
 Depends: 
     R (>= 4.0.0)
 Imports:

@@ -7,9 +7,9 @@ R package for fitting distributions to run timing data via maximum
 likelihood
 
 [![R build
-status](https://github.com/noaa-nwfsc/phenomix/workflows/R-CMD-check/badge.svg)](https://github.com/noaa-nwfsc/phenomix/actions)
+status](https://github.com/nwfsc-cb/phenomix/workflows/R-CMD-check/badge.svg)](https://github.com/nwfsc-cb/phenomix/actions)
 
-pkgdown site: <https://noaa-nwfsc.github.io/phenomix/>
+pkgdown site: <https://nwfsc-cb.github.io/phenomix/>
 
 ### DOI
 
@@ -21,16 +21,16 @@ The DOI for this repository is
 You can install phenomix with:
 
 ``` r
-remotes::install_github("noaa-nwfsc/phenomix",build_vignettes = TRUE)
-#> Downloading GitHub repo noaa-nwfsc/phenomix@HEAD
+remotes::install_github("nwfsc-cb/phenomix",build_vignettes = TRUE)
+#> Downloading GitHub repo nwfsc-cb/phenomix@HEAD
 #> 
 #> ── R CMD build ─────────────────────────────────────────────────────────────────
-#>      checking for file ‘/private/var/folders/ts/4x6hzmfx7d52vbhjqmrs_3pw0000gp/T/Rtmp0qtkWs/remotes1782f5f11a2e2/noaa-nwfsc-phenomix-232e30e/DESCRIPTION’ ...  ✔  checking for file ‘/private/var/folders/ts/4x6hzmfx7d52vbhjqmrs_3pw0000gp/T/Rtmp0qtkWs/remotes1782f5f11a2e2/noaa-nwfsc-phenomix-232e30e/DESCRIPTION’
+#>      checking for file ‘/private/var/folders/ts/4x6hzmfx7d52vbhjqmrs_3pw0000gp/T/RtmpjBCVFK/remotes161f77702fa38/nwfsc-cb-phenomix-a46f4fc/DESCRIPTION’ ...  ✔  checking for file ‘/private/var/folders/ts/4x6hzmfx7d52vbhjqmrs_3pw0000gp/T/RtmpjBCVFK/remotes161f77702fa38/nwfsc-cb-phenomix-a46f4fc/DESCRIPTION’
 #>   ─  preparing ‘phenomix’:
 #>      checking DESCRIPTION meta-information ...  ✔  checking DESCRIPTION meta-information
 #>   ─  cleaning src
 #>   ─  installing the package to build vignettes
-#>      creating vignettes ...  ✔  creating vignettes (1m 32.7s)
+#>      creating vignettes ...  ✔  creating vignettes (1m 34.3s)
 #>   ─  cleaning src
 #>   ─  checking for LF line-endings in source and make files and shell scripts
 #>   ─  checking for empty or unneeded directories
@@ -76,7 +76,7 @@ the model support a symmetric or asymmetric distribution?
 The main functions are `create_data()` and `fit()`. See `?create_data`
 and `?fit` for additional details and examples. A vignette includes
 additional detail, and examples of several models as well as function
-arguments available <https://noaa-nwfsc.github.io/phenomix/>.
+arguments available <https://nwfsc-cb.github.io/phenomix/>.
 
 ## References
 

@@ -49,9 +49,8 @@ create_data <- function(data,
                         family = "lognormal",
                         max_theta = 10,
                         share_shape = TRUE,
-                        nu_prior = c(2,10),
-                        beta_prior = c(2,1)) {
-
+                        nu_prior = c(2, 10),
+                        beta_prior = c(2, 1)) {
   dist <- c("gaussian", "poisson", "negbin", "binomial", "lognormal")
   fam <- match(family, dist)
   if (is.na(fam)) {
@@ -76,18 +75,18 @@ create_data <- function(data,
   }
 
   # optional priors
-  use_t_prior = TRUE
+  use_t_prior <- TRUE
   if (length(nu_prior) != 2) {
-    if(is.na(nu_prior)) {
-      use_t_prior = FALSE
+    if (is.na(nu_prior)) {
+      use_t_prior <- FALSE
     } else {
       stop("The nu prior must be a numeric 2-element vector or NA")
     }
   }
-  use_beta_prior = TRUE
+  use_beta_prior <- TRUE
   if (length(beta_prior) != 2) {
-    if(is.na(beta_prior)) {
-      use_beta_prior = FALSE
+    if (is.na(beta_prior)) {
+      use_beta_prior <- FALSE
     } else {
       stop("The beta prior must be a numeric 2-element vector or NA")
     }

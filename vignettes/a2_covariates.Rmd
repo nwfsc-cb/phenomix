@@ -21,7 +21,6 @@ knitr::opts_chunk$set(
 library(ggplot2)
 library(phenomix)
 library(dplyr)
-library(TMB)
 ```
 
 ## Covariates
@@ -37,23 +36,25 @@ Fixed effects for the mean at minimum include a global intercept, but may includ
 Importantly, if covariates are to be included in the mean or standard deviation, a second data frame `covar_data` must be included that has a unique covariate value for each time slice of data (e.g. year). For example, in the example above with temperature, covar data would have to look something like this:
 
 ```{r}
-# temp is a dummy variable here representing annual deviations in temperature, 
+# temp is a dummy variable here representing annual deviations in temperature,
 # but you could replace it here with your own data
-covar_data = data.frame(year = 2000:2020, 
-                        temp = rnorm(21,mean=0,sd=1))
+covar_data <- data.frame(
+  year = 2000:2020,
+  temp = rnorm(21, mean = 0, sd = 1)
+)
 ```
 
 Similarly, we could include a linear trend in the mean `mu ~ nyear`, where nyear is a numeric version of year. One way to pass in the data would be simply making `nyear` redundant with `year`,
 
 ```{r}
-covar_data = data.frame(year = 2000:2020)
+covar_data <- data.frame(year = 2000:2020)
 covar_data$nyear <- covar_data$year
 ```
 
 However, we've found that approach can be slightly unstable. Instead, we can center or scale the numeric year variable. Here, we'll scale it to start at 1. 
 
 ```{r}
-covar_data = data.frame(year = 2000:2020)
+covar_data <- data.frame(year = 2000:2020)
 covar_data$nyear <- covar_data$year - min(covar_data$year) + 1
 ```
 

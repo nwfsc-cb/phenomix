@@ -13,6 +13,7 @@ pars(object)
 Get parameters from model object, copying glmmTMB 'fast' implementation
 }
 \examples{
+\donttest{
 data(fishdist)
 
 # example of fitting fixed effects, no trends, no random effects
@@ -24,5 +25,6 @@ datalist <- create_data(fishdist[which(fishdist$year > 1970), ],
 fit <- fit(datalist)
 p <- pars(fit)
 names(p)
+}
 }
 \keyword{internal}

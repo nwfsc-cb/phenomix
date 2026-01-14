@@ -16,7 +16,7 @@ fit(
 \arguments{
 \item{data_list}{A list of data, as output from create_data}
 
-\item{silent}{Boolean passed to TMB::MakeADFun, whether to be verbose or not (defaults to FALSE)}
+\item{silent}{Boolean passed to RTMB::MakeADFun, whether to be verbose or not (defaults to FALSE)}
 
 \item{inits}{Optional named list of parameters for starting values, defaults to NULL}
 
@@ -28,10 +28,11 @@ where no limits used.}
 \item{fit_model}{Whether to fit the model. If not, returns a list including the data, parameters, and initial values. Defaults to TRUE}
 }
 \description{
-This function creates a list of parameters, sets up TMB object and attempts to
+This function creates a list of parameters, sets up RTMB object and attempts to
 do fitting / estimation
 }
 \examples{
+\dontrun{
 data(fishdist)
 
 # example of fitting fixed effects, no trends, no random effects
@@ -41,22 +42,5 @@ datalist <- create_data(fishdist[which(fishdist$year > 1970), ],
   est_mu_re = FALSE, est_sigma_re = FALSE
 )
 fit <- fit(datalist)
-#
-# # example of model with random effects in means only, and symmetric distribution
-# set.seed(1)
-# datalist <- create_data(fishdist[which(fishdist$year > 1970),], asymmetric_model = FALSE,
-#                      est_sigma_re = FALSE)
-# fit <- fit(datalist)
-# # example of model with random effects in variances
-# set.seed(1)
-# datalist <- create_data(fishdist[which(fishdist$year > 1970),], asymmetric_model = TRUE,
-#                          est_mu_re = TRUE)
-# fit <- fit(datalist)
-#
-# # example of model with poisson response
-# set.seed(1)
-# datalist <- create_data(fishdist[which(fishdist$year > 1970),], asymmetric_model = FALSE,
-#                         est_sigma_trend=FALSE, est_mu_trend=FALSE, est_mu_re = TRUE,
-#                         family="poisson")
-# fit <- fit(datalist)
+}
 }

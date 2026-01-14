@@ -4,15 +4,15 @@
 \name{phenomix-package}
 \alias{phenomix}
 \alias{phenomix-package}
-\title{The 'phenomix' package.}
+\title{phenomix: Fit Density Curves to Peak Timing Data that Varies over Time}
 \description{
-A DESCRIPTION OF THE PACKAGE
+The 'phenomix' package fits time-varying density curves to run timing type data commonly encountered in fisheries and ecology. Example applications include to peak run timing curves collected for juvenile or adult Pacific salmon, though could also be applied to other kinds of data such as hydrographs, plant phenology (flowering, leaf out).
 }
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://noaa-nwfsc.github.io/phenomix}
-  \item \url{https://github.com/noaa-nwfsc/phenomix}
+  \item \url{https://nwfsc-cb.github.io/phenomix}
+  \item \url{https://github.com/nwfsc-cb/phenomix}
 }
 
 }

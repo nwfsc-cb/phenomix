@@ -1,7 +1,7 @@
 Type: Package
 Package: phenomix
 Title: Fit Density Curves to Peak Timing Data that Varies over Time
-Version: 1.0.4
+Version: 1.0.5
 Authors@R: c(person(given = c("Eric", "J."),
              family = "Ward",
              role = c("aut", "cre"),
@@ -27,20 +27,16 @@ Imports:
     gnorm,
     methods,
     stats,
-    TMB (>= 1.7.20),
+    RTMB,
     nlme
 Suggests:
     testthat,
     knitr,
     rmarkdown
-LinkingTo: 
-    RcppEigen,
-    TMB
 VignetteBuilder: 
     knitr
 ByteCompile: true
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.1
-SystemRequirements: GNU make
+RoxygenNote: 7.3.3

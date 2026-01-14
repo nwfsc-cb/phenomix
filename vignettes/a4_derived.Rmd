@@ -21,37 +21,37 @@ knitr::opts_chunk$set(
 library(ggplot2)
 library(phenomix)
 library(dplyr)
-library(TMB)
 ```
 
 We will start with the original simple model fit to the `fishdist` data,  
 
 ```{r}
 data("fishdist")
-cov_dat = data.frame(nyear = unique(fishdist$year))
+cov_dat <- data.frame(nyear = unique(fishdist$year))
 # rescale year -- could also standardize with scale()
-cov_dat$nyear = cov_dat$nyear - min(cov_dat$nyear) 
+cov_dat$nyear <- cov_dat$nyear - min(cov_dat$nyear)
 ```
 
 
 ```{r}
-datalist = create_data(fishdist, 
-  min_number=0, 
-  variable = "number", 
-  time="year", 
+datalist <- create_data(fishdist,
+  min_number = 0,
+  variable = "number",
+  time = "year",
   date = "doy",
-  asymmetric_model = FALSE, 
-  mu = ~ nyear,
-  sigma = ~ nyear,
+  asymmetric_model = FALSE,
+  mu = ~nyear,
+  sigma = ~nyear,
   covar_data = cov_dat,
   est_sigma_re = TRUE,
   est_mu_re = TRUE,
-  tail_model = "gaussian")
+  tail_model = "gaussian"
+)
 ```
 
 ```{r message=FALSE, warning=FALSE, results='hide'}
 set.seed(1)
-fitted = fit(datalist)
+fitted <- fit(datalist)
 ```
 
 ## Extracting parameters manually
@@ -103,8 +103,8 @@ e <- extract_all(fitted)
 In addition to the parameters above, we can extract the derived annual totals (predicted across all days 1-365). These are extracted with the following `extract_annual` function. Note that the second parameter controls whether the estimates are in normal or log space. 
 
 ```{r}
-est_log <- extract_annual(fitted, log=TRUE)
-est_normal <- extract_annual(fitted, log=FALSE)
+est_log <- extract_annual(fitted, log = TRUE)
+est_normal <- extract_annual(fitted, log = FALSE)
 ```
 
 
